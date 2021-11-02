@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -42,7 +43,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 	public VentanaMain(){
 		setSize(Constantes.ventana_x_size,Constantes.ventana_y_size);
-		setTitle("Aplicacion TIENDA");
+		setTitle("AppMusic");
 		contenedorPrincipal= (JPanel) this.getContentPane();
 		configurarMenu();
 		this.setJMenuBar(menuPrincipal);
