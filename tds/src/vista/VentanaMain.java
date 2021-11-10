@@ -27,6 +27,7 @@ import modelo.Venta;
 @SuppressWarnings("serial")
 public class VentanaMain extends JFrame implements ActionListener{
 	
+	//Comentario
 	private JMenuBar menuPrincipal;
 	private JMenu mCliente, mVenta, mProducto, mOtros;
 	private JMenuItem mniAltaCli, mniListadoCli;
