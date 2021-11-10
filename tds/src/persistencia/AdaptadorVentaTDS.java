@@ -15,7 +15,7 @@ import beans.Entidad;
 import beans.Propiedad;
 
 import modelo.Venta;
-import modelo.Cliente;
+import modelo.Usuario;
 import modelo.LineaVenta;
 
 public class AdaptadorVentaTDS implements IAdaptadorVentaDAO {
@@ -58,7 +58,7 @@ public class AdaptadorVentaTDS implements IAdaptadorVentaDAO {
 		for (LineaVenta ldv : venta.getLineasVenta())
 			adaptadorLV.registrarLineaVenta(ldv);
 		// registrar cliente
-		AdaptadorClienteTDS adaptadorCliente = AdaptadorClienteTDS.getUnicaInstancia();
+		AdaptadorUsuarioTDS adaptadorCliente = AdaptadorUsuarioTDS.getUnicaInstancia();
 		adaptadorCliente.registrarCliente(venta.getCliente());
 
 		// Crear entidad venta
@@ -130,11 +130,11 @@ public class AdaptadorVentaTDS implements IAdaptadorVentaDAO {
 
 		// recuperar propiedades que son objetos llamando a adaptadores
 		// cliente
-		AdaptadorClienteTDS adaptadorCliente = AdaptadorClienteTDS.getUnicaInstancia();
+		AdaptadorUsuarioTDS adaptadorCliente = AdaptadorUsuarioTDS.getUnicaInstancia();
 		int codigoCliente = Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eVenta, "cliente"));
 		
-		Cliente cliente  = adaptadorCliente.recuperarCliente(codigoCliente);
-		venta.setCliente(cliente);
+		Usuario usuario  = adaptadorCliente.recuperarCliente(codigoCliente);
+		venta.setCliente(usuario);
 		// lineas de venta
 		List<LineaVenta> lineasVenta = obtenerLineasVentaDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eVenta, "lineasventa"));
 

@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import controlador.ControladorTienda;
 
 @SuppressWarnings("serial")
-public class PanelAltaProducto extends JPanel {
+public class PanelAltaVideo extends JPanel {
 	private Font fuenteGrande = new Font("Arial",Font.BOLD,32);
 	private JLabel rotulo;
 	private JPanel datosProducto;
@@ -32,7 +32,7 @@ public class PanelAltaProducto extends JPanel {
 	private VentanaMain ventana;
 	
 	
-	public PanelAltaProducto(VentanaMain v){
+	public PanelAltaVideo(VentanaMain v){
 		ventana=v; 
 		crearPantalla();
 	}
@@ -91,10 +91,10 @@ public class PanelAltaProducto extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {	
 				String auxNombre=nombre.getText().trim();
 				String auxPrecio=precio.getText().trim();
-				double doubleprecio=Double.parseDouble(auxPrecio);
+				//double doubleprecio=Double.parseDouble(auxPrecio);
 				if (auxNombre.isEmpty()||auxPrecio.isEmpty()) lalerta.setVisible(true);
 				else { lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarProducto(doubleprecio, auxNombre,descripcion.getText());
+					   ControladorTienda.getUnicaInstancia().registrarVideo(auxNombre, descripcion.getText());
 					   JOptionPane.showMessageDialog(ventana,
 								"Producto dado de alta",
 								"Registrar producto",JOptionPane.PLAIN_MESSAGE);

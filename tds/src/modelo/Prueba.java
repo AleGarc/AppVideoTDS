@@ -6,15 +6,15 @@ import java.util.GregorianCalendar;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorClienteDAO;
-import persistencia.IAdaptadorProductoDAO;
+import persistencia.IAdaptadorVideoDAO;
 import persistencia.IAdaptadorVentaDAO;
 import persistencia.PoolDAO;
 
 public class Prueba {
 
 	public static void main(String[] args) {
-		Producto p1 = new Producto(10.0, "danone", "yogurt desnatado");
-		Cliente c1 = new Cliente("123", "Paco Martinez");
+		Video p1 = new Video(10.0, "danone", "yogurt desnatado");
+		Usuario c1 = new Usuario("123", "Paco Martinez");
 		LineaVenta l1 = new LineaVenta(12, p1);
 		LineaVenta l2 = new LineaVenta(5, p1);
 		LineaVenta otrol1 = new LineaVenta(1, p1);
@@ -39,7 +39,7 @@ public class Prueba {
 
 		IAdaptadorClienteDAO adaptadorCliente = miFactoria.getClienteDAO();
 		IAdaptadorVentaDAO adaptadorVenta = miFactoria.getVentaDAO();
-		IAdaptadorProductoDAO adaptadorProducto = miFactoria.getProductoDAO();
+		IAdaptadorVideoDAO adaptadorProducto = miFactoria.getProductoDAO();
 
 		// registrar
 		adaptadorProducto.registrarProducto(p1);
@@ -65,7 +65,7 @@ public class Prueba {
 		// System.exit(0);
 
 		// listar
-		Cliente auxC;
+		Usuario auxC;
 		System.out.println("recupero cliente " + c1.getCodigo());
 		auxC = adaptadorCliente.recuperarCliente(c1.getCodigo());
 		System.out.println("DNI:" + auxC.getDni());

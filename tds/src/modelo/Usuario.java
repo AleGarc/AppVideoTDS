@@ -3,7 +3,7 @@ package modelo;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Cliente {
+public class Usuario {
 	private int codigo;
 	private String nombre_completo;
 	private String fecha_nacimiento;
@@ -11,7 +11,7 @@ public class Cliente {
 	private String usuario;
 	private String password;
 	
-	public Cliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
+	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		codigo = 0;
 		this.nombre_completo = nombre_completo;
 		this.fecha_nacimiento = fecha_nacimiento;

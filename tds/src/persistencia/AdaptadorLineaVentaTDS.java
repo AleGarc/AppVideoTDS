@@ -9,7 +9,7 @@ import beans.Entidad;
 import beans.Propiedad;
 
 import modelo.LineaVenta;
-import modelo.Producto;
+import modelo.Video;
 
 public class AdaptadorLineaVentaTDS implements IAdaptadorLineaVentaDAO {
 
@@ -44,7 +44,7 @@ public class AdaptadorLineaVentaTDS implements IAdaptadorLineaVentaDAO {
 
 
 		// registrar primero los atributos que son objetos
-		AdaptadorProductoTDS adaptadorProducto = AdaptadorProductoTDS.getUnicaInstancia();
+		AdaptadorVideoTDS adaptadorProducto = AdaptadorVideoTDS.getUnicaInstancia();
 		adaptadorProducto.registrarProducto(lineaVenta.getProducto());
 
 		// crear entidad linea de venta
@@ -82,17 +82,17 @@ public class AdaptadorLineaVentaTDS implements IAdaptadorLineaVentaDAO {
 	public LineaVenta recuperarLineaVenta(int codigo) {
 		Entidad eLineaVenta;
 		int unidades;
-		Producto producto;
+		Video video;
 
 		eLineaVenta = servPersistencia.recuperarEntidad(codigo);
 		unidades = Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eLineaVenta, "unidades"));
 
 		// Para recuperar el producto se lo solicita al adaptador producto
-		AdaptadorProductoTDS adaptadorProducto = AdaptadorProductoTDS.getUnicaInstancia();
-		producto = adaptadorProducto.recuperarProducto(
+		AdaptadorVideoTDS adaptadorProducto = AdaptadorVideoTDS.getUnicaInstancia();
+		video = adaptadorProducto.recuperarProducto(
 				Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eLineaVenta, "producto")));
 
-		LineaVenta lineaVenta = new LineaVenta(unidades, producto);
+		LineaVenta lineaVenta = new LineaVenta(unidades, video);
 		lineaVenta.setCodigo(codigo);
 		return lineaVenta;
 	}

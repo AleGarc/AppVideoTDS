@@ -4,12 +4,12 @@ public class LineaVenta {
 
 	private int codigo;
 	private int unidades;
-	private Producto producto;
+	private Video video;
 	
-	public LineaVenta(int unidades, Producto producto){
+	public LineaVenta(int unidades, Video video){
 		codigo = 0;
 		this.unidades = unidades;
-		this.producto = producto;
+		this.video = video;
 	}
 	
 	public int getCodigo() {
@@ -24,14 +24,15 @@ public class LineaVenta {
 	public void setUnidades(int unidades) {
 		this.unidades = unidades;
 	}
-	public Producto getProducto() {
-		return producto;
+	public Video getProducto() {
+		return video;
 	}
-	public void setProducto(Producto producto) {
-		this.producto = producto;
+	public void setProducto(Video video) {
+		this.video = video;
 	}
 	
 	public double getSubTotal() {
-		return unidades * producto.getPrecio();
+		//return unidades * video.getTitulo();		//CAMBIAR
+		return 0;
 	}
 }

@@ -3,16 +3,16 @@ package controlador;
 import java.util.Date;
 import java.util.List;
 
-import modelo.CatalogoClientes;
-import modelo.CatalogoProductos;
+import modelo.CatalogoUsuarios;
+import modelo.CatalogoVideos;
 import modelo.CatalogoVentas;
-import modelo.Cliente;
-import modelo.Producto;
+import modelo.Usuario;
+import modelo.Video;
 import modelo.Venta;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorClienteDAO;
-import persistencia.IAdaptadorProductoDAO;
+import persistencia.IAdaptadorVideoDAO;
 import persistencia.IAdaptadorVentaDAO;
 
 public class ControladorTienda {
@@ -20,12 +20,12 @@ public class ControladorTienda {
 	private static ControladorTienda unicaInstancia;
 
 	private IAdaptadorClienteDAO adaptadorCliente;
-	private IAdaptadorProductoDAO adaptadorProducto;
+	private IAdaptadorVideoDAO adaptadorVideo;
 	private IAdaptadorVentaDAO adaptadorVenta;
 
-	private CatalogoClientes catalogoClientes;
+	private CatalogoUsuarios catalogoUsuarios;
 	private CatalogoVentas catalogoVentas;
-	private CatalogoProductos catalogoProductos;
+	private CatalogoVideos catalogoVideos;
 
 	private Venta ventaActual;
 
@@ -43,37 +43,37 @@ public class ControladorTienda {
 
 	public void registrarCliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		// No se controla que existan dnis duplicados
-		Cliente cliente = new Cliente(nombre_completo, fecha_nacimiento, email, usuario, password);
-		adaptadorCliente.registrarCliente(cliente);
-		catalogoClientes.addCliente(cliente);
+		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
+		adaptadorCliente.registrarCliente(user);
+		catalogoUsuarios.addCliente(user);
 	}
 
-	public void registrarProducto(double precio, String nombre, String descripcion) {
+	public void registrarVideo(String titulo, String url) {
 		// No se controla que el valor del string precio sea un double
-		Producto producto = new Producto(precio, nombre, descripcion);
-		adaptadorProducto.registrarProducto(producto);
+		Video video = new Video(titulo, url);
+		adaptadorVideo.registrarVideo(video);
 
-		catalogoProductos.addProducto(producto);
+		catalogoVideos.addVideo(video);
 	}
 
 	public void crearVenta() {
 		ventaActual = new Venta();
 	}
 	
-	public void anadirLineaVenta(int unidades, Producto producto) {
-		ventaActual.addLineaVenta(unidades, producto);
+	public void anadirLineaVenta(int unidades, Video video) {
+		ventaActual.addLineaVenta(unidades, video);
 	}
 
 	public void registrarVenta(String dni, Date fecha) {
-		Cliente cliente = catalogoClientes.getCliente(dni);
-		ventaActual.setCliente(cliente);
+		Usuario usuario = catalogoUsuarios.getCliente(dni);
+		ventaActual.setCliente(usuario);
 		ventaActual.setFecha(fecha);
 
 		adaptadorVenta.registrarVenta(ventaActual);
 
 		catalogoVentas.addVenta(ventaActual);
 
-		adaptadorCliente.modificarCliente(cliente);
+		adaptadorCliente.modificarCliente(usuario);
 	}
 
 	private void inicializarAdaptadores() {
@@ -84,21 +84,21 @@ public class ControladorTienda {
 			e.printStackTrace();
 		}
 		adaptadorCliente = factoria.getClienteDAO();
-		adaptadorProducto = factoria.getProductoDAO();
+		adaptadorVideo = factoria.getVideoDAO();
 		adaptadorVenta = factoria.getVentaDAO();
 	}
 
 	private void inicializarCatalogos() {
-		catalogoClientes = CatalogoClientes.getUnicaInstancia();
+		catalogoUsuarios = CatalogoUsuarios.getUnicaInstancia();
 		catalogoVentas = CatalogoVentas.getUnicaInstancia();
-		catalogoProductos = CatalogoProductos.getUnicaInstancia();
+		catalogoVideos = CatalogoVideos.getUnicaInstancia();
 	}
 
 	public boolean existeCliente(String dni) {
-		return CatalogoClientes.getUnicaInstancia().getCliente(dni) != null;
+		return CatalogoUsuarios.getUnicaInstancia().getCliente(dni) != null;
 	}
 
-	public List<Producto> getProductos() {
-		return catalogoProductos.getProductos();
+	public List<Video> getVideos() {
+		return catalogoVideos.getVideos();
 	}
 }

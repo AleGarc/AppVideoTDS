@@ -17,11 +17,11 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextArea;
 
 import controlador.ControladorTienda;
-import modelo.CatalogoClientes;
+import modelo.CatalogoUsuarios;
 import modelo.CatalogoVentas;
-import modelo.Cliente;
+import modelo.Usuario;
 import modelo.LineaVenta;
-import modelo.Producto;
+import modelo.Video;
 import modelo.Venta;
 
 @SuppressWarnings("serial")
@@ -38,7 +38,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 	private PanelVerImagen pantallaVerImagen;
 	private PanelAltaCliente pantallaAltaCliente;
-	private PanelAltaProducto pantallaAltaProducto;
+	private PanelAltaVideo pantallaAltaProducto;
 	private PanelCrearVenta pantallaCrearVenta;
 	
 	public VentanaMain(){
@@ -51,7 +51,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		/*crear pantallas*/
 		pantallaVerImagen = new PanelVerImagen();
 		pantallaAltaCliente = new PanelAltaCliente(this);
-		pantallaAltaProducto = new PanelAltaProducto(this);
+		pantallaAltaProducto = new PanelAltaVideo(this);
 		pantallaCrearVenta = new PanelCrearVenta(this);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -137,7 +137,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		if (e.getSource()== mniCrearVenta) {
 			ControladorTienda.getUnicaInstancia().crearVenta();
-			pantallaCrearVenta.cargarProductos(); //actualizar combobox con productos nuevos
+			pantallaCrearVenta.cargarVideos(); //actualizar combobox con productos nuevos
 			setContentPane(pantallaCrearVenta);
 			validate();
 			return;	
@@ -190,19 +190,19 @@ public class VentanaMain extends JFrame implements ActionListener{
   		listado.setText("Codigo     Nombre                         Precio\n");
   		listado.append("---------- ------------------------------ --------\n");
   		
-  		for (Producto p: ControladorTienda.getUnicaInstancia().getProductos()) {
-  			String codigo=String.format("%1$10d",p.getCodigo());
-  			String nombre=String.format("%1$-30s",p.getNombre());
-  			String precio=String.format("%1$8.2f",p.getPrecio());
-  			listado.append(codigo+" "+nombre+" "+precio+"\n");
+  		for (Video p: ControladorTienda.getUnicaInstancia().getVideos()) {
+  			String codigo=String.format("%1$10d",p.getTitulo());
+  			String nombre=String.format("%1$-30s",p.getUrl());
+  			//String precio=String.format("%1$8.2f",p.getPrecio());
+  			listado.append(codigo+" "+nombre+"\n");
   		}
   	}
 	
 	public void listadoClientes(JTextArea listado) {
-  		List<Cliente> listaClientes = CatalogoClientes.getUnicaInstancia().getClientes();
+  		List<Usuario> listaClientes = CatalogoUsuarios.getUnicaInstancia().getClientes();
   		listado.setText("dni        Nombre                         N.ventas\n");
   		listado.append("---------- ------------------------------ --------\n");
-  		for (Cliente c: listaClientes) {
+  		for (Usuario c: listaClientes) {
   			String dni=String.format("%1$-10s",c.getNombre_completo());
   			String nombre=String.format("%1$-30s",c.getUsuario());
   			//String numVentas=String.format("%1$-8s",String.valueOf(c.getVentas().size()));
@@ -233,7 +233,7 @@ public class VentanaMain extends JFrame implements ActionListener{
   		System.out.println("Fecha:"+v.getFecha());
   		//System.out.println("Dni:"+v.getCliente().getDni());
   		for(LineaVenta lv:v.getLineasVenta()){
-  			System.out.println(""+lv.getUnidades()+" "+lv.getProducto().getNombre()+" "+lv.getSubTotal());
+  			//System.out.println(""+lv.getUnidades()+" "+lv.getProducto().getNombre()+" "+lv.getSubTotal());
   		}
   		System.out.println("Total:"+v.getTotal());
   	}

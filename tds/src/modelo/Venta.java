@@ -7,7 +7,7 @@ import java.util.List;
 public class Venta {
 
 	private int codigo;
-	private Cliente cliente;
+	private Usuario usuario;
 	private Date fecha;
 	private List<LineaVenta> lineasVenta;
 	private boolean esCompleta;
@@ -18,7 +18,7 @@ public class Venta {
 
 	public Venta(Date fecha) {
 		codigo = 0;
-		cliente = null;
+		usuario = null;
 		this.fecha = fecha;
 		lineasVenta = new LinkedList<LineaVenta>();
 	}
@@ -39,12 +39,12 @@ public class Venta {
 		this.codigo = codigo;
 	}
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
+	public void setCliente(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	public Cliente getCliente() {
-		return cliente;
+	public Usuario getCliente() {
+		return usuario;
 	}
 
 	public Date getFecha() {
@@ -72,8 +72,8 @@ public class Venta {
 	}
     
 	// se invoca desde la clase Venta para añadir una nueva línea de venta
-	public LineaVenta addLineaVenta(int unidades, Producto producto) {
-		LineaVenta lv = new LineaVenta(unidades, producto);
+	public LineaVenta addLineaVenta(int unidades, Video video) {
+		LineaVenta lv = new LineaVenta(unidades, video);
 		lineasVenta.add(lv);
 		return lv;
 	}

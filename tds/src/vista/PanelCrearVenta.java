@@ -28,7 +28,7 @@ import javax.swing.table.TableColumn;
 
 import controlador.ControladorTienda;
 import modelo.LineaVenta;
-import modelo.Producto;
+import modelo.Video;
 
 @SuppressWarnings("serial")
 public class PanelCrearVenta extends JPanel implements ActionListener{
@@ -37,9 +37,9 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private JLabel rotulo;
 	private JPanel datosVenta, introducirLV;
-	private JLabel ldni, lfecha, lunidades, lproducto, lalerta;
+	private JLabel ldni, lfecha, lunidades, lVideo, lalerta;
 	private JTextField dni, fecha, unidades;
-	private JComboBox<Producto> productoCombo;
+	private JComboBox<Video> VideoCombo;
 	private JTable tabla;
 	private DefaultTableModel modelo;
 	private JButton btnAddLinea, btnBorrarLinea, btnRegistrar, btnCancelar;
@@ -79,18 +79,18 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 		fixedSize(introducirLV,Constantes.x_size-100,90);
 		introducirLV.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Introducir linea de venta"));
 		lunidades=new JLabel("Unidades",JLabel.RIGHT); fixedSize(lunidades,60,12);
-		lproducto=new JLabel("Producto",JLabel.RIGHT); fixedSize(lproducto,100,12);
+		lVideo=new JLabel("Video",JLabel.RIGHT); fixedSize(lVideo,100,12);
 		unidades=new JTextField(); fixedSize(unidades,70,24);
 		unidades.setHorizontalAlignment(JTextField.RIGHT);
-		productoCombo=new JComboBox<Producto>();
-		cargarProductos(); fixedSize(productoCombo,140,24);
+		VideoCombo=new JComboBox<Video>();
+		cargarVideos(); fixedSize(VideoCombo,140,24);
 		btnAddLinea= new JButton("Añadir a la venta"); fixedSize(btnAddLinea,130,30);
 		btnBorrarLinea= new JButton("Quitar linea"); fixedSize(btnBorrarLinea,90,40);
 		btnBorrarLinea.setBorder(BorderFactory.createLineBorder(Color.RED));
 			
-		introducirLV.add(lunidades);introducirLV.add(lproducto);
+		introducirLV.add(lunidades);introducirLV.add(lVideo);
 		introducirLV.add(Box.createRigidArea(new Dimension(300,5)));
-		introducirLV.add(unidades); introducirLV.add(productoCombo);
+		introducirLV.add(unidades); introducirLV.add(VideoCombo);
 		introducirLV.add(btnAddLinea); 
 		introducirLV.add(Box.createRigidArea(new Dimension(25,5)));
 		introducirLV.add(btnBorrarLinea);
@@ -128,11 +128,11 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 		btnRegistrar.addActionListener(this);
 	}
 	
-	//almacena los productos en la ComboBox
-	public void cargarProductos() {
-		List<Producto> listaproductos= ControladorTienda.getUnicaInstancia().getProductos();
-		productoCombo.removeAllItems();
-		for(Producto p:listaproductos) productoCombo.addItem(p);
+	//almacena los Videos en la ComboBox
+	public void cargarVideos() {
+		List<Video> listaVideos= ControladorTienda.getUnicaInstancia().getVideos();
+		VideoCombo.removeAllItems();
+		for(Video p:listaVideos) VideoCombo.addItem(p);
 	}
 	
 	private void crearTabla() {
@@ -144,7 +144,7 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 		tabla.setGridColor(Color.gray);
 
 		modelo = new DefaultTableModel() {
-			private String[] columnNames = {"Unidades","Producto","Precio unidad","Subtotal"};
+			private String[] columnNames = {"Unidades","Video","Precio unidad","Subtotal"};
 			public String getColumnName(int column) {
 			    return columnNames[column];
 			}
@@ -156,7 +156,7 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 		columna.setPreferredWidth(70);
 		columna.setMinWidth(70);
 		columna.setMaxWidth(70);
-		columna = tabla.getColumn("Producto"); 
+		columna = tabla.getColumn("Video"); 
 		columna.setPreferredWidth(250);
 		columna.setMinWidth(250);
 		columna.setMaxWidth(250);
@@ -181,15 +181,16 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 				return;
 			}
 			Object [] nuevaFila = new Object[4];
-			Producto auxProducto=(Producto) productoCombo.getSelectedItem();
+			Video auxVideo=(Video) VideoCombo.getSelectedItem();
 			Integer auxUnidades=Integer.parseInt(unidades.getText());
 			
-			ControladorTienda.getUnicaInstancia().anadirLineaVenta(auxUnidades,auxProducto);
+			ControladorTienda.getUnicaInstancia().anadirLineaVenta(auxUnidades,auxVideo);
 			
-			double total=auxUnidades*auxProducto.getPrecio();
+			/*double total=auxUnidades*auxVideo.getPrecio();*/
+			double total = 0.0;
 			nuevaFila[0]=auxUnidades; 				//Integer
-			nuevaFila[1]=auxProducto;	      		//Producto
-			nuevaFila[2]=auxProducto.getPrecio();	//Double
+			nuevaFila[1]=auxVideo;	      		//Video
+			nuevaFila[2]=auxVideo.getTitulo();	//Double
 			nuevaFila[3]=total; 					//Double
 			modelo.addRow(nuevaFila);
 			unidades.setText("");

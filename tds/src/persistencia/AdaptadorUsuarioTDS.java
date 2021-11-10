@@ -11,33 +11,33 @@ import tds.driver.ServicioPersistencia;
 import beans.Entidad;
 import beans.Propiedad;
 
-import modelo.Cliente;
+import modelo.Usuario;
 import modelo.Venta;
 
 //Usa un pool para evitar problemas doble referencia con ventas
-public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
+public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 	private static ServicioPersistencia servPersistencia;
-	private static AdaptadorClienteTDS unicaInstancia = null;
+	private static AdaptadorUsuarioTDS unicaInstancia = null;
 
-	public static AdaptadorClienteTDS getUnicaInstancia() { // patron singleton
+	public static AdaptadorUsuarioTDS getUnicaInstancia() { // patron singleton
 		if (unicaInstancia == null)
-			return new AdaptadorClienteTDS();
+			return new AdaptadorUsuarioTDS();
 		else
 			return unicaInstancia;
 	}
 
-	private AdaptadorClienteTDS() { 
+	private AdaptadorUsuarioTDS() { 
 		servPersistencia = FactoriaServicioPersistencia.getInstance().getServicioPersistencia(); 
 	}
 
 	/* cuando se registra un cliente se le asigna un identificador único */
-	public void registrarCliente(Cliente cliente) {
+	public void registrarCliente(Usuario usuario) {
 		Entidad eCliente;
 		boolean existe = true; 
 		
 		// Si la entidad está registrada no la registra de nuevo
 		try {
-			eCliente = servPersistencia.recuperarEntidad(cliente.getCodigo());
+			eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
 		} catch (NullPointerException e) {
 			existe = false;
 		}
@@ -52,11 +52,11 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 		eCliente = new Entidad();
 		eCliente.setNombre("cliente");
 		eCliente.setPropiedades(new ArrayList<Propiedad>(
-				Arrays.asList(new Propiedad("nombre_completo", cliente.getNombre_completo()), 
-						new Propiedad("fecha_nacimiento", cliente.getFecha_nacimiento()),
-						new Propiedad("email", cliente.getEmail()),
-						new Propiedad("usuario", cliente.getUsuario()),
-						new Propiedad("password", cliente.getPassword()))));
+				Arrays.asList(new Propiedad("nombre_completo", usuario.getNombre_completo()), 
+						new Propiedad("fecha_nacimiento", usuario.getFecha_nacimiento()),
+						new Propiedad("email", usuario.getEmail()),
+						new Propiedad("usuario", usuario.getUsuario()),
+						new Propiedad("password", usuario.getPassword()))));
 		/*eCliente.setPropiedades(new ArrayList<Propiedad>(
 				Arrays.asList(new Propiedad("dni", cliente.getDni()), new Propiedad("nombre", cliente.getNombre()),
 						new Propiedad("ventas", obtenerCodigosVentas(cliente.getVentas())))));*/
@@ -65,41 +65,41 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 		eCliente = servPersistencia.registrarEntidad(eCliente);
 		// asignar identificador unico
 		// Se aprovecha el que genera el servicio de persistencia
-		cliente.setCodigo(eCliente.getId()); 
+		usuario.setCodigo(eCliente.getId()); 
 	}
 
-	public void borrarCliente(Cliente cliente) {
+	public void borrarCliente(Usuario usuario) {
 		// No se comprueban restricciones de integridad con Venta
-		Entidad eCliente = servPersistencia.recuperarEntidad(cliente.getCodigo());
+		Entidad eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
 		
 		servPersistencia.borrarEntidad(eCliente);
 	}
 
-	public void modificarCliente(Cliente cliente) {
+	public void modificarCliente(Usuario usuario) {
 
-		Entidad eCliente = servPersistencia.recuperarEntidad(cliente.getCodigo());
+		Entidad eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
 
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "nombre_completo");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "nombre_completo", cliente.getNombre_completo());
+		servPersistencia.anadirPropiedadEntidad(eCliente, "nombre_completo", usuario.getNombre_completo());
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "fecha_nacimiento");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "fecha_nacimiento", cliente.getFecha_nacimiento());
+		servPersistencia.anadirPropiedadEntidad(eCliente, "fecha_nacimiento", usuario.getFecha_nacimiento());
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "email");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "email", cliente.getEmail());
+		servPersistencia.anadirPropiedadEntidad(eCliente, "email", usuario.getEmail());
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "usuario");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "usuario", cliente.getUsuario());
+		servPersistencia.anadirPropiedadEntidad(eCliente, "usuario", usuario.getUsuario());
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "password");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "password", cliente.getPassword());
+		servPersistencia.anadirPropiedadEntidad(eCliente, "password", usuario.getPassword());
 		
 		/*String ventas = obtenerCodigosVentas(cliente.getVentas());
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "ventas");
 		servPersistencia.anadirPropiedadEntidad(eCliente, "ventas", ventas);*/
 	}
 
-	public Cliente recuperarCliente(int codigo) {
+	public Usuario recuperarCliente(int codigo) {
 
 		// Si la entidad está en el pool la devuelve directamente
 		if (PoolDAO.getUnicaInstancia().contiene(codigo))
-			return (Cliente) PoolDAO.getUnicaInstancia().getObjeto(codigo);
+			return (Usuario) PoolDAO.getUnicaInstancia().getObjeto(codigo);
 
 		// si no, la recupera de la base de datos
 		Entidad eCliente;
@@ -120,12 +120,12 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 		usuario = servPersistencia.recuperarPropiedadEntidad(eCliente, "usuario");
 		password = servPersistencia.recuperarPropiedadEntidad(eCliente, "password");
 		
-		Cliente cliente = new Cliente(nombre_completo, fecha_nacimiento, email, usuario, password);
-		cliente.setCodigo(codigo);
+		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
+		user.setCodigo(codigo);
 
 		// IMPORTANTE:añadir el cliente al pool antes de llamar a otros
 		// adaptadores
-		PoolDAO.getUnicaInstancia().addObjeto(codigo, cliente);
+		PoolDAO.getUnicaInstancia().addObjeto(codigo, usuario);
 
 		// recuperar propiedades que son objetos llamando a adaptadores
 		// ventas
@@ -134,18 +134,18 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 		for (Venta v : ventas)
 			cliente.addVenta(v);*/
 
-		return cliente;
+		return user;
 	}
 
-	public List<Cliente> recuperarTodosClientes() {
+	public List<Usuario> recuperarTodosClientes() {
 
 		List<Entidad> eClientes = servPersistencia.recuperarEntidades("cliente");
-		List<Cliente> clientes = new LinkedList<Cliente>();
+		List<Usuario> usuarios = new LinkedList<Usuario>();
 
 		for (Entidad eCliente : eClientes) {
-			clientes.add(recuperarCliente(eCliente.getId()));
+			usuarios.add(recuperarCliente(eCliente.getId()));
 		}
-		return clientes;
+		return usuarios;
 	}
 
 	// -------------------Funciones auxiliares-----------------------------

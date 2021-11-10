@@ -16,58 +16,58 @@ import persistencia.IAdaptadorClienteDAO;
  * datos con un número grande de objetos. En ese caso se consultaria
  * directamente la base de datos
  */
-public class CatalogoClientes {
-	private Map<String,Cliente> clientes; 
-	private static CatalogoClientes unicaInstancia = new CatalogoClientes();
+public class CatalogoUsuarios {
+	private Map<String,Usuario> usuarios; 
+	private static CatalogoUsuarios unicaInstancia = new CatalogoUsuarios();
 	
 	private FactoriaDAO dao;
 	private IAdaptadorClienteDAO adaptadorCliente;
 	
-	private CatalogoClientes() {
+	private CatalogoUsuarios() {
 		try {
   			dao = FactoriaDAO.getInstancia(FactoriaDAO.DAO_TDS);
   			adaptadorCliente = dao.getClienteDAO();
-  			clientes = new HashMap<String,Cliente>();
+  			usuarios = new HashMap<String,Usuario>();
   			this.cargarCatalogo();
   		} catch (DAOException eDAO) {
   			eDAO.printStackTrace();
   		}
 	}
 	
-	public static CatalogoClientes getUnicaInstancia(){
+	public static CatalogoUsuarios getUnicaInstancia(){
 		return unicaInstancia;
 	}
 	
 	/*devuelve todos los clientes*/
-	public List<Cliente> getClientes(){
-		ArrayList<Cliente> lista = new ArrayList<Cliente>();
-		for (Cliente c:clientes.values()) 
+	public List<Usuario> getClientes(){
+		ArrayList<Usuario> lista = new ArrayList<Usuario>();
+		for (Usuario c:usuarios.values()) 
 			lista.add(c);
 		return lista;
 	}
 	
-	public Cliente getCliente(int codigo) {
-		for (Cliente c:clientes.values()) {
+	public Usuario getCliente(int codigo) {
+		for (Usuario c:usuarios.values()) {
 			if (c.getCodigo()==codigo) return c;
 		}
 		return null;
 	}
-	public Cliente getCliente(String dni) {
-		return clientes.get(dni); 
+	public Usuario getCliente(String dni) {
+		return usuarios.get(dni); 
 	}
 	
-	public void addCliente(Cliente cli) {
-		clientes.put(cli.getUsuario(),cli);
+	public void addCliente(Usuario cli) {
+		usuarios.put(cli.getUsuario(),cli);
 	}
-	public void removeCliente (Cliente cli) {
-		clientes.remove(cli.getUsuario());
+	public void removeCliente (Usuario cli) {
+		usuarios.remove(cli.getUsuario());
 	}
 	
 	/*Recupera todos los clientes para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
-		 List<Cliente> clientesBD = adaptadorCliente.recuperarTodosClientes();
-		 for (Cliente cli: clientesBD) 
-			     clientes.put(cli.getUsuario(),cli);
+		 List<Usuario> clientesBD = adaptadorCliente.recuperarTodosClientes();
+		 for (Usuario cli: clientesBD) 
+			     usuarios.put(cli.getUsuario(),cli);
 	}
 	
 }
