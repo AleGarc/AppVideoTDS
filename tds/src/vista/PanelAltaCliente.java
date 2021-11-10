@@ -126,12 +126,16 @@ public class PanelAltaCliente extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				String auxpassword=password.getText().trim();	
 				String auxNombre=nombre.getText().trim();
+				String auxApellidos=apellidos.getText().trim();
 				String auxEmail=email.getText().trim();
 				String auxFecha=fecha.getText().trim();
 				String auxUsuario=user.getText().trim();
-				if (auxpassword.isEmpty()||auxNombre.isEmpty() || auxEmail.isEmpty() || auxFecha.isEmpty() || auxUsuario.isEmpty()) lalerta.setVisible(true);
+				if (auxpassword.isEmpty()||auxNombre.isEmpty() || 
+						auxEmail.isEmpty() || auxFecha.isEmpty() || 
+						auxUsuario.isEmpty() || auxApellidos.isEmpty()) lalerta.setVisible(true);
 				else { lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarCliente(auxpassword, auxNombre);
+					   String nombre_completo = auxNombre +" "+ auxApellidos;
+					   ControladorTienda.getUnicaInstancia().registrarCliente(nombre_completo, auxFecha, auxEmail, auxUsuario, auxpassword);
 					   JOptionPane.showMessageDialog(ventana,
 								"Cliente dado de alta correctamente",
 								"Registrar cliente",JOptionPane.PLAIN_MESSAGE);

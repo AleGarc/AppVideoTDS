@@ -57,17 +57,17 @@ public class CatalogoClientes {
 	}
 	
 	public void addCliente(Cliente cli) {
-		clientes.put(cli.getDni(),cli);
+		clientes.put(cli.getUsuario(),cli);
 	}
 	public void removeCliente (Cliente cli) {
-		clientes.remove(cli.getDni());
+		clientes.remove(cli.getUsuario());
 	}
 	
 	/*Recupera todos los clientes para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
 		 List<Cliente> clientesBD = adaptadorCliente.recuperarTodosClientes();
 		 for (Cliente cli: clientesBD) 
-			     clientes.put(cli.getDni(),cli);
+			     clientes.put(cli.getUsuario(),cli);
 	}
 	
 }

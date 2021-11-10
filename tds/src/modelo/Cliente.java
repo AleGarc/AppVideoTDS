@@ -5,15 +5,60 @@ import java.util.List;
 
 public class Cliente {
 	private int codigo;
-	private String dni;
-	private String nombre;
-	private List<Venta> ventas;
-
-	public Cliente(String dni, String nombre) {
+	private String nombre_completo;
+	private String fecha_nacimiento;
+	private String email;
+	private String usuario;
+	private String password;
+	
+	public Cliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		codigo = 0;
-		this.dni = dni;
-		this.nombre = nombre;
-		ventas = new LinkedList<Venta>();
+		this.nombre_completo = nombre_completo;
+		this.fecha_nacimiento = fecha_nacimiento;
+		this.email = email;
+		this.usuario = usuario;
+		this.password = password;
+		
+	}
+
+	public String getNombre_completo() {
+		return nombre_completo;
+	}
+
+	public void setNombre_completo(String nombre_completo) {
+		this.nombre_completo = nombre_completo;
+	}
+
+	public String getFecha_nacimiento() {
+		return fecha_nacimiento;
+	}
+
+	public void setFecha_nacimiento(String fecha_nacimiento) {
+		this.fecha_nacimiento = fecha_nacimiento;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public void setCodigo(int codigo) {
@@ -24,28 +69,6 @@ public class Cliente {
 		return codigo;
 	}
 
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
 
-	public String getDni() {
-		return dni;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void addVenta(Venta v) {
-		ventas.add(v);
-	}
-
-	public List<Venta> getVentas() {
-		return ventas;
-	}
 
 }

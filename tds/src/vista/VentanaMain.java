@@ -203,10 +203,11 @@ public class VentanaMain extends JFrame implements ActionListener{
   		listado.setText("dni        Nombre                         N.ventas\n");
   		listado.append("---------- ------------------------------ --------\n");
   		for (Cliente c: listaClientes) {
-  			String dni=String.format("%1$-10s",c.getDni());
-  			String nombre=String.format("%1$-30s",c.getNombre());
-  			String numVentas=String.format("%1$-8s",String.valueOf(c.getVentas().size()));
-  			listado.append(dni+" "+nombre+" "+numVentas+"\n");
+  			String dni=String.format("%1$-10s",c.getNombre_completo());
+  			String nombre=String.format("%1$-30s",c.getUsuario());
+  			//String numVentas=String.format("%1$-8s",String.valueOf(c.getVentas().size()));
+  			//listado.append(dni+" "+nombre+" "+numVentas+"\n");
+  			listado.append(dni+" "+nombre+"\n");
   		}
 	}
 	public void listadoVentas(JTextArea listado, Date f1, Date f2) {
@@ -220,7 +221,8 @@ public class VentanaMain extends JFrame implements ActionListener{
   		System.out.println("hay "+listaVentas.size());
   		for (Venta v: listaVentas) {
   			String fecha=datef.format(v.getFecha());
-  			String nombre=String.format("%1$-30s",v.getCliente().getNombre());
+  			//String nombre=String.format("%1$-30s",v.getCliente().getNombre());
+  			String nombre = "Pruebaaaa";
   			String total=String.format("%1$-8s",String.valueOf(v.getTotal()));
   			listado.append(fecha+" "+nombre+" "+total+"\n");
   			mostrarVenta(v);
@@ -229,7 +231,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private void mostrarVenta(Venta v) {
   		System.out.println("-------------------------------------------------------------");
   		System.out.println("Fecha:"+v.getFecha());
-  		System.out.println("Dni:"+v.getCliente().getDni());
+  		//System.out.println("Dni:"+v.getCliente().getDni());
   		for(LineaVenta lv:v.getLineasVenta()){
   			System.out.println(""+lv.getUnidades()+" "+lv.getProducto().getNombre()+" "+lv.getSubTotal());
   		}

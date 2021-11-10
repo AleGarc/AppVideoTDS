@@ -41,9 +41,9 @@ public class ControladorTienda {
 		return unicaInstancia;
 	}
 
-	public void registrarCliente(String dni, String nombre) {
+	public void registrarCliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		// No se controla que existan dnis duplicados
-		Cliente cliente = new Cliente(dni, nombre);
+		Cliente cliente = new Cliente(nombre_completo, fecha_nacimiento, email, usuario, password);
 		adaptadorCliente.registrarCliente(cliente);
 		catalogoClientes.addCliente(cliente);
 	}
@@ -73,7 +73,6 @@ public class ControladorTienda {
 
 		catalogoVentas.addVenta(ventaActual);
 
-		cliente.addVenta(ventaActual);
 		adaptadorCliente.modificarCliente(cliente);
 	}
 

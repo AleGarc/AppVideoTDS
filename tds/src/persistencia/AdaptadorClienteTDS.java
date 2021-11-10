@@ -45,15 +45,21 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 
 		// registrar primero los atributos que son objetos
 		AdaptadorVentaTDS adaptadorVenta = AdaptadorVentaTDS.getUnicaInstancia();
-		for (Venta v : cliente.getVentas())
-			adaptadorVenta.registrarVenta(v);
+		/*for (Venta v : cliente.getVentas())
+			adaptadorVenta.registrarVenta(v);*/
 
 		// crear entidad Cliente
 		eCliente = new Entidad();
 		eCliente.setNombre("cliente");
 		eCliente.setPropiedades(new ArrayList<Propiedad>(
+				Arrays.asList(new Propiedad("nombre_completo", cliente.getNombre_completo()), 
+						new Propiedad("fecha_nacimiento", cliente.getFecha_nacimiento()),
+						new Propiedad("email", cliente.getEmail()),
+						new Propiedad("usuario", cliente.getUsuario()),
+						new Propiedad("password", cliente.getPassword()))));
+		/*eCliente.setPropiedades(new ArrayList<Propiedad>(
 				Arrays.asList(new Propiedad("dni", cliente.getDni()), new Propiedad("nombre", cliente.getNombre()),
-						new Propiedad("ventas", obtenerCodigosVentas(cliente.getVentas())))));
+						new Propiedad("ventas", obtenerCodigosVentas(cliente.getVentas())))));*/
 		
 		// registrar entidad cliente
 		eCliente = servPersistencia.registrarEntidad(eCliente);
@@ -73,14 +79,20 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 
 		Entidad eCliente = servPersistencia.recuperarEntidad(cliente.getCodigo());
 
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "dni");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "dni", cliente.getDni());
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "nombre");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "nombre", cliente.getNombre());
-
-		String ventas = obtenerCodigosVentas(cliente.getVentas());
+		servPersistencia.eliminarPropiedadEntidad(eCliente, "nombre_completo");
+		servPersistencia.anadirPropiedadEntidad(eCliente, "nombre_completo", cliente.getNombre_completo());
+		servPersistencia.eliminarPropiedadEntidad(eCliente, "fecha_nacimiento");
+		servPersistencia.anadirPropiedadEntidad(eCliente, "fecha_nacimiento", cliente.getFecha_nacimiento());
+		servPersistencia.eliminarPropiedadEntidad(eCliente, "email");
+		servPersistencia.anadirPropiedadEntidad(eCliente, "email", cliente.getEmail());
+		servPersistencia.eliminarPropiedadEntidad(eCliente, "usuario");
+		servPersistencia.anadirPropiedadEntidad(eCliente, "usuario", cliente.getUsuario());
+		servPersistencia.eliminarPropiedadEntidad(eCliente, "password");
+		servPersistencia.anadirPropiedadEntidad(eCliente, "password", cliente.getPassword());
+		
+		/*String ventas = obtenerCodigosVentas(cliente.getVentas());
 		servPersistencia.eliminarPropiedadEntidad(eCliente, "ventas");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "ventas", ventas);
+		servPersistencia.anadirPropiedadEntidad(eCliente, "ventas", ventas);*/
 	}
 
 	public Cliente recuperarCliente(int codigo) {
@@ -91,18 +103,24 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 
 		// si no, la recupera de la base de datos
 		Entidad eCliente;
-		List<Venta> ventas = new LinkedList<Venta>();
-		String dni;
-		String nombre;
-
+		//List<Venta> ventas = new LinkedList<Venta>();
+		String nombre_completo;
+		String fecha_nacimiento;
+		String email;
+		String usuario;
+		String password;
+		
 		// recuperar entidad
 		eCliente = servPersistencia.recuperarEntidad(codigo);
 
 		// recuperar propiedades que no son objetos
-		dni = servPersistencia.recuperarPropiedadEntidad(eCliente, "dni");
-		nombre = servPersistencia.recuperarPropiedadEntidad(eCliente, "nombre");
-
-		Cliente cliente = new Cliente(dni, nombre);
+		nombre_completo = servPersistencia.recuperarPropiedadEntidad(eCliente, "nombre_completo");
+		fecha_nacimiento = servPersistencia.recuperarPropiedadEntidad(eCliente, "fecha_nacimiento");
+		email = servPersistencia.recuperarPropiedadEntidad(eCliente, "email");
+		usuario = servPersistencia.recuperarPropiedadEntidad(eCliente, "usuario");
+		password = servPersistencia.recuperarPropiedadEntidad(eCliente, "password");
+		
+		Cliente cliente = new Cliente(nombre_completo, fecha_nacimiento, email, usuario, password);
 		cliente.setCodigo(codigo);
 
 		// IMPORTANTE:añadir el cliente al pool antes de llamar a otros
@@ -111,10 +129,10 @@ public class AdaptadorClienteTDS implements IAdaptadorClienteDAO {
 
 		// recuperar propiedades que son objetos llamando a adaptadores
 		// ventas
-		ventas = obtenerVentasDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eCliente, "ventas"));
+		/*ventas = obtenerVentasDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eCliente, "ventas"));
 
 		for (Venta v : ventas)
-			cliente.addVenta(v);
+			cliente.addVenta(v);*/
 
 		return cliente;
 	}
