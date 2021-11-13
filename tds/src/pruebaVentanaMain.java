@@ -73,71 +73,12 @@ public class pruebaVentanaMain {
 		JPanel Contenido = new JPanel();
 		Contenido.setLayout(new FlowLayout(FlowLayout.LEFT,10,10));  
 		frmAppVideo.getContentPane().add(Contenido);
-		JPanel Menu = new JPanel();
-		//panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		Menu.setLayout(new FlowLayout(FlowLayout.LEFT,10,2));  
-		Menu.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		Menu.setPreferredSize(new Dimension(Constantes.ventana_x_size-35,60));
-		Menu.setMaximumSize(Menu.getPreferredSize());
-		//frmAppVideo.getContentPane().add(Menu);
-		Contenido.add(Menu);
-		
-		JButton btnNewButton = new JButton("Registro");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		
-		
-		JLabel lblNewLabel = new JLabel("");
 		
 		//Escalado del icono.
 		ImageIcon imageIcon = new ImageIcon(VentanaMain.class.getResource("/Titulo.png")); 
 		Image image = imageIcon.getImage(); 
 		Image newimg = image.getScaledInstance(656/7, 278/7,  java.awt.Image.SCALE_SMOOTH);
-		imageIcon = new ImageIcon(newimg); 
-		
-		lblNewLabel.setIcon(imageIcon);
-		
-		Menu.add(lblNewLabel);
-		
-		Component rigidArea_1 = Box.createRigidArea(new Dimension(70, 50));
-		Menu.add(rigidArea_1);
-		
-		JLabel lblNewLabel_1 = new JLabel("Hola nosequien");
-		Menu.add(lblNewLabel_1);
-		
-		Component rigidArea_1_1 = Box.createRigidArea(new Dimension(70, 50));
-		Menu.add(rigidArea_1_1);
-		Menu.add(btnNewButton);
-		
-		JButton btnNewButton_1 = new JButton("Login");
-		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Menu.add(btnNewButton_1);
-		
-		
-		Component rigidArea = Box.createRigidArea(new Dimension(70, 50));
-		Menu.add(rigidArea);			//CAMBIAR Y PONER CONSTANTES
-		
-		JButton btnNewButton_2 = new JButton("Logout");
-		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Menu.add(btnNewButton_2);
-		
-		Component rigidArea_2 = Box.createRigidArea(new Dimension(140, 50));
-		Menu.add(rigidArea_2);
-		
-		JButton btnNewButton_2_1 = new JButton("Premium");
-		btnNewButton_2_1.setForeground(Color.RED);
-		btnNewButton_2_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Menu.add(btnNewButton_2_1);
-		
-		JPanel Opciones = new JPanel();
-		Opciones.setLayout(new FlowLayout(FlowLayout.LEFT));
-		Opciones.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, 40));
-		Opciones.setMaximumSize(new Dimension(Constantes.ventana_x_size-35, 40));
-		//frmAppVideo.getContentPane().add(Opciones);
-		Contenido.add(Opciones);
+		imageIcon = new ImageIcon(newimg);
 		
 		JPanel Ventana = new JPanel();
 		Ventana.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -200,22 +141,6 @@ public class pruebaVentanaMain {
 		
 		JButton btnNewButton_6 = new JButton("Cancelar");
 		panel.add(btnNewButton_6);
-		
-		JButton btnNewButton_3 = new JButton("Explorar");
-		btnNewButton_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_3);
-		
-		JButton btnNewButton_4 = new JButton("Mis Listas");
-		btnNewButton_4.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_4);
-		
-		JButton btnNewButton_4_1 = new JButton("Recientes");
-		btnNewButton_4_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_4_1);
-		
-		JButton btnNewButton_4_2 = new JButton("Nueva Lista");
-		btnNewButton_4_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_4_2);
 		
 	}
 
