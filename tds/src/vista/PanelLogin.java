@@ -71,9 +71,9 @@ public class PanelLogin extends JPanel {
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblNewLabel_2);
 		
-		JTextField textField = new JTextField();
-		panel.add(textField);
-		textField.setColumns(20);
+		JTextField usuarioText = new JTextField();
+		panel.add(usuarioText);
+		usuarioText.setColumns(20);
 		
 		Component rigidArea_3_1_1_1 = Box.createRigidArea(new Dimension(400, 50));
 		panel.add(rigidArea_3_1_1_1);
@@ -151,25 +151,25 @@ public class PanelLogin extends JPanel {
 		add(datosProducto,BorderLayout.CENTER);
 		
 		//Manejadores
-
-		btnRegistrar.addActionListener(new ActionListener() {
+		*/
+		btnNewButton_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
-				String auxNombre=nombre.getText().trim();
+				String auxUsuario=usuarioText.getText().trim();
 				String auxPrecio=precio.getText().trim();
 				//double doubleprecio=Double.parseDouble(auxPrecio);
-				if (auxNombre.isEmpty()||auxPrecio.isEmpty()) lalerta.setVisible(true);
+				if (auxUsuario.isEmpty()||auxPrecio.isEmpty()) lalerta.setVisible(true);
 				else { lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarVideo(auxNombre, descripcion.getText());
+					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
 					   JOptionPane.showMessageDialog(ventana,
 								"Producto dado de alta",
 								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
-					   precio.setText(""); nombre.setText(""); 
+					   precio.setText(""); usuarioText.setText(""); 
 					   descripcion.setText(""); lalerta.setVisible(false); 
 				}
 			}	
 		});
 		
-		btnCancelar.addActionListener(new ActionListener() {
+		/*btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				precio.setText(""); nombre.setText("");
 				descripcion.setText(""); lalerta.setVisible(false); 
