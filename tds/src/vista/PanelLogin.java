@@ -82,10 +82,10 @@ public class PanelLogin extends JPanel {
 		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblNewLabel_2_1);
 		
-		JTextField textField_1 = new JTextField();
-		textField_1.setHorizontalAlignment(SwingConstants.LEFT);
-		textField_1.setColumns(20);
-		panel.add(textField_1);
+		JTextField passwordText = new JTextField();
+		passwordText.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordText.setColumns(20);
+		panel.add(passwordText);
 		
 		Component rigidArea_3_1_1_2 = Box.createRigidArea(new Dimension(3, 20));
 		panel.add(rigidArea_3_1_1_2);
@@ -155,16 +155,20 @@ public class PanelLogin extends JPanel {
 		btnNewButton_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
 				String auxUsuario=usuarioText.getText().trim();
-				String auxPrecio=precio.getText().trim();
+				String auxPassword=passwordText.getText().trim();
 				//double doubleprecio=Double.parseDouble(auxPrecio);
-				if (auxUsuario.isEmpty()||auxPrecio.isEmpty()) lalerta.setVisible(true);
-				else { lalerta.setVisible(false);
+				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
+				else if (!ControladorTienda.getUnicaInstancia().autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
+				else { /*lalerta.setVisible(false);
 					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
 					   JOptionPane.showMessageDialog(ventana,
 								"Producto dado de alta",
 								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
 					   precio.setText(""); usuarioText.setText(""); 
-					   descripcion.setText(""); lalerta.setVisible(false); 
+					   descripcion.setText(""); lalerta.setVisible(false); */
+					
+					usuarioText.setText(""); passwordText.setText("");
+					System.out.println("VOOM\n");
 				}
 			}	
 		});
@@ -176,6 +180,12 @@ public class PanelLogin extends JPanel {
 			}
 		});*/
 		
+	}
+	
+	private void showErrorAuth() {
+		JOptionPane.showMessageDialog(ventana,
+				"Usuario o contraseña no valido",
+				"Error",JOptionPane.ERROR_MESSAGE);
 	}
 		
 	private void fixedSize(JComponent c,int x, int y) {

@@ -97,6 +97,10 @@ public class ControladorTienda {
 	public boolean existeCliente(String dni) {
 		return CatalogoUsuarios.getUnicaInstancia().getCliente(dni) != null;
 	}
+	
+	public boolean autenticarUsuario(String user, String password) {
+		return CatalogoUsuarios.getUnicaInstancia().authUsuario(user, password);
+	}
 
 	public List<Video> getVideos() {
 		return catalogoVideos.getVideos();

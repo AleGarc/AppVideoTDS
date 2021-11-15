@@ -63,6 +63,13 @@ public class CatalogoUsuarios {
 		usuarios.remove(cli.getUsuario());
 	}
 	
+	public boolean authUsuario(String user, String password) {
+		
+		Usuario u = usuarios.get(user);
+		if(u == null) return false;
+		return u.getPassword().equals(password);
+	}
+	
 	/*Recupera todos los clientes para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
 		 List<Usuario> clientesBD = adaptadorCliente.recuperarTodosClientes();
