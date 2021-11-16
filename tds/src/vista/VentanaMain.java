@@ -43,14 +43,7 @@ import modelo.Venta;
 public class VentanaMain extends JFrame implements ActionListener{
 	
 
-	//Comentario
-	private JMenuBar menuPrincipal;
-	private JMenu mCliente, mVenta, mProducto, mOtros;
-	private JMenuItem mniAltaCli, mniListadoCli;
-	private JMenuItem mniCrearVenta, mniListadoVentas,mniListadoFechas;
-	private JMenuItem mniAltaPro, mniListadoPro;
-	private JButton btnNewButton_3, btnNewButton_4;
-	private JRadioButtonMenuItem mniTiendaCutre,mniTiendaUniversidad;
+	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista;
 	
 	private JPanel contenedorPrincipal;
 	private JPanel contenido;
@@ -61,15 +54,19 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private PanelAltaVideo pantallaAltaProducto;
 	private PanelCrearVenta pantallaCrearVenta;
 	
+	private JButton loginMainButton;
 	
 	private final String pantallaLoginCard = "pantallaLoginCard";
 
+	private String usuario;
+	private JLabel saludoUsuario;
+	private boolean logeado = false;
 	
 	
 	public VentanaMain(){
 		//setSize(Constantes.ventana_x_size,Constantes.ventana_y_size);
 		setBounds(2560/2-(Constantes.ventana_x_size/2),1440/2-(Constantes.ventana_y_size/2),Constantes.ventana_x_size,Constantes.ventana_y_size );
-		setTitle("AppMusic");
+		setTitle("AppVideo");
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		//contenedorPrincipal= (JPanel) this.getContentPane();
 		configurarMenu();
@@ -79,6 +76,9 @@ public class VentanaMain extends JFrame implements ActionListener{
 		/*crear pantallas*/
 		//pantallaVerImagen = new PanelVerImagen();
 		pantallaLogin =  new PanelLogin(this);
+		loginMainButton = new JButton();
+		loginMainButton.addActionListener(this);
+		pantallaLogin.setLoginMainButton(loginMainButton);
 		pantallaAltaCliente = new PanelAltaCliente(this);
 		pantallaAltaProducto = new PanelAltaVideo(this);
 		pantallaCrearVenta = new PanelCrearVenta(this);
@@ -119,8 +119,8 @@ public class VentanaMain extends JFrame implements ActionListener{
 		//frmAppVideo.getContentPane().add(Menu);
 		contenedorPrincipal.add(Menu);
 		
-		JButton btnNewButton = new JButton("Registro");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnRegistro = new JButton("Registro");
+		btnRegistro.setFont(new Font("Tahoma", Font.PLAIN, 16));
 
 		
 		
@@ -139,106 +139,64 @@ public class VentanaMain extends JFrame implements ActionListener{
 		Component rigidArea_1 = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea_1);
 		
-		JLabel lblNewLabel_1 = new JLabel("Hola nosequien");
-		Menu.add(lblNewLabel_1);
+		saludoUsuario = new JLabel();
+		saludoUsuario.setVisible(false);
+		Menu.add(saludoUsuario);
 		
 		Component rigidArea_1_1 = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea_1_1);
-		Menu.add(btnNewButton);
+		Menu.add(btnRegistro);
 		
-		JButton btnNewButton_1 = new JButton("Login");
-		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Menu.add(btnNewButton_1);
+		btnLogin = new JButton("Login");
+		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Menu.add(btnLogin);
 		
 		
 		Component rigidArea = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea);			//CAMBIAR Y PONER CONSTANTES
 		
-		JButton btnNewButton_2 = new JButton("Logout");
-		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Menu.add(btnNewButton_2);
+		btnLogout = new JButton("Logout");
+		btnLogout.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnLogout.setVisible(false);
+		Menu.add(btnLogout);
 		
 		Component rigidArea_2 = Box.createRigidArea(new Dimension(140, 50));
 		Menu.add(rigidArea_2);
 		
-		JButton btnNewButton_2_1 = new JButton("Premium");
-		btnNewButton_2_1.setForeground(Color.RED);
-		btnNewButton_2_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Menu.add(btnNewButton_2_1);
+		btnPremium = new JButton("Premium");
+		btnPremium.setForeground(Color.RED);
+		btnPremium.setVisible(false);
+		btnPremium.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Menu.add(btnPremium);
 		
 		JPanel Opciones = new JPanel();
 		Opciones.setLayout(new FlowLayout(FlowLayout.LEFT));
 		Opciones.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, 105));
 		Opciones.setMaximumSize(new Dimension(Constantes.ventana_x_size-35, 105));
 		//frmAppVideo.getContentPane().add(Opciones);
-		 btnNewButton_3 = new JButton("Explorar");
-		btnNewButton_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_3);
+		 btnExplorar = new JButton("Explorar");
+		btnExplorar.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Opciones.add(btnExplorar);
 		
-		 btnNewButton_4 = new JButton("Mis Listas");
-		btnNewButton_4.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_4);
+		 btnMisListas = new JButton("Mis Listas");
+		btnMisListas.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Opciones.add(btnMisListas);
 		
-		JButton btnNewButton_4_1 = new JButton("Recientes");
-		btnNewButton_4_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_4_1);
+		btnRecientes = new JButton("Recientes");
+		btnRecientes.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Opciones.add(btnRecientes);
 		
-		JButton btnNewButton_4_2 = new JButton("Nueva Lista");
-		btnNewButton_4_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		Opciones.add(btnNewButton_4_2);
+		btnNuevaLista = new JButton("Nueva Lista");
+		btnNuevaLista.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Opciones.add(btnNuevaLista);
 		contenedorPrincipal.add(Opciones);
 		
-		
-		/*menuPrincipal=new JMenuBar(); //barra del menu
-		 
-		
-		//opciones principales
-		mCliente= new JMenu("Cliente");	mVenta= new JMenu("Venta");
-		mProducto= new JMenu("Producto"); mOtros= new JMenu("Otros");
-		//Submenu cliente
-		mniAltaCli= new JMenuItem("Alta de cliente");
-		mniListadoCli= new JMenuItem("Listado de clientes");
-		//Submenu venta
-		mniCrearVenta= new JMenuItem("Crear Venta");
-		mniListadoVentas= new JMenuItem("Listado de ventas");
-		mniListadoFechas= new JMenuItem("Listado de un periodo");
-		//*************************mascosas
-		//Submenu producto
-		mniAltaPro= new JMenuItem("Alta de Producto");
-		mniListadoPro= new JMenuItem("Listado de Productos");
-		//Submenu otros
-		mniTiendaCutre= new JRadioButtonMenuItem("Ver tienda cutre");
-		mniTiendaUniversidad= new JRadioButtonMenuItem("Ver tienda universitaria");
-		mniTiendaUniversidad.setSelected(true);
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(mniTiendaCutre); buttonGroup.add(mniTiendaUniversidad);
-		
-		mCliente.add(mniAltaCli); mCliente.add(mniListadoCli);
-		mVenta.add(mniCrearVenta); mVenta.add(mniListadoVentas); mVenta.add(mniListadoFechas);
-		mProducto.add(mniAltaPro); mProducto.add(mniListadoPro);
-		mOtros.add(mniTiendaCutre); mOtros.add(mniTiendaUniversidad);
-		
-		menuPrincipal.add(mCliente); 
-		menuPrincipal.add(mVenta);
-		menuPrincipal.add(mProducto); 
-		menuPrincipal.add(mOtros);*/
-		
-		//Manejadores
-		/*mniAltaCli.addActionListener(this);
-		mniListadoCli.addActionListener(this);
-		
-		mniCrearVenta.addActionListener(this);
-		mniListadoVentas.addActionListener(this);
-		mniListadoFechas.addActionListener(this);
-		
-		mniAltaPro.addActionListener(this);
-		mniListadoPro.addActionListener(this);
-		
-		mniTiendaCutre.addActionListener(this);
-		mniTiendaUniversidad.addActionListener(this);*/
-		
-		btnNewButton_3.addActionListener(this);
-		btnNewButton_4.addActionListener(this);
+		btnExplorar.addActionListener(this);
+		btnMisListas.addActionListener(this);
+		btnRecientes.addActionListener(this);
+		btnLogin.addActionListener(this);
+		btnRegistro.addActionListener(this);
+		btnLogout.addActionListener(this);
 	}
 	
 	
@@ -259,7 +217,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource()== mniAltaCli) { 
+		/*if (e.getSource()== mniAltaCli) { 
 			setContentPane(pantallaAltaCliente);
 			validate();
 			return;	
@@ -322,15 +280,38 @@ public class VentanaMain extends JFrame implements ActionListener{
 			pack();
 			return;
 		}*/
-		if (e.getSource() == btnNewButton_3) {
+		if (e.getSource() == btnLogin) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, pantallaLoginCard);
+		    return;
 		    
 		}
-		if (e.getSource() == btnNewButton_4) {
+		if (e.getSource() == btnRegistro) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, "altaCliente");
+		    return;
 		}
+		if(e.getSource() == loginMainButton) {
+			usuario = pantallaLogin.getUsuario();
+			logeado = true;
+			saludoUsuario.setText("Hola " + usuario);
+			saludoUsuario.setVisible(true);
+			btnLogin.setVisible(false);
+			btnRegistro.setVisible(false);
+			btnLogout.setVisible(true);
+			btnPremium.setVisible(true);
+			return;
+		}
+		if(e.getSource() == btnLogout) {
+			logeado = false;
+			saludoUsuario.setVisible(false);
+			btnLogin.setVisible(true);
+			btnRegistro.setVisible(true);
+			btnLogout.setVisible(false);
+			btnPremium.setVisible(false);
+			return;
+		}
+			
 	}
 	
 	public void listadoProductos(JTextArea listado) {

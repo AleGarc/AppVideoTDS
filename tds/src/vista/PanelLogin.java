@@ -24,15 +24,19 @@ import javax.swing.border.LineBorder;
 import controlador.ControladorTienda;
 
 
-public class PanelLogin extends JPanel {
+public class PanelLogin extends JPanel implements ActionListener{
 	private Font fuenteGrande = new Font("Arial",Font.BOLD,32);
 	private JLabel rotulo;
 	private JPanel datosProducto;
 	private JLabel lnombre, ldescripcion, lprecio, lalerta;
-	private JTextField nombre, precio;
+	private JTextField txtUsuario, txtPassword;
 	private JTextArea descripcion;
-	private JButton btnRegistrar, btnCancelar;
+	private JButton btnLogin, btnCancelar;
 	private VentanaMain ventana;
+	
+	private JButton loginMainButton;
+	
+	private String usuario;
 	
 	public PanelLogin(VentanaMain v){
 		ventana=v; 
@@ -71,9 +75,9 @@ public class PanelLogin extends JPanel {
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblNewLabel_2);
 		
-		JTextField usuarioText = new JTextField();
-		panel.add(usuarioText);
-		usuarioText.setColumns(20);
+		txtUsuario = new JTextField();
+		panel.add(txtUsuario);
+		txtUsuario.setColumns(20);
 		
 		Component rigidArea_3_1_1_1 = Box.createRigidArea(new Dimension(400, 50));
 		panel.add(rigidArea_3_1_1_1);
@@ -82,10 +86,10 @@ public class PanelLogin extends JPanel {
 		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblNewLabel_2_1);
 		
-		JTextField passwordText = new JTextField();
-		passwordText.setHorizontalAlignment(SwingConstants.LEFT);
-		passwordText.setColumns(20);
-		panel.add(passwordText);
+		txtPassword = new JTextField();
+		txtPassword.setHorizontalAlignment(SwingConstants.LEFT);
+		txtPassword.setColumns(20);
+		panel.add(txtPassword);
 		
 		Component rigidArea_3_1_1_2 = Box.createRigidArea(new Dimension(3, 20));
 		panel.add(rigidArea_3_1_1_2);
@@ -93,8 +97,8 @@ public class PanelLogin extends JPanel {
 		Component rigidArea_3_1_1 = Box.createRigidArea(new Dimension(400, 50));
 		panel.add(rigidArea_3_1_1);
 		
-		JButton btnNewButton_5 = new JButton("Aceptar");
-		panel.add(btnNewButton_5);
+		btnLogin = new JButton("Aceptar");
+		panel.add(btnLogin);
 		
 		Component rigidArea_4 = Box.createRigidArea(new Dimension(60, 20));
 		panel.add(rigidArea_4);
@@ -103,6 +107,8 @@ public class PanelLogin extends JPanel {
 		panel.add(btnNewButton_6);
 		
 		add(Ventana);
+		
+		btnLogin.addActionListener(this);
 		/*setSize(Constantes.x_size,Constantes.y_size);
 		setLayout(new BorderLayout());
 		rotulo=new JLabel("Alta Producto",JLabel.CENTER);
@@ -152,7 +158,7 @@ public class PanelLogin extends JPanel {
 		
 		//Manejadores
 		*/
-		btnNewButton_5.addActionListener(new ActionListener() {
+		/*btnNewButton_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
 				String auxUsuario=usuarioText.getText().trim();
 				String auxPassword=passwordText.getText().trim();
@@ -165,20 +171,49 @@ public class PanelLogin extends JPanel {
 								"Producto dado de alta",
 								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
 					   precio.setText(""); usuarioText.setText(""); 
-					   descripcion.setText(""); lalerta.setVisible(false); */
+					   descripcion.setText(""); lalerta.setVisible(false); 
 					
 					usuarioText.setText(""); passwordText.setText("");
-					System.out.println("VOOM\n");
+					for(ActionListener a: loginMainButton.getActionListeners()) {
+					    a.actionPerformed(new ActionEvent(loginMainButton, ActionEvent.ACTION_PERFORMED, null) {
+					          //Nothing need go here, the actionPerformed method (with the
+					          //above arguments) will trigger the respective listener
+					    });
+					    }
+					}
 				}
 			}	
-		});
-		
-		/*btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				precio.setText(""); nombre.setText("");
-				descripcion.setText(""); lalerta.setVisible(false); 
-			}
 		});*/
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource()== btnLogin) { 
+				String auxUsuario=txtUsuario.getText().trim();
+				String auxPassword=txtPassword.getText().trim();
+				//double doubleprecio=Double.parseDouble(auxPrecio);
+				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
+				else if (!ControladorTienda.getUnicaInstancia().autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
+				else { /*lalerta.setVisible(false);
+					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
+					   JOptionPane.showMessageDialog(ventana,
+								"Producto dado de alta",
+								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
+					   precio.setText(""); usuarioText.setText(""); 
+					   descripcion.setText(""); lalerta.setVisible(false); */
+					
+					txtUsuario.setText(""); txtPassword.setText("");
+					usuario = auxUsuario;
+					for(ActionListener a: loginMainButton.getActionListeners()) {
+					    a.actionPerformed(new ActionEvent(loginMainButton, ActionEvent.ACTION_PERFORMED, null) {
+					          //Nothing need go here, the actionPerformed method (with the
+					          //above arguments) will trigger the respective listener
+					    });
+					    }
+					}
+				}
+				return;	
+			
 		
 	}
 	
@@ -187,11 +222,19 @@ public class PanelLogin extends JPanel {
 				"Usuario o contraseña no valido",
 				"Error",JOptionPane.ERROR_MESSAGE);
 	}
+	
+	public void setLoginMainButton(JButton b) {
+		loginMainButton = b;
+	}
 		
 	private void fixedSize(JComponent c,int x, int y) {
 		c.setMinimumSize(new Dimension(x,y));
 		c.setMaximumSize(new Dimension(x,y));
 		c.setPreferredSize(new Dimension(x,y));
+	}
+	
+	public String getUsuario() {
+		return usuario;
 	}
 
 }
