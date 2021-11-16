@@ -119,22 +119,17 @@ public class VentanaMain extends JFrame implements ActionListener{
 		//frmAppVideo.getContentPane().add(Menu);
 		contenedorPrincipal.add(Menu);
 		
-		btnRegistro = new JButton("Registro");
-		btnRegistro.setFont(new Font("Tahoma", Font.PLAIN, 16));
-
-		
-		
-		JLabel lblNewLabel = new JLabel("");
-		
+		JLabel imagenMenu = new JLabel("");
 		//Escalado del icono.
 		ImageIcon imageIcon = new ImageIcon(VentanaMain.class.getResource("/Titulo.png")); 
 		Image image = imageIcon.getImage(); 
 		Image newimg = image.getScaledInstance(656/7, 278/7,  java.awt.Image.SCALE_SMOOTH);
 		imageIcon = new ImageIcon(newimg); 
+		imagenMenu.setIcon(imageIcon);
+		Menu.add(imagenMenu);
 		
-		lblNewLabel.setIcon(imageIcon);
 		
-		Menu.add(lblNewLabel);
+		
 		
 		Component rigidArea_1 = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea_1);
@@ -145,12 +140,14 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		Component rigidArea_1_1 = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea_1_1);
+		
+		btnRegistro = new JButton("Registro");
+		btnRegistro.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Menu.add(btnRegistro);
 		
 		btnLogin = new JButton("Login");
 		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Menu.add(btnLogin);
-		
 		
 		Component rigidArea = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea);			//CAMBIAR Y PONER CONSTANTES
@@ -173,12 +170,13 @@ public class VentanaMain extends JFrame implements ActionListener{
 		Opciones.setLayout(new FlowLayout(FlowLayout.LEFT));
 		Opciones.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, 105));
 		Opciones.setMaximumSize(new Dimension(Constantes.ventana_x_size-35, 105));
+		contenedorPrincipal.add(Opciones);
 		//frmAppVideo.getContentPane().add(Opciones);
-		 btnExplorar = new JButton("Explorar");
+		btnExplorar = new JButton("Explorar");
 		btnExplorar.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Opciones.add(btnExplorar);
 		
-		 btnMisListas = new JButton("Mis Listas");
+		btnMisListas = new JButton("Mis Listas");
 		btnMisListas.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Opciones.add(btnMisListas);
 		
@@ -189,7 +187,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnNuevaLista = new JButton("Nueva Lista");
 		btnNuevaLista.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Opciones.add(btnNuevaLista);
-		contenedorPrincipal.add(Opciones);
+		
 		
 		btnExplorar.addActionListener(this);
 		btnMisListas.addActionListener(this);
