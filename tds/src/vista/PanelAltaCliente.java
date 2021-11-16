@@ -33,13 +33,12 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-
+import controlador.ControladorTienda;
 
 
 public class PanelAltaCliente extends JPanel{
 	
 	private VentanaMain ventana;
-	private JFrame frmRegistro;
 	private JLabel lblNombre;
 	private JLabel lblApellidos;
 	private JLabel lblFechaNacimiento;
@@ -69,9 +68,8 @@ public class PanelAltaCliente extends JPanel{
 	private JPanel panelCamposEmail;
 	private JPanel panelCamposUsuario;
 	private JPanel panelCamposFechaNacimiento;
-	
-	private JFrame frame;
 
+	private JPanel frmRegistro;
 	/**
 	 * Launch the application.
 	 */
@@ -90,18 +88,18 @@ public class PanelAltaCliente extends JPanel{
 	private void initialize() {
 
 
+		
+		frmRegistro = new JPanel();
+		//frmRegistro.setTitle("Registro AppMusic");
+		//frmRegistro.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frmRegistro.getContentPane().setLayout(new BorderLayout());
+		//frmRegistro.setResizable(false);
+		//frmRegistro.getContentPane().setLayout(new BorderLayout());
 
-		frmRegistro = new JFrame();
-		frmRegistro.setTitle("Registro AppMusic");
-		frmRegistro.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmRegistro.getContentPane().setLayout(new BorderLayout());
-		frmRegistro.setResizable(false);
-		frmRegistro.getContentPane().setLayout(new BorderLayout());
-
-		Container contentPane = frmRegistro.getContentPane();
+		//Container contentPane = frmRegistro.getContentPane();
 
 		JPanel datosPersonales = new JPanel();
-		contentPane.add(datosPersonales);
+		frmRegistro.add(datosPersonales);
 		datosPersonales.setBorder(new TitledBorder(null, "Datos de Registro", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		datosPersonales.setLayout(new BoxLayout(datosPersonales, BoxLayout.Y_AXIS));
 
@@ -111,14 +109,14 @@ public class PanelAltaCliente extends JPanel{
 		datosPersonales.add(crearLineaUsuario());
 		datosPersonales.add(crearLineaPassword());
 		datosPersonales.add(crearLineaFechaNacimiento());
-		
-		crearPanelBotones();
+
+		datosPersonales.add(crearPanelBotones());
 
 		ocultarErrores();
 
-		frmRegistro.revalidate();
-		frmRegistro.pack();
-		
+		//frmRegistro.revalidate();
+		//frmRegistro.pack();
+		add(frmRegistro);
 }
 	private JPanel creaLineaNombre() {
 		JPanel lineaNombre = new JPanel();
@@ -261,9 +259,9 @@ public class PanelAltaCliente extends JPanel{
 		return lineaFechaNacimiento;
 	}
 
-	private void crearPanelBotones() {
+	private JPanel crearPanelBotones() {
 		JPanel lineaBotones = new JPanel(); 
-		frmRegistro.getContentPane().add(lineaBotones, BorderLayout.SOUTH);
+		//frmRegistro.getContentPane().add(lineaBotones, BorderLayout.SOUTH);
 		lineaBotones.setBorder(new EmptyBorder(5, 0, 0, 0));
 		lineaBotones.setLayout(new FlowLayout(FlowLayout.CENTER));
 		
@@ -275,6 +273,8 @@ public class PanelAltaCliente extends JPanel{
 
 		crearManejadorBotonRegistar();
 		crearManejadorBotonCancelar();
+		
+		return lineaBotones;
 	}
 
 	private void crearManejadorBotonRegistar() {
@@ -284,22 +284,23 @@ public class PanelAltaCliente extends JPanel{
 				OK = checkFields();
 				if (OK) {
 					boolean registrado = false;
-					/*registrado = ControladorTienda.getUnicaInstancia().registrarUsuario(txtNombre.getText(),
-							txtApellidos.getText(), txtEmail.getText(), txtUsuario.getText(),
+					String nombre_completo = txtNombre.getText() + txtApellidos.getText();
+					registrado = ControladorTienda.getUnicaInstancia().registrarCliente(nombre_completo, txtEmail.getText(), txtUsuario.getText(),
 							new String(txtPassword.getPassword()), 
 							txtFechaNacimiento.getText());
 					if (registrado) {
 						JOptionPane.showMessageDialog(frmRegistro, "Asistente registrado correctamente.", "Registro",
 								JOptionPane.INFORMATION_MESSAGE);
 						
-						LoginView loginView = new LoginView();
-						loginView.mostrarVentana();
-						frmRegistro.dispose();
+						txtNombre.setText(""); txtApellidos.setText(""); 
+						txtEmail.setText(""); txtPassword.setText(""); 
+						txtUsuario.setText(""); txtFechaNacimiento.setText("");
+						txtPasswordChk.setText("");
 					} else {
 						JOptionPane.showMessageDialog(frmRegistro, "No se ha podido llevar a cabo el registro.\n",
 								"Registro", JOptionPane.ERROR_MESSAGE);
-						frmRegistro.setTitle("Login Gestor Eventos");
-					}*/
+						//frmRegistro.setTitle("Login Gestor Eventos");
+					}
 				}
 			}
 		});
@@ -310,7 +311,7 @@ public class PanelAltaCliente extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				//LoginView loginView = new LoginView();
 				//loginView.mostrarVentana();
-				frmRegistro.dispose();
+				//frmRegistro.dispose();
 			}
 		});
 	}
@@ -388,7 +389,7 @@ public class PanelAltaCliente extends JPanel{
 		}
 
 		frmRegistro.revalidate();
-		frmRegistro.pack();
+		//frmRegistro.pack();
 		
 		return salida;
 	}

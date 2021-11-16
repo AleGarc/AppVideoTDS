@@ -41,11 +41,12 @@ public class ControladorTienda {
 		return unicaInstancia;
 	}
 
-	public void registrarCliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
+	public boolean registrarCliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		// No se controla que existan dnis duplicados
 		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
 		adaptadorCliente.registrarCliente(user);
 		catalogoUsuarios.addCliente(user);
+		return true;		//CAMBIAr
 	}
 
 	public void registrarVideo(String titulo, String url) {
