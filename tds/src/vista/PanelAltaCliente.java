@@ -1,3 +1,5 @@
+package vista;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -32,10 +34,9 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import umu.tds.controlador.Controlador;
-import umu.tds.gui.LoginView;
 
-public class PanelAltaCliente {
+
+public class PanelAltaCliente extends JPanel{
 	
 	private VentanaMain ventana;
 	private JFrame frmRegistro;
@@ -276,14 +277,14 @@ public class PanelAltaCliente {
 		crearManejadorBotonCancelar();
 	}
 
-	/*private void crearManejadorBotonRegistar() {
+	private void crearManejadorBotonRegistar() {
 		btnRegistrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean OK = false;
 				OK = checkFields();
 				if (OK) {
 					boolean registrado = false;
-					registrado = ControladorTienda.getUnicaInstancia().registrarUsuario(txtNombre.getText(),
+					/*registrado = ControladorTienda.getUnicaInstancia().registrarUsuario(txtNombre.getText(),
 							txtApellidos.getText(), txtEmail.getText(), txtUsuario.getText(),
 							new String(txtPassword.getPassword()), 
 							txtFechaNacimiento.getText());
@@ -298,17 +299,17 @@ public class PanelAltaCliente {
 						JOptionPane.showMessageDialog(frmRegistro, "No se ha podido llevar a cabo el registro.\n",
 								"Registro", JOptionPane.ERROR_MESSAGE);
 						frmRegistro.setTitle("Login Gestor Eventos");
-					}
+					}*/
 				}
 			}
 		});
-	}*/
+	}
 
 	private void crearManejadorBotonCancelar() {
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginView loginView = new LoginView();
-				loginView.mostrarVentana();
+				//LoginView loginView = new LoginView();
+				//loginView.mostrarVentana();
 				frmRegistro.dispose();
 			}
 		});
@@ -372,13 +373,13 @@ public class PanelAltaCliente {
 			salida = false;
 		}
 		/* Comprobar que no exista otro usuario con igual login */
-		if (!lblUsuarioError.getText().isEmpty() && Controlador.getUnicaInstancia().esUsuarioRegistrado(txtUsuario.getText())) {
+		/*if (!lblUsuarioError.getText().isEmpty() && Controlador.getUnicaInstancia().esUsuarioRegistrado(txtUsuario.getText())) {
 			lblUsuarioError.setText("Ya existe ese usuario");
 			lblUsuarioError.setVisible(true);
 			lblUsuario.setForeground(Color.RED);
 			txtUsuario.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
-		}
+		}*/
 		if (txtFechaNacimiento.getText().isEmpty()) {
 			lblFechaNacimientoError.setVisible(true);
 			lblFechaNacimiento.setForeground(Color.RED);

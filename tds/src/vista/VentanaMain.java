@@ -95,6 +95,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		contenido.add(pantallaLogin, pantallaLoginCard);
 		
 		contenido.add(pantallaAltaCliente, pantallaRegistroCard);
+		//contenido.add(pantallaAltaCliente, pantallaRegistroCard);
 		
 		CardLayout c1 = (CardLayout)(contenido.getLayout());
 		c1.show(contenido, "pantallaLoginCard");
@@ -286,7 +287,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		}
 		if (e.getSource() == btnRegistro) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
-		    cl.show(contenido, "altaCliente");
+		    cl.show(contenido, pantallaRegistroCard);
 		    return;
 		}
 		if(e.getSource() == loginMainButton) {
