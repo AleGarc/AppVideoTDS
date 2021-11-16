@@ -44,7 +44,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 
 	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista;
-	
+	private final String pantallaRegistroCard = "pantallaRegistroCard";
 	private JPanel contenedorPrincipal;
 	private JPanel contenido;
 	
@@ -94,7 +94,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		contenido.setLayout(new CardLayout(0,0));
 		contenido.add(pantallaLogin, pantallaLoginCard);
 		
-		contenido.add(pantallaAltaCliente, "altaCliente");
+		contenido.add(pantallaAltaCliente, pantallaRegistroCard);
 		
 		CardLayout c1 = (CardLayout)(contenido.getLayout());
 		c1.show(contenido, "pantallaLoginCard");
