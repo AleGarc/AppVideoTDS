@@ -40,12 +40,17 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		}
 		if (existe) return;
 		
+		// registrar primero los atributos que son objetos
+		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
+		adaptadorEtiqueta.registrarListaEtiqueta(video.getEtiquetas());
+
+		
 		// crear entidad Video
 		eVideo = new Entidad();
 		eVideo.setNombre("video");
 		eVideo.setPropiedades(new ArrayList<Propiedad>(Arrays.asList(new Propiedad("titulo", video.getTitulo()),
 				new Propiedad("url", video.getUrl()),
-				new Propiedad("etiquetas", video.getTitulo()))));
+				new Propiedad("etiquetas", adaptadorEtiqueta.obtenerCodigosListaEtiquetas(video.getEtiquetas())))));
 		
 		// registrar entidad Video
 		eVideo = servPersistencia.registrarEntidad(eVideo);
@@ -53,7 +58,9 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		// Se aprovecha el que genera el servicio de persistencia
 		video.setCodigo(eVideo.getId());  
 	}
-
+	
+	
+		
 	public void borrarVideo(Video video) {
 		// No se comprueba integridad con lineas de venta
 		Entidad eVideo = servPersistencia.recuperarEntidad(video.getCodigo());
@@ -67,20 +74,23 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		servPersistencia.anadirPropiedadEntidad(eVideo, "titulo", String.valueOf(video.getTitulo()));
 		servPersistencia.eliminarPropiedadEntidad(eVideo, "url");
 		servPersistencia.anadirPropiedadEntidad(eVideo, "url", video.getUrl());
+		
+		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		servPersistencia.eliminarPropiedadEntidad(eVideo, "etiquetas");
-		servPersistencia.anadirPropiedadEntidad(eVideo, "etiquetas", video.getTitulo());
+		servPersistencia.anadirPropiedadEntidad(eVideo, "etiquetas", adaptadorEtiqueta.obtenerCodigosListaEtiquetas(video.getEtiquetas())); 
 	}
 
 	public Video recuperarVideo(int codigo) {
 		Entidad eVideo;
 		String titulo;
 		String url;
-
 		eVideo = servPersistencia.recuperarEntidad(codigo);
 		titulo = servPersistencia.recuperarPropiedadEntidad(eVideo, "titulo");
 		url = servPersistencia.recuperarPropiedadEntidad(eVideo, "url");
 		
-		Video video = new Video(titulo, url);
+		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
+		String listaCodigosEtiquetas = servPersistencia.recuperarPropiedadEntidad(eVideo, "etiquetas");
+		Video video = new Video(titulo, url, adaptadorEtiqueta.obtenerEtiquetasDesdeCodigos(listaCodigosEtiquetas));
 		video.setCodigo(codigo);
 		return video;
 	}
