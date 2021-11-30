@@ -44,20 +44,21 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 
 	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista;
-	private final String pantallaRegistroCard = "pantallaRegistroCard";
+	private final String panelRegistroCard = "panelRegistroCard";
 	private JPanel contenedorPrincipal;
 	private JPanel contenido;
 	
-	//private PanelVerImagen pantallaVerImagen;
-	private PanelLogin pantallaLogin;
-	private PanelAltaCliente pantallaAltaCliente;
-	private PanelAltaVideo pantallaAltaProducto;
-	private PanelCrearVenta pantallaCrearVenta;
+	//private PanelVerImagen panelVerImagen;
+	private PanelLogin panelLogin;
+	private PanelAltaCliente panelAltaCliente;
+	private PanelAltaVideo panelAltaProducto;
+	private PanelCrearVenta panelCrearVenta;
+	private PanelExplorar panelExplorar;
 	
 	private JButton loginMainButton;
 	
-	private final String pantallaLoginCard = "pantallaLoginCard";
-
+	private final String panelLoginCard = "panelLoginCard";
+	private final String panelExplorarCard = "panelExplorar";
 	private String usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
@@ -73,40 +74,43 @@ public class VentanaMain extends JFrame implements ActionListener{
 		this.add(contenedorPrincipal);
 		//this.add(contenido);
 		
-		/*crear pantallas*/
-		//pantallaVerImagen = new PanelVerImagen();
-		pantallaLogin =  new PanelLogin(this);
+		/*crear panels*/
+		//panelVerImagen = new PanelVerImagen();
+		panelLogin =  new PanelLogin(this);
 		loginMainButton = new JButton();
 		loginMainButton.addActionListener(this);
-		pantallaLogin.setLoginMainButton(loginMainButton);
-		pantallaAltaCliente = new PanelAltaCliente(this);
-		pantallaAltaProducto = new PanelAltaVideo(this);
-		pantallaCrearVenta = new PanelCrearVenta(this);
+		panelLogin.setLoginMainButton(loginMainButton);
+		panelAltaCliente = new PanelAltaCliente(this);
+		panelAltaProducto = new PanelAltaVideo(this);
+		panelCrearVenta = new PanelCrearVenta(this);
+		panelExplorar = new PanelExplorar(this);
 		
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 
-		//Pantalla inicial
-		//pantallaVerImagen.cambiarImagen("/otroFondoTienda.jpg");
-		//setContentPane(pantallaLogin);
+		//panel inicial
+		//panelVerImagen.cambiarImagen("/otroFondoTienda.jpg");
+		//setContentPane(panelLogin);
 		contenido = new JPanel();
 		contenido.setLayout(new CardLayout(0,0));
-		contenido.add(pantallaLogin, pantallaLoginCard);
+		contenido.add(panelLogin, panelLoginCard);
 		
-		contenido.add(pantallaAltaCliente, pantallaRegistroCard);
-		//contenido.add(pantallaAltaCliente, pantallaRegistroCard);
+		contenido.add(panelAltaCliente, panelRegistroCard);
+		
+		contenido.add(panelExplorar, panelExplorarCard);
+		//contenido.add(panelAltaCliente, panelRegistroCard);
 		
 		CardLayout c1 = (CardLayout)(contenido.getLayout());
-		c1.show(contenido, "pantallaLoginCard");
+		c1.show(contenido, "panelLoginCard");
 		
 		add(contenido);
-		//add(pantallaLogin);
+		//add(panelLogin);
 		//pack();
 		setVisible(true);
 	}
 	
-	/*Crea la barra del menu principal de la aplicaci�n*/
+	/*Crea la barra del menu principal de la aplicaciï¿½n*/
 	private void configurarMenu(){
 		contenedorPrincipal = new JPanel();
 		contenedorPrincipal.setLayout(new FlowLayout(FlowLayout.LEFT,10,10));  
@@ -217,7 +221,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		/*if (e.getSource()== mniAltaCli) { 
-			setContentPane(pantallaAltaCliente);
+			setContentPane(panelAltaCliente);
 			validate();
 			return;	
 		}
@@ -232,8 +236,8 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		if (e.getSource()== mniCrearVenta) {
 			ControladorTienda.getUnicaInstancia().crearVenta();
-			pantallaCrearVenta.cargarVideos(); //actualizar combobox con productos nuevos
-			setContentPane(pantallaCrearVenta);
+			panelCrearVenta.cargarVideos(); //actualizar combobox con productos nuevos
+			setContentPane(panelCrearVenta);
 			validate();
 			return;	
 		}
@@ -254,7 +258,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		}
 		
 		if (e.getSource()== mniAltaPro) { 
-			setContentPane(pantallaAltaProducto);
+			setContentPane(panelAltaProducto);
 			validate();
 			return;	
 		}
@@ -268,30 +272,35 @@ public class VentanaMain extends JFrame implements ActionListener{
 		}
 		
 		/*if (e.getSource()== mniTiendaCutre) {
-			pantallaVerImagen.cambiarImagen("/fondoTienda.jpg");
-			setContentPane(pantallaVerImagen);
+			panelVerImagen.cambiarImagen("/fondoTienda.jpg");
+			setContentPane(panelVerImagen);
 			pack();
 			return;
 		}
 		if (e.getSource()== mniTiendaUniversidad) {
-			pantallaVerImagen.cambiarImagen("/otroFondoTienda.jpg");
-			setContentPane(pantallaVerImagen);
+			panelVerImagen.cambiarImagen("/otroFondoTienda.jpg");
+			setContentPane(panelVerImagen);
 			pack();
 			return;
 		}*/
 		if (e.getSource() == btnLogin) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
-		    cl.show(contenido, pantallaLoginCard);
+		    cl.show(contenido, panelLoginCard);
 		    return;
 		    
 		}
 		if (e.getSource() == btnRegistro) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
-		    cl.show(contenido, pantallaRegistroCard);
+		    cl.show(contenido, panelRegistroCard);
+		    return;
+		}
+		if (e.getSource() == btnExplorar) {
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelExplorarCard);
 		    return;
 		}
 		if(e.getSource() == loginMainButton) {
-			usuario = pantallaLogin.getUsuario();
+			usuario = panelLogin.getUsuario();
 			logeado = true;
 			saludoUsuario.setText("Hola " + usuario);
 			saludoUsuario.setVisible(true);
