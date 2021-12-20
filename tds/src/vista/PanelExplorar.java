@@ -32,6 +32,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import controlador.ControladorTienda;
+import tds.video.VideoWeb;
 
 
 public class PanelExplorar extends JPanel implements ActionListener{
@@ -39,12 +40,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JList<String> etiquetasDisponibles;
 	private JList<String> etiquetasSeleccionadas;
 	private VentanaMain ventana;
-	
-	private JButton loginMainButton;
-	
+	private static VideoWeb videoWeb;
+	private JButton playButton;
+	private JButton btnPlay;
 	private String usuario;
 	
 	public PanelExplorar(VentanaMain v){
+		videoWeb = new VideoWeb();
 		ventana=v; 
 		crearPantalla();
 	}
@@ -80,15 +82,41 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panel.setBackground(Color.LIGHT_GRAY);
 		fixedSize(panel, 700,80);
 		PanelIzquierdo.add(panel);
+		//PanelIzquierdo.setBackground(Color.YELLOW);
 		
 		Component rigidArea2 = Box.createRigidArea(new Dimension(5, 5));
 		PanelIzquierdo.add(rigidArea2);
 		
-		JPanel panel2 = new JPanel();
-		panel2.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel2.setBackground(Color.LIGHT_GRAY);
-		fixedSize(panel2, 700, 439);
-		PanelIzquierdo.add(panel2);
+		JPanel resultados = new JPanel();
+		resultados.setBorder(new LineBorder(new Color(0, 0, 0)));
+		resultados.setBackground(Color.LIGHT_GRAY);
+		fixedSize(resultados, 700, 439);
+		PanelIzquierdo.add(resultados);
+		
+		
+		JLabel miniatura = new JLabel();
+		miniatura.setText("Mariano Rajoy");
+		//resultados.add(videoWeb);
+		resultados.add(miniatura);
+		miniatura.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
+		miniatura.setHorizontalTextPosition(JLabel.CENTER);
+		miniatura.setVerticalTextPosition(JLabel.BOTTOM);
+		
+		JLabel miniatura2 = new JLabel();
+		miniatura2.setText("Perro Sanxe");
+		//resultados.add(videoWeb);
+		resultados.add(miniatura2);
+		miniatura2.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=YlJB3gGOluk"));
+		miniatura2.setHorizontalTextPosition(JLabel.CENTER);
+		miniatura2.setVerticalTextPosition(JLabel.BOTTOM);
+		//miniatura.setIcon(videoWeb.getSmallThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
+	    //videoWeb.playVideo("https://www.youtube.com/watch?v=EdVMSYomYJY");
+	    validate();
+	    
+		
+		
+		
+		
 		
 		
 		
@@ -104,6 +132,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 		JButton btnNewButton_1 = new JButton("Nueva Busqueda");
 		panel.add(btnNewButton_1);
+		
+		btnPlay = new JButton("Reproducir");
+		btnPlay.addActionListener(this);
+		panel.add(btnPlay);
 		
 		
 		JPanel panelDerecho = new JPanel();
@@ -177,6 +209,12 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 		
 		
+		
+		
+		
+		
+		
+		
 		etiquetasDisponibles.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()){
@@ -213,34 +251,20 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource()== btnLogin) { 
-				String auxUsuario=txtUsuario.getText().trim();
-				String auxPassword=txtPassword.getText().trim();
-				//double doubleprecio=Double.parseDouble(auxPrecio);
-				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
-				else if (!ControladorTienda.getUnicaInstancia().autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
-				else { /*lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
-					   JOptionPane.showMessageDialog(ventana,
-								"Producto dado de alta",
-								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
-					   precio.setText(""); usuarioText.setText(""); 
-					   descripcion.setText(""); lalerta.setVisible(false); */
-					
-					txtUsuario.setText(""); txtPassword.setText("");
-					usuario = auxUsuario;
-					for(ActionListener a: loginMainButton.getActionListeners()) {
-					    a.actionPerformed(new ActionEvent(loginMainButton, ActionEvent.ACTION_PERFORMED, null) {
+			if (e.getSource()== btnPlay) { 
+					for(ActionListener a: playButton.getActionListeners()) {
+					    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
 					          //Nothing need go here, the actionPerformed method (with the
 					          //above arguments) will trigger the respective listener
+					    	
 					    });
 					    }
 					}
-				}
-				return;	
+		}
+				
 			
 		
-	}
+	
 	
 	private void showErrorAuth() {
 		JOptionPane.showMessageDialog(ventana,
@@ -248,9 +272,6 @@ public class PanelExplorar extends JPanel implements ActionListener{
 				"Error",JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public void setLoginMainButton(JButton b) {
-		loginMainButton = b;
-	}
 		
 	private void fixedSize(JComponent c,int x, int y) {
 		c.setMinimumSize(new Dimension(x,y));
@@ -260,6 +281,11 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	
 	public String getUsuario() {
 		return usuario;
+	}
+	
+	public void setPlayMainButton(JButton playMainButton)
+	{
+		playButton = playMainButton;
 	}
 
 }

@@ -54,11 +54,14 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private PanelAltaVideo panelAltaProducto;
 	private PanelCrearVenta panelCrearVenta;
 	private PanelExplorar panelExplorar;
+	private PanelReproductor panelReproductor;
 	
 	private JButton loginMainButton;
+	private JButton playMainButton;
 	
 	private final String panelLoginCard = "panelLoginCard";
 	private final String panelExplorarCard = "panelExplorar";
+	private final String panelReproductorCard = "panelReproductor";
 	private String usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
@@ -79,12 +82,15 @@ public class VentanaMain extends JFrame implements ActionListener{
 		panelLogin =  new PanelLogin(this);
 		loginMainButton = new JButton();
 		loginMainButton.addActionListener(this);
+		playMainButton = new JButton();
+		playMainButton.addActionListener(this);
 		panelLogin.setLoginMainButton(loginMainButton);
 		panelAltaCliente = new PanelAltaCliente(this);
 		panelAltaProducto = new PanelAltaVideo(this);
 		panelCrearVenta = new PanelCrearVenta(this);
 		panelExplorar = new PanelExplorar(this);
-		
+		panelExplorar.setPlayMainButton(playMainButton);
+		panelReproductor = new PanelReproductor(this);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -99,6 +105,8 @@ public class VentanaMain extends JFrame implements ActionListener{
 		contenido.add(panelAltaCliente, panelRegistroCard);
 		
 		contenido.add(panelExplorar, panelExplorarCard);
+		
+		contenido.add(panelReproductor, panelReproductorCard);
 		//contenido.add(panelAltaCliente, panelRegistroCard);
 		
 		CardLayout c1 = (CardLayout)(contenido.getLayout());
@@ -319,7 +327,11 @@ public class VentanaMain extends JFrame implements ActionListener{
 			btnPremium.setVisible(false);
 			return;
 		}
-			
+		if(e.getSource() == playMainButton) {
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelReproductorCard);
+			return;
+		}
 	}
 	
 	public void listadoProductos(JTextArea listado) {
