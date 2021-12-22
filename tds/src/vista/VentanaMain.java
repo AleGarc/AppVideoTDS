@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.Box;
@@ -21,6 +22,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -37,10 +39,12 @@ import modelo.CatalogoVentas;
 import modelo.Usuario;
 import modelo.LineaVenta;
 import modelo.Video;
+import pulsador.IEncendidoListener;
+import pulsador.Luz;
 import modelo.Venta;
 
 @SuppressWarnings("serial")
-public class VentanaMain extends JFrame implements ActionListener{
+public class VentanaMain extends JFrame implements ActionListener, IEncendidoListener{
 	
 
 	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista;
@@ -65,6 +69,8 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private String usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
+	
+	private Luz pulsador;
 	
 	
 	public VentanaMain(){
@@ -162,6 +168,8 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Menu.add(btnLogin);
 		
+		
+		
 		Component rigidArea = Box.createRigidArea(new Dimension(70, 50));
 		Menu.add(rigidArea);			//CAMBIAR Y PONER CONSTANTES
 		
@@ -201,6 +209,13 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnNuevaLista.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Opciones.add(btnNuevaLista);
 		
+		Component espacio = Box.createRigidArea(new Dimension(515, 2));
+		Opciones.add(espacio);
+		
+		pulsador = new Luz();
+		pulsador.setColor(Color.GREEN);
+		pulsador.addEncendidoListener(this);
+		Opciones.add(pulsador);
 		
 		btnExplorar.addActionListener(this);
 		btnMisListas.addActionListener(this);
@@ -228,83 +243,23 @@ public class VentanaMain extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		/*if (e.getSource()== mniAltaCli) { 
-			setContentPane(panelAltaCliente);
-			validate();
-			return;	
-		}
-		
-		if (e.getSource()== mniListadoCli) {
-			VentanaListados lc= new VentanaListados("Listado de clientes");
-			lc.setLocationRelativeTo(this);
-			lc.setVisible(true);
-			listadoClientes(lc.getTextArea());
-			return;
-		}
-		
-		if (e.getSource()== mniCrearVenta) {
-			ControladorTienda.getUnicaInstancia().crearVenta();
-			panelCrearVenta.cargarVideos(); //actualizar combobox con productos nuevos
-			setContentPane(panelCrearVenta);
-			validate();
-			return;	
-		}
-		
-		if (e.getSource()== mniListadoVentas) {
-			VentanaListados lc= new VentanaListados("Listado de Ventas");
-			lc.setLocationRelativeTo(this);
-			lc.setVisible(true);
-			listadoVentas(lc.getTextArea(),null,null);
-			return;
-		}
-
-		if (e.getSource()== mniListadoFechas) {
-			VentanaEntreFechas lef= new VentanaEntreFechas(this);
-			lef.setLocationRelativeTo(this);
-			lef.setVisible(true);
-			return;
-		}
-		
-		if (e.getSource()== mniAltaPro) { 
-			setContentPane(panelAltaProducto);
-			validate();
-			return;	
-		}
-		
-		if (e.getSource()== mniListadoPro) {
-			VentanaListados lc= new VentanaListados("Listado de Productos");
-			lc.setLocationRelativeTo(this);
-			lc.setVisible(true);
-			listadoProductos(lc.getTextArea());
-			return;
-		}
-		
-		/*if (e.getSource()== mniTiendaCutre) {
-			panelVerImagen.cambiarImagen("/fondoTienda.jpg");
-			setContentPane(panelVerImagen);
-			pack();
-			return;
-		}
-		if (e.getSource()== mniTiendaUniversidad) {
-			panelVerImagen.cambiarImagen("/otroFondoTienda.jpg");
-			setContentPane(panelVerImagen);
-			pack();
-			return;
-		}*/
 		if (e.getSource() == btnLogin) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelLoginCard);
+		    validate();
 		    return;
 		    
 		}
 		if (e.getSource() == btnRegistro) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelRegistroCard);
+		    validate();
 		    return;
 		}
 		if (e.getSource() == btnExplorar) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
+		    validate();
 		    return;
 		}
 		if(e.getSource() == loginMainButton) {
@@ -330,6 +285,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		if(e.getSource() == playMainButton) {
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelReproductorCard);
+		    validate();
 			return;
 		}
 	}
@@ -385,4 +341,23 @@ public class VentanaMain extends JFrame implements ActionListener{
   		}
   		System.out.println("Total:"+v.getTotal());
   	}
+
+	@Override
+	public void enteradoCambioEncendido(EventObject arg0) {
+		if(arg0.getSource() == pulsador) {
+			JFileChooser eleccionFichero =  new JFileChooser();
+			int returnVal = eleccionFichero.showOpenDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+			        String file = eleccionFichero.getSelectedFile().getName();
+			        //This is where a real application would open the file.
+			        System.out.println("Opening: " + file + ".");
+			       
+			} else {
+				 System.out.println("Open command cancelled by user.");
+			}
+		}
+		
+		// TODO Auto-generated method stub
+		
+	}
 }

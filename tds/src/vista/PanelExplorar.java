@@ -40,13 +40,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JList<String> etiquetasDisponibles;
 	private JList<String> etiquetasSeleccionadas;
 	private VentanaMain ventana;
-	private static VideoWeb videoWeb;
+	//private static VideoWeb videoWeb;
 	private JButton playButton;
 	private JButton btnPlay;
 	private String usuario;
 	
 	public PanelExplorar(VentanaMain v){
-		videoWeb = new VideoWeb();
+		//videoWeb = new VideoWeb();
 		ventana=v; 
 		crearPantalla();
 	}
@@ -98,7 +98,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		miniatura.setText("Mariano Rajoy");
 		//resultados.add(videoWeb);
 		resultados.add(miniatura);
-		miniatura.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
+		//miniatura.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
 		miniatura.setHorizontalTextPosition(JLabel.CENTER);
 		miniatura.setVerticalTextPosition(JLabel.BOTTOM);
 		
@@ -106,7 +106,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		miniatura2.setText("Perro Sanxe");
 		//resultados.add(videoWeb);
 		resultados.add(miniatura2);
-		miniatura2.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=YlJB3gGOluk"));
+		//miniatura2.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=YlJB3gGOluk"));
 		miniatura2.setHorizontalTextPosition(JLabel.CENTER);
 		miniatura2.setVerticalTextPosition(JLabel.BOTTOM);
 		//miniatura.setIcon(videoWeb.getSmallThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));

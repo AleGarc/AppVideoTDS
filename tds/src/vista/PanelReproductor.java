@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -22,21 +23,18 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import controlador.ControladorTienda;
+import tds.video.VideoWeb;
 
 
 public class PanelReproductor extends JPanel implements ActionListener{
-	private Font fuenteGrande = new Font("Arial",Font.BOLD,32);
-	private JLabel rotulo;
-	private JPanel datosProducto;
-	private JLabel lnombre, ldescripcion, lprecio, lalerta;
-	private JTextField txtUsuario, txtPassword;
-	private JTextArea descripcion;
-	private JButton btnLogin, btnCancelar;
+
 	private VentanaMain ventana;
 	
 	private JButton loginMainButton;
 	
 	private String usuario;
+	
+	private static VideoWeb videoWeb;
 	
 	public PanelReproductor(VentanaMain v){
 		ventana=v; 
@@ -50,140 +48,54 @@ public class PanelReproductor extends JPanel implements ActionListener{
 		Ventana.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
 		Ventana.setMaximumSize(Ventana.getPreferredSize());
 		
-		//frmAppVideo.getContentPane().add(Ventana);
 		
-		//Ventana.setLayout(new BoxLayout(Ventana, BoxLayout.Y_AXIS));
-		Ventana.setLayout(new FlowLayout(FlowLayout.CENTER));
+		videoWeb = new VideoWeb();
+	      
+		Ventana.setLayout(new BoxLayout(Ventana, BoxLayout.Y_AXIS));
 		
-		Component rigidArea5 = Box.createRigidArea(new Dimension(700, 100));
-		Ventana.add(rigidArea5);
 		
-		JPanel panel = new JPanel();
 		
-		panel.setBackground(Color.LIGHT_GRAY);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		//panel.setAlignmentX(75);
-		panel.setBorder(new LineBorder(Color.DARK_GRAY));
-		panel.setPreferredSize(new Dimension(400, 300));
-		panel.setMaximumSize(new Dimension(400, 300));
-		Ventana.add(panel);
-		
-		Component rigidArea_3_1 = Box.createRigidArea(new Dimension(400, 60));
-		panel.add(rigidArea_3_1);
-		
-		JLabel lblNewLabel_2 = new JLabel("Usuario:");
-		lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
-		panel.add(lblNewLabel_2);
-		
-		txtUsuario = new JTextField();
-		panel.add(txtUsuario);
-		txtUsuario.setColumns(20);
-		
-		Component rigidArea_3_1_1_1 = Box.createRigidArea(new Dimension(400, 50));
-		panel.add(rigidArea_3_1_1_1);
-		
-		JLabel lblNewLabel_2_1 = new JLabel("Password");
-		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.LEFT);
-		panel.add(lblNewLabel_2_1);
-		
-		txtPassword = new JTextField();
-		txtPassword.setHorizontalAlignment(SwingConstants.LEFT);
-		txtPassword.setColumns(20);
-		panel.add(txtPassword);
-		
-		Component rigidArea_3_1_1_2 = Box.createRigidArea(new Dimension(3, 20));
-		panel.add(rigidArea_3_1_1_2);
-		
-		Component rigidArea_3_1_1 = Box.createRigidArea(new Dimension(400, 50));
-		panel.add(rigidArea_3_1_1);
-		
-		btnLogin = new JButton("Aceptar");
-		panel.add(btnLogin);
-		
-		Component rigidArea_4 = Box.createRigidArea(new Dimension(60, 20));
-		panel.add(rigidArea_4);
-		
-		JButton btnNewButton_6 = new JButton("Cancelar");
-		panel.add(btnNewButton_6);
 		
 		add(Ventana);
+		Component h1 = Box.createRigidArea(new Dimension(15, 15));
+		Ventana.add(h1);
 		
-		btnLogin.addActionListener(this);
-		/*setSize(Constantes.x_size,Constantes.y_size);
-		setLayout(new BorderLayout());
-		rotulo=new JLabel("Alta Producto",JLabel.CENTER);
-		fixedSize(rotulo,Constantes.x_size,60);
-		rotulo.setFont(fuenteGrande);
-		add(rotulo,BorderLayout.NORTH);
-
-		datosProducto=new JPanel();
-		datosProducto.setLayout(new FlowLayout(FlowLayout.LEFT));
+		
+		JLabel tituloVideo = new JLabel();
+		tituloVideo.setText("Titulo del video");
+		tituloVideo.setFont(new Font("Arial",Font.BOLD,32));
+		tituloVideo.setHorizontalTextPosition(JLabel.CENTER);
+		tituloVideo.setVerticalTextPosition(JLabel.CENTER);
+		
+		tituloVideo.setAlignmentX(Component.CENTER_ALIGNMENT);
+		Ventana.add(tituloVideo);
+		
+		Component h2 = Box.createRigidArea(new Dimension(40, 40));
+		Ventana.add(h2);
+		//videoWeb.playVideo("https://www.youtube.com/watch?v=EdVMSYomYJY");
 	
-		lnombre=new JLabel("Nombre:",JLabel.RIGHT);	
-		fixedSize(lnombre,170,24);
-		nombre=new JTextField(); 
-		fixedSize(nombre,140,24); 
-	
-		lprecio=new JLabel("Precio:",JLabel.RIGHT); 
-		fixedSize(lprecio,60,24);
-		precio=new JTextField(); 
-		fixedSize(precio,90,24);
-
-		ldescripcion=new JLabel("Descripcion:",JLabel.RIGHT); 
-		fixedSize(ldescripcion,170,24);
-		descripcion=new JTextArea(); 
-		fixedSize(descripcion,300,100);
-		descripcion.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-	
-		btnRegistrar=new JButton("Registrar"); fixedSize(btnRegistrar,100,30);
-		btnCancelar=new JButton("Cancelar"); fixedSize(btnCancelar,100,30);
+		validate();
+		Ventana.add(videoWeb);
 		
-		lalerta=new JLabel("Los campos Nombre y Precio son obligtorios",JLabel.CENTER);
-		lalerta.setForeground(Color.RED); fixedSize(lalerta,Constantes.x_size,30);
-		lalerta.setVisible(false);
+		JLabel nuevaEtiqueta = new JLabel("Nueva etiqueta:");
+		JTextField txtEtiqueta = new JTextField();
+		txtEtiqueta.setColumns(10);
+		JButton btnAnadir = new JButton("Añadir");
 		
-		datosProducto.add(Box.createRigidArea(new Dimension(Constantes.x_size,35)));
-		datosProducto.add(lnombre); datosProducto.add(nombre);
-		datosProducto.add(lprecio); datosProducto.add(precio);
-		datosProducto.add(ldescripcion);
-		datosProducto.add(descripcion);
-		datosProducto.add(Box.createRigidArea(new Dimension(Constantes.x_size,39)));
-		datosProducto.add(Box.createRigidArea(new Dimension(170,20)));
-		datosProducto.add(btnRegistrar);
-		datosProducto.add(Box.createRigidArea(new Dimension(90,20)));
-		datosProducto.add(btnCancelar);
-		datosProducto.add(lalerta);
+		JPanel anadirNuevaEtiqueta = new JPanel();
+		anadirNuevaEtiqueta.setLayout(new FlowLayout( FlowLayout.LEFT));
+		fixedSize(anadirNuevaEtiqueta,300,40);
+		anadirNuevaEtiqueta.setBackground(Color.LIGHT_GRAY);
+		anadirNuevaEtiqueta.add(nuevaEtiqueta);
+		anadirNuevaEtiqueta.add(txtEtiqueta);
+		anadirNuevaEtiqueta.add(btnAnadir);
 		
-		add(datosProducto,BorderLayout.CENTER);
+		Component h3 = Box.createRigidArea(new Dimension(80, 80));
+		Ventana.add(h3);
 		
-		//Manejadores
-		*/
-		/*btnNewButton_5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {	
-				String auxUsuario=usuarioText.getText().trim();
-				String auxPassword=passwordText.getText().trim();
-				//double doubleprecio=Double.parseDouble(auxPrecio);
-				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
-				else if (!ControladorTienda.getUnicaInstancia().autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
-				else { /*lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
-					   JOptionPane.showMessageDialog(ventana,
-								"Producto dado de alta",
-								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
-					   precio.setText(""); usuarioText.setText(""); 
-					   descripcion.setText(""); lalerta.setVisible(false); 
-					
-					usuarioText.setText(""); passwordText.setText("");
-					for(ActionListener a: loginMainButton.getActionListeners()) {
-					    a.actionPerformed(new ActionEvent(loginMainButton, ActionEvent.ACTION_PERFORMED, null) {
-					          //Nothing need go here, the actionPerformed method (with the
-					          //above arguments) will trigger the respective listener
-					    });
-					    }
-					}
-				}
-			}	
-		});*/
+		Ventana.add(anadirNuevaEtiqueta);
+		
+		
 		}
 		
 		@Override
