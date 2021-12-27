@@ -10,6 +10,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -45,6 +47,9 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JButton btnPlay;
 	private String usuario;
 	
+	DefaultListModel<String> model = new DefaultListModel<String>();
+	DefaultListModel<String> model2 = new DefaultListModel<String>();
+	
 	public PanelExplorar(VentanaMain v){
 		//videoWeb = new VideoWeb();
 		ventana=v; 
@@ -57,7 +62,6 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panelExplorar.setBackground(Color.BLACK);
 		//panelExplorar.setBounds(700, 250, 1024, 720);
 		panelExplorar.setLayout(new BoxLayout(panelExplorar, BoxLayout.X_AXIS));
-		
 		
 		
 		
@@ -175,32 +179,22 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panel_lista_2.setBackground(Color.LIGHT_GRAY);
 		panel_2.add(panel_lista_2);
 		
+		
 		JList<String> etiquetasDisponibles = new JList<String>(); 	//ETIQUETAS DE MAXIMO CARACTERES 30.
 		etiquetasDisponibles.setSelectedIndex(0);
 		etiquetasDisponibles.setVisibleRowCount(10);
 		etiquetasDisponibles.setFixedCellWidth(150);
-		String[] items = new String[] {};
-		DefaultListModel<String> model = new DefaultListModel<String>();
-		for (String item: items) 
-			model.addElement(item);
+		update(new ArrayList<String>());
 		etiquetasDisponibles.setModel(model);
-		
 		JScrollPane scroller = new JScrollPane(etiquetasDisponibles);
 		panel_lista_1.add(scroller);
 		
-		JButton anadirEtiqueta = new JButton ("añadir");
-		panel_lista_1.add(anadirEtiqueta);
-		JButton eliminarEtiqueta = new JButton ("eliminar");
-		panel_lista_1.add(eliminarEtiqueta);
+		
 		
 		JList<String> etiquetasSeleccionadas = new JList<String>(); 	//ETIQUETAS DE MAXIMO CARACTERES 30.
 		etiquetasSeleccionadas.setSelectedIndex(0);
 		etiquetasSeleccionadas.setVisibleRowCount(10);
 		etiquetasSeleccionadas.setFixedCellWidth(165);
-		String[] items2 = new String[]{};
-		DefaultListModel<String> model2 = new DefaultListModel<String>();
-		for (String item: items2) 
-			model2.addElement(item);
 		etiquetasSeleccionadas.setModel(model2);
 		
 		JScrollPane scroller2 = new JScrollPane(etiquetasSeleccionadas);
@@ -218,9 +212,11 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		etiquetasDisponibles.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()){
+					@SuppressWarnings("unchecked")
 					JList<String> source = (JList<String>)event.getSource();
-					String selected = source.getSelectedValue().toString();
-					model2.addElement(selected);
+					String selected = source.getSelectedValue();
+					if(!model2.contains(selected)) model2.addElement(selected);
+					
 				}
 			}
 		});
@@ -237,16 +233,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		});
 		
 		
-		anadirEtiqueta.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(e.getSource() == anadirEtiqueta)
-				{
-					 JFrame f=new JFrame();   
-					 String nuevaEtiqueta=JOptionPane.showInputDialog(f,"Nombre de la nueva etiqueta","Nueva etiqueta",3);
-					 model.addElement(nuevaEtiqueta);
-				}
-			}
-		});
+		
 	}
 		
 		@Override
@@ -265,13 +252,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			
 		
 	
-	
-	private void showErrorAuth() {
-		JOptionPane.showMessageDialog(ventana,
-				"Usuario o contraseña no valido",
-				"Error",JOptionPane.ERROR_MESSAGE);
-	}
-	
+
 		
 	private void fixedSize(JComponent c,int x, int y) {
 		c.setMinimumSize(new Dimension(x,y));
@@ -288,4 +269,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		playButton = playMainButton;
 	}
 
+	public void update(List<String> etiquetasDadas) {	
+		model.removeAllElements();
+		for (String etiqueta: etiquetasDadas) 
+			model.addElement(etiqueta);
+		model2.removeAllElements();
+	}
 }

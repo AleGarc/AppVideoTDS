@@ -1,10 +1,17 @@
 package controlador;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.EventObject;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+
+import modelo.CatalogoEtiquetas;
 import modelo.CatalogoUsuarios;
 import modelo.CatalogoVideos;
+import modelo.Etiqueta;
 import modelo.CatalogoVentas;
 import modelo.Usuario;
 import modelo.Video;
@@ -13,12 +20,17 @@ import persistencia.DAOException;
 import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorClienteDAO;
 import persistencia.IAdaptadorVideoDAO;
-import persistencia.IAdaptadorVentaDAO;
+import pulsador.IEncendidoListener;
 
-public class ControladorTienda {
+import persistencia.IAdaptadorVentaDAO;
+import umu.tds.componente.ArchivoVideosEvent;
+import umu.tds.componente.CargadorVideos;
+import umu.tds.componente.IArchivoVideosListener;
+import umu.tds.componente.Videos;
+
+public class ControladorTienda implements IEncendidoListener, IArchivoVideosListener{
 
 	private static ControladorTienda unicaInstancia;
-
 	private IAdaptadorClienteDAO adaptadorCliente;
 	private IAdaptadorVideoDAO adaptadorVideo;
 	private IAdaptadorVentaDAO adaptadorVenta;
@@ -26,8 +38,11 @@ public class ControladorTienda {
 	private CatalogoUsuarios catalogoUsuarios;
 	private CatalogoVentas catalogoVentas;
 	private CatalogoVideos catalogoVideos;
+	private CatalogoEtiquetas catalogoEtiquetas;
 
 	private Venta ventaActual;
+	
+	private CargadorVideos cargadorVideos;
 
 	private ControladorTienda() {
 		inicializarAdaptadores(); // debe ser la primera linea para evitar error
@@ -49,20 +64,19 @@ public class ControladorTienda {
 		return true;		//CAMBIAr
 	}
 
-	public void registrarVideo(String titulo, String url) {
+	public void registrarVideo(String titulo, String url, List<Etiqueta> etiquetas) {
 		// No se controla que el valor del string precio sea un double
-		Video video = new Video(titulo, url);
+		Video video = new Video(titulo, url, etiquetas);
 		adaptadorVideo.registrarVideo(video);
-
 		catalogoVideos.addVideo(video);
 	}
-
-	public void crearVenta() {
-		ventaActual = new Venta();
-	}
 	
-	public void anadirLineaVenta(int unidades, Video video) {
-		ventaActual.addLineaVenta(unidades, video);
+	public List<Etiqueta> stringToEtiquetas(List<String> etiquetasString){
+		ArrayList<Etiqueta> etiquetas = new ArrayList<Etiqueta>();
+		for(String e: etiquetasString) {
+			etiquetas.add(new Etiqueta(e));
+		}
+		return etiquetas;
 	}
 
 	public void registrarVenta(String dni, Date fecha) {
@@ -87,23 +101,71 @@ public class ControladorTienda {
 		adaptadorCliente = factoria.getClienteDAO();
 		adaptadorVideo = factoria.getVideoDAO();
 		adaptadorVenta = factoria.getVentaDAO();
+		
+		cargadorVideos = new CargadorVideos();
+		cargadorVideos.addArchivoListener(this);
 	}
 
 	private void inicializarCatalogos() {
 		catalogoUsuarios = CatalogoUsuarios.getUnicaInstancia();
 		catalogoVentas = CatalogoVentas.getUnicaInstancia();
 		catalogoVideos = CatalogoVideos.getUnicaInstancia();
+		catalogoEtiquetas = CatalogoEtiquetas.getUnicaInstancia();
 	}
 
 	public boolean existeCliente(String dni) {
-		return CatalogoUsuarios.getUnicaInstancia().getCliente(dni) != null;
+		return catalogoUsuarios.getCliente(dni) != null;
 	}
 	
 	public boolean autenticarUsuario(String user, String password) {
-		return CatalogoUsuarios.getUnicaInstancia().authUsuario(user, password);
+		return catalogoUsuarios.authUsuario(user, password);
 	}
 
 	public List<Video> getVideos() {
 		return catalogoVideos.getVideos();
+	}
+	
+	public List<String> getEtiquetasDisponibles(){
+		return catalogoEtiquetas.getEtiquetasString();
+	}
+
+	@Override
+	public void enteradoCambioEncendido(EventObject arg0) {
+	
+			JFileChooser eleccionFichero =  new JFileChooser();
+			int returnVal = eleccionFichero.showOpenDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+			        File file = eleccionFichero.getSelectedFile();
+			        //This is where a real application would open the file.
+			        System.out.println("Opening: " + file.getAbsolutePath() + ".");
+			        cargarVideos(file);
+			        
+			       
+			} else {
+				 System.out.println("Open command cancelled by user.");
+			}
+		
+		
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void cargarVideos(File xml) {
+		cargadorVideos.setArchivoVideos(xml);
+	}
+
+	@Override
+	public void enteradoNuevoArchivo(EventObject arg0) {
+		if(arg0 instanceof ArchivoVideosEvent){
+			ArchivoVideosEvent evento = (ArchivoVideosEvent)arg0;
+			Videos listaVideos = evento.getVideos();
+			List<String> etiquetas = new ArrayList<String>();
+			for(umu.tds.componente.Video video: listaVideos.getVideo()) {
+				etiquetas.addAll(video.getEtiqueta());
+				registrarVideo(video.getTitulo(), video.getURL(), stringToEtiquetas(etiquetas));
+				etiquetas.clear();
+			}
+		}
+		
 	}
 }

@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EventObject;
@@ -44,7 +45,7 @@ import pulsador.Luz;
 import modelo.Venta;
 
 @SuppressWarnings("serial")
-public class VentanaMain extends JFrame implements ActionListener, IEncendidoListener{
+public class VentanaMain extends JFrame implements ActionListener{
 	
 
 	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista;
@@ -214,7 +215,7 @@ public class VentanaMain extends JFrame implements ActionListener, IEncendidoLis
 		
 		pulsador = new Luz();
 		pulsador.setColor(Color.GREEN);
-		pulsador.addEncendidoListener(this);
+		pulsador.addEncendidoListener(ControladorTienda.getUnicaInstancia());
 		Opciones.add(pulsador);
 		
 		btnExplorar.addActionListener(this);
@@ -257,6 +258,7 @@ public class VentanaMain extends JFrame implements ActionListener, IEncendidoLis
 		    return;
 		}
 		if (e.getSource() == btnExplorar) {
+			panelExplorar.update(ControladorTienda.getUnicaInstancia().getEtiquetasDisponibles());
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
 		    validate();
@@ -342,22 +344,5 @@ public class VentanaMain extends JFrame implements ActionListener, IEncendidoLis
   		System.out.println("Total:"+v.getTotal());
   	}
 
-	@Override
-	public void enteradoCambioEncendido(EventObject arg0) {
-		if(arg0.getSource() == pulsador) {
-			JFileChooser eleccionFichero =  new JFileChooser();
-			int returnVal = eleccionFichero.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-			        String file = eleccionFichero.getSelectedFile().getName();
-			        //This is where a real application would open the file.
-			        System.out.println("Opening: " + file + ".");
-			       
-			} else {
-				 System.out.println("Open command cancelled by user.");
-			}
-		}
-		
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

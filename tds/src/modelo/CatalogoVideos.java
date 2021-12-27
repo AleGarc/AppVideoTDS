@@ -19,6 +19,7 @@ import persistencia.IAdaptadorVideoDAO;
 public class CatalogoVideos {
 	private Map<String,Video> videos; 
 	private static CatalogoVideos unicaInstancia = new CatalogoVideos();
+	private CatalogoEtiquetas catalogoEtiquetas = CatalogoEtiquetas.getUnicaInstancia();
 	
 	private FactoriaDAO dao;
 	private IAdaptadorVideoDAO adaptadorVideo;
@@ -58,6 +59,9 @@ public class CatalogoVideos {
 	
 	public void addVideo(Video vid) {
 		videos.put(vid.getTitulo(),vid);
+		for(Etiqueta e: vid.getEtiquetas()) {
+			catalogoEtiquetas.addEtiqueta(e);
+		}
 	}
 	public void removeVideo(Video pro) {
 		videos.remove(pro.getTitulo());

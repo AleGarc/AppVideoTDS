@@ -24,4 +24,10 @@ public class TDSFactoriaDAO extends FactoriaDAO {
 		return AdaptadorUsuarioTDS.getUnicaInstancia();
 	}
 
+	@Override
+	public IAdaptadorEtiquetaDAO getEtiquetaDAO() {
+		return AdaptadorEtiquetaTDS.getUnicaInstancia();
+	}
+
+	
 }

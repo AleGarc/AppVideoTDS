@@ -21,7 +21,7 @@ public class Video {
 		this.codigo = 0;
 		this.titulo = titulo;
 		this.url = url;
-		this.etiquetas = new LinkedList<Etiqueta>(etiquetas);
+		this.etiquetas = etiquetas;
 	}
 	
 	public String getTitulo() {
