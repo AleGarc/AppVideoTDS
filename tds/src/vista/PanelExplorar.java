@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -39,19 +41,20 @@ import tds.video.VideoWeb;
 
 public class PanelExplorar extends JPanel implements ActionListener{
 	private JTextField textField;
-	private JList<String> etiquetasDisponibles;
-	private JList<String> etiquetasSeleccionadas;
 	private VentanaMain ventana;
-	//private static VideoWeb videoWeb;
+	private static VideoWeb videoWeb;
 	private JButton playButton;
 	private JButton btnPlay;
 	private String usuario;
+	private List<JLabel> videosBuscados = new ArrayList<JLabel>();
 	
 	DefaultListModel<String> model = new DefaultListModel<String>();
 	DefaultListModel<String> model2 = new DefaultListModel<String>();
 	
+	
+	JPanel resultados = new JPanel();
 	public PanelExplorar(VentanaMain v){
-		//videoWeb = new VideoWeb();
+		videoWeb = new VideoWeb();
 		ventana=v; 
 		crearPantalla();
 	}
@@ -91,18 +94,21 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		Component rigidArea2 = Box.createRigidArea(new Dimension(5, 5));
 		PanelIzquierdo.add(rigidArea2);
 		
-		JPanel resultados = new JPanel();
+		resultados = new JPanel();
 		resultados.setBorder(new LineBorder(new Color(0, 0, 0)));
 		resultados.setBackground(Color.LIGHT_GRAY);
 		fixedSize(resultados, 700, 439);
+		resultados.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
 		PanelIzquierdo.add(resultados);
 		
+		updateResultados();
 		
+		/*
 		JLabel miniatura = new JLabel();
 		miniatura.setText("Mariano Rajoy");
 		//resultados.add(videoWeb);
 		resultados.add(miniatura);
-		//miniatura.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
+		miniatura.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
 		miniatura.setHorizontalTextPosition(JLabel.CENTER);
 		miniatura.setVerticalTextPosition(JLabel.BOTTOM);
 		
@@ -110,13 +116,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		miniatura2.setText("Perro Sanxe");
 		//resultados.add(videoWeb);
 		resultados.add(miniatura2);
-		//miniatura2.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=YlJB3gGOluk"));
+		miniatura2.setIcon(videoWeb.getThumb("https://www.youtube.com/watch?v=YlJB3gGOluk"));
 		miniatura2.setHorizontalTextPosition(JLabel.CENTER);
 		miniatura2.setVerticalTextPosition(JLabel.BOTTOM);
 		//miniatura.setIcon(videoWeb.getSmallThumb("https://www.youtube.com/watch?v=EdVMSYomYJY"));
 	    //videoWeb.playVideo("https://www.youtube.com/watch?v=EdVMSYomYJY");
 	    validate();
-	    
+	    */
 		
 		
 		
@@ -274,5 +280,26 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		for (String etiqueta: etiquetasDadas) 
 			model.addElement(etiqueta);
 		model2.removeAllElements();
+	}
+	
+	public void updateResultados() {
+		resultados.removeAll();
+		for(JLabel label: videosBuscados) {
+			resultados.add(label);
+		}
+	}
+	
+	public void updateVideos(Map<String,String> videos) {
+		videosBuscados.removeAll(videosBuscados);
+		for(String titulo: videos.keySet()) {
+			//System.out.println(titulo + videos.get(titulo));
+			JLabel video = new JLabel();
+			video.setText(titulo);
+			video.setIcon(videoWeb.getThumb(videos.get(titulo)));
+			video.setHorizontalTextPosition(JLabel.CENTER);
+			video.setVerticalTextPosition(JLabel.BOTTOM);
+			videosBuscados.add(video);
+		}
+		
 	}
 }

@@ -16,7 +16,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -42,6 +44,7 @@ import modelo.LineaVenta;
 import modelo.Video;
 import pulsador.IEncendidoListener;
 import pulsador.Luz;
+import umu.tds.componente.Videos;
 import modelo.Venta;
 
 @SuppressWarnings("serial")
@@ -259,6 +262,17 @@ public class VentanaMain extends JFrame implements ActionListener{
 		}
 		if (e.getSource() == btnExplorar) {
 			panelExplorar.update(ControladorTienda.getUnicaInstancia().getEtiquetasDisponibles());
+			
+			
+			List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
+			Map<String, String> videosMapa = new HashMap<String, String>();
+			for(Video v: videos) {
+				videosMapa.put(v.getTitulo(), v.getUrl());
+			}
+			
+			panelExplorar.updateVideos(videosMapa);
+			panelExplorar.updateResultados();
+			
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
 		    validate();
