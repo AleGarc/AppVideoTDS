@@ -1,6 +1,7 @@
 package vista;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,6 +11,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,9 @@ import javax.swing.event.ListSelectionListener;
 
 import controlador.ControladorTienda;
 import tds.video.VideoWeb;
+import modelo.Video;
+import modelo.VideoDisplay;
+import modelo.VideoDisplayListRenderer;
 
 
 public class PanelExplorar extends JPanel implements ActionListener{
@@ -45,17 +51,22 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private static VideoWeb videoWeb;
 	private JButton playButton;
 	private JButton btnPlay;
+	private JButton btnNuevaBusqueda;
 	private String usuario;
-	private List<JLabel> videosBuscados = new ArrayList<JLabel>();
+	private Video selectedVideo;
+	private List<Video> videosEncontrados = new ArrayList<Video>();
+	//private List<JLabel> videosBuscados = new ArrayList<JLabel>();
 	
 	DefaultListModel<String> model = new DefaultListModel<String>();
 	DefaultListModel<String> model2 = new DefaultListModel<String>();
 	
+	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
 	
-	JPanel resultados = new JPanel();
-	public PanelExplorar(VentanaMain v){
-		videoWeb = new VideoWeb();
+	//JPanel resultados = new JPanel();
+	public PanelExplorar(VentanaMain v, VideoWeb vWeb){
+		//videoWeb = new VideoWeb();
 		ventana=v; 
+		videoWeb = vWeb;
 		crearPantalla();
 	}
 	
@@ -94,14 +105,49 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		Component rigidArea2 = Box.createRigidArea(new Dimension(5, 5));
 		PanelIzquierdo.add(rigidArea2);
 		
-		resultados = new JPanel();
+		/*resultados = new JPanel();
 		resultados.setBorder(new LineBorder(new Color(0, 0, 0)));
 		resultados.setBackground(Color.LIGHT_GRAY);
-		fixedSize(resultados, 700, 439);
-		resultados.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
-		PanelIzquierdo.add(resultados);
+		//fixedSize(resultados, 700, 439);
+		//resultados.setMinimumSize(new Dimension(700, 439));
+		//resultados.setMaximumSize(new Dimension(700,2000000));
+		//resultados.setPreferredSize(resultados.getMinimumSize());
+		//resultados.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
+		resultados.setLayout(new GridLayout(0,4));*/
 		
-		updateResultados();
+		JList<VideoDisplay> lista = new JList<VideoDisplay>();
+		lista.setBackground(Color.LIGHT_GRAY);
+		lista.setBorder(new LineBorder(new Color(0, 0, 0)));
+		lista.setCellRenderer(new VideoDisplayListRenderer());
+		lista.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		lista.setVisibleRowCount(-1);
+		lista.setModel(modelVideos);
+		lista.addMouseListener(new MouseAdapter(){
+			@SuppressWarnings("serial")
+			public void mouseClicked(MouseEvent e)
+			{
+				if (e.getClickCount() == 2)
+				{
+					selectedVideo = videosEncontrados.get(lista.getSelectedIndex());
+					for(ActionListener a: playButton.getActionListeners()) {
+					    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
+					          //Nothing need go here, the actionPerformed method (with the
+					          //above arguments) will trigger the respective listener
+					    	
+					    });
+					    }
+				}
+			}
+		});
+		
+		JScrollPane scrollerResultados = new JScrollPane(lista);
+		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		fixedSize(scrollerResultados, 700,439);
+		PanelIzquierdo.add(scrollerResultados);
+		//PanelIzquierdo.add(resultados);
+		
+		//updateResultados();
 		
 		/*
 		JLabel miniatura = new JLabel();
@@ -140,13 +186,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JButton btnNewButton = new JButton("Buscar");
 		panel.add(btnNewButton);
 		
-		JButton btnNewButton_1 = new JButton("Nueva Busqueda");
-		panel.add(btnNewButton_1);
-		
-		btnPlay = new JButton("Reproducir");
-		btnPlay.addActionListener(this);
-		panel.add(btnPlay);
-		
+		btnNuevaBusqueda = new JButton("Nueva Busqueda");
+		btnNuevaBusqueda.addActionListener(this);
+		panel.add(btnNuevaBusqueda);
+			
 		
 		JPanel panelDerecho = new JPanel();
 		Ventana.add(panelDerecho);
@@ -193,6 +236,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		update(new ArrayList<String>());
 		etiquetasDisponibles.setModel(model);
 		JScrollPane scroller = new JScrollPane(etiquetasDisponibles);
+		scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		panel_lista_1.add(scroller);
 		
 		
@@ -205,6 +249,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 		JScrollPane scroller2 = new JScrollPane(etiquetasSeleccionadas);
 		scroller2.getViewport().setViewSize(panel_lista_2.getPreferredSize());
+		scroller2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		panel_lista_2.add(scroller2);
 		
 		
@@ -241,25 +286,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 		
 	}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource()== btnPlay) { 
-					for(ActionListener a: playButton.getActionListeners()) {
-					    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
-					          //Nothing need go here, the actionPerformed method (with the
-					          //above arguments) will trigger the respective listener
-					    	
-					    });
-					    }
-					}
-		}
-				
-			
-		
-	
 
-		
 	private void fixedSize(JComponent c,int x, int y) {
 		c.setMinimumSize(new Dimension(x,y));
 		c.setMaximumSize(new Dimension(x,y));
@@ -280,26 +307,34 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		for (String etiqueta: etiquetasDadas) 
 			model.addElement(etiqueta);
 		model2.removeAllElements();
+				//HAY QUE USAR VALIDATE() MIRAR 
 	}
 	
-	public void updateResultados() {
+	/*public void updateResultados() {
 		resultados.removeAll();
 		for(JLabel label: videosBuscados) {
 			resultados.add(label);
 		}
+	}*/
+	
+	public void updateVideos(List<Video> videos) {
+		videosEncontrados = videos;
+		for(Video v: videos) {
+			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
+		}
 	}
 	
-	public void updateVideos(Map<String,String> videos) {
-		videosBuscados.removeAll(videosBuscados);
-		for(String titulo: videos.keySet()) {
-			//System.out.println(titulo + videos.get(titulo));
-			JLabel video = new JLabel();
-			video.setText(titulo);
-			video.setIcon(videoWeb.getThumb(videos.get(titulo)));
-			video.setHorizontalTextPosition(JLabel.CENTER);
-			video.setVerticalTextPosition(JLabel.BOTTOM);
-			videosBuscados.add(video);
-		}
+	public void setVideoWeb(VideoWeb v){
+		videoWeb = v;
+	}
+	
+	public Video getSelectedVideo() {
+		return selectedVideo;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -44,6 +44,7 @@ import modelo.LineaVenta;
 import modelo.Video;
 import pulsador.IEncendidoListener;
 import pulsador.Luz;
+import tds.video.VideoWeb;
 import umu.tds.componente.Videos;
 import modelo.Venta;
 
@@ -62,20 +63,24 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private PanelAltaVideo panelAltaProducto;
 	private PanelCrearVenta panelCrearVenta;
 	private PanelExplorar panelExplorar;
-	private PanelReproductor panelReproductor;
+	private PanelNuevaLista panelNuevaLista;
+	private PanelMisListas panelMisListas;
+	
 	
 	private JButton loginMainButton;
 	private JButton playMainButton;
 	
 	private final String panelLoginCard = "panelLoginCard";
 	private final String panelExplorarCard = "panelExplorar";
-	private final String panelReproductorCard = "panelReproductor";
+	private final String panelMisListasCard = "panelMisListas";
+	private final String panelNuevaListaCard = "panelNuevaLista";
 	private String usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
 	
 	private Luz pulsador;
 	
+	private static VideoWeb videoWeb = new VideoWeb();
 	
 	public VentanaMain(){
 		//setSize(Constantes.ventana_x_size,Constantes.ventana_y_size);
@@ -98,9 +103,10 @@ public class VentanaMain extends JFrame implements ActionListener{
 		panelAltaCliente = new PanelAltaCliente(this);
 		panelAltaProducto = new PanelAltaVideo(this);
 		panelCrearVenta = new PanelCrearVenta(this);
-		panelExplorar = new PanelExplorar(this);
+		panelExplorar = new PanelExplorar(this, videoWeb);
 		panelExplorar.setPlayMainButton(playMainButton);
-		panelReproductor = new PanelReproductor(this);
+		panelNuevaLista = new PanelNuevaLista(this, videoWeb);
+		panelMisListas = new PanelMisListas(this, videoWeb);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -116,7 +122,10 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		contenido.add(panelExplorar, panelExplorarCard);
 		
-		contenido.add(panelReproductor, panelReproductorCard);
+		contenido.add(panelMisListas, panelMisListasCard);
+		
+		contenido.add(panelNuevaLista, panelNuevaListaCard);
+		
 		//contenido.add(panelAltaCliente, panelRegistroCard);
 		
 		CardLayout c1 = (CardLayout)(contenido.getLayout());
@@ -227,6 +236,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnLogin.addActionListener(this);
 		btnRegistro.addActionListener(this);
 		btnLogout.addActionListener(this);
+		btnNuevaLista.addActionListener(this);
 	}
 	
 	
@@ -265,13 +275,9 @@ public class VentanaMain extends JFrame implements ActionListener{
 			
 			
 			List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
-			Map<String, String> videosMapa = new HashMap<String, String>();
-			for(Video v: videos) {
-				videosMapa.put(v.getTitulo(), v.getUrl());
-			}
 			
-			panelExplorar.updateVideos(videosMapa);
-			panelExplorar.updateResultados();
+			panelExplorar.updateVideos(videos);
+			//panelExplorar.updateResultados();
 			
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
@@ -287,6 +293,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 			btnRegistro.setVisible(false);
 			btnLogout.setVisible(true);
 			btnPremium.setVisible(true);
+			validate();
 			return;
 		}
 		if(e.getSource() == btnLogout) {
@@ -296,12 +303,38 @@ public class VentanaMain extends JFrame implements ActionListener{
 			btnRegistro.setVisible(true);
 			btnLogout.setVisible(false);
 			btnPremium.setVisible(false);
+			validate();
 			return;
 		}
 		if(e.getSource() == playMainButton) {
+			panelMisListas.switchMode(Mode.REPRODUCTOR);
+			panelMisListas.setVideo(panelExplorar.getSelectedVideo());
+			/*CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelReproductorCard);*/
 			CardLayout cl = (CardLayout)(contenido.getLayout());
-		    cl.show(contenido, panelReproductorCard);
+		    cl.show(contenido, panelMisListasCard);
 		    validate();
+			return;
+		}
+		if (e.getSource() == btnMisListas) {
+			panelMisListas.switchMode(Mode.MISLISTAS);
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelMisListasCard);
+		    validate();
+		    
+		    List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
+			
+			panelMisListas.updateVideos(videos);
+			
+			return;
+		}
+		if (e.getSource() == btnNuevaLista) {
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelNuevaListaCard);
+		    validate();
+		    
+		    List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
+			panelNuevaLista.updateVideos(videos);
 			return;
 		}
 	}

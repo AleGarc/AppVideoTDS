@@ -137,7 +137,6 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 			        File file = eleccionFichero.getSelectedFile();
 			        //This is where a real application would open the file.
-			        System.out.println("Opening: " + file.getAbsolutePath() + ".");
 			        cargarVideos(file);
 			        
 			       
