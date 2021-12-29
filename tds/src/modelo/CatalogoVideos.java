@@ -53,25 +53,25 @@ public class CatalogoVideos {
 		}
 		return null;
 	}
-	public Video getVideo(String nombre) {
-		return videos.get(nombre); 
+	public Video getVideo(String url) {
+		return videos.get(url); 
 	}
 	
 	public void addVideo(Video vid) {
-		videos.put(vid.getTitulo(),vid);
+		videos.put(vid.getUrl(),vid);
 		for(Etiqueta e: vid.getEtiquetas()) {
 			catalogoEtiquetas.addEtiqueta(e);
 		}
 	}
 	public void removeVideo(Video pro) {
-		videos.remove(pro.getTitulo());
+		videos.remove(pro.getUrl());
 	}
 	
 	/*Recupera todos los Videos para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
 		 List<Video> VideosBD = adaptadorVideo.recuperarTodosVideos();
 		 for (Video pro: VideosBD) 
-			     videos.put(pro.getTitulo(),pro);
+			     videos.put(pro.getUrl(),pro);
 	}
 	
 }

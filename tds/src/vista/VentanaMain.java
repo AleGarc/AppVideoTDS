@@ -80,7 +80,10 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 	private Luz pulsador;
 	
-	private static VideoWeb videoWeb = new VideoWeb();
+	
+	private static ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
+	
+	private static VideoWeb videoWeb = controladorTienda.getVideoWeb();
 	
 	public VentanaMain(){
 		//setSize(Constantes.ventana_x_size,Constantes.ventana_y_size);
@@ -227,7 +230,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		pulsador = new Luz();
 		pulsador.setColor(Color.GREEN);
-		pulsador.addEncendidoListener(ControladorTienda.getUnicaInstancia());
+		pulsador.addEncendidoListener(controladorTienda);
 		Opciones.add(pulsador);
 		
 		btnExplorar.addActionListener(this);
@@ -271,10 +274,10 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    return;
 		}
 		if (e.getSource() == btnExplorar) {
-			panelExplorar.update(ControladorTienda.getUnicaInstancia().getEtiquetasDisponibles());
+			panelExplorar.update(controladorTienda.getEtiquetasDisponibles());
 			
 			
-			List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
+			List<Video> videos = controladorTienda.getVideos();
 			
 			panelExplorar.updateVideos(videos);
 			//panelExplorar.updateResultados();
@@ -322,7 +325,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    cl.show(contenido, panelMisListasCard);
 		    validate();
 		    
-		    List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
+		    List<Video> videos = controladorTienda.getVideos();
 			
 			panelMisListas.updateVideos(videos);
 			
@@ -333,7 +336,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    cl.show(contenido, panelNuevaListaCard);
 		    validate();
 		    
-		    List<Video> videos = ControladorTienda.getUnicaInstancia().getVideos();
+		    List<Video> videos = controladorTienda.getVideos();
 			panelNuevaLista.updateVideos(videos);
 			return;
 		}
@@ -343,7 +346,7 @@ public class VentanaMain extends JFrame implements ActionListener{
   		listado.setText("Codigo     Nombre                         Precio\n");
   		listado.append("---------- ------------------------------ --------\n");
   		
-  		for (Video p: ControladorTienda.getUnicaInstancia().getVideos()) {
+  		for (Video p: controladorTienda.getVideos()) {
   			String codigo=String.format("%1$10d",p.getTitulo());
   			String nombre=String.format("%1$-30s",p.getUrl());
   			//String precio=String.format("%1$8.2f",p.getPrecio());

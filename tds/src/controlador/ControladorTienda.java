@@ -19,9 +19,10 @@ import modelo.Venta;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorClienteDAO;
+import persistencia.IAdaptadorEtiquetaDAO;
 import persistencia.IAdaptadorVideoDAO;
 import pulsador.IEncendidoListener;
-
+import tds.video.VideoWeb;
 import persistencia.IAdaptadorVentaDAO;
 import umu.tds.componente.ArchivoVideosEvent;
 import umu.tds.componente.CargadorVideos;
@@ -44,10 +45,14 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 	
 	private CargadorVideos cargadorVideos;
 
+	private static VideoWeb videoWeb;
+	
 	private ControladorTienda() {
 		inicializarAdaptadores(); // debe ser la primera linea para evitar error
 								  // de sincronización
 		inicializarCatalogos();
+		
+		videoWeb = new VideoWeb();
 	}
 
 	public static ControladorTienda getUnicaInstancia() {
@@ -56,19 +61,30 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		return unicaInstancia;
 	}
 
-	public boolean registrarCliente(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
-		// No se controla que existan dnis duplicados
-		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
-		adaptadorCliente.registrarCliente(user);
-		catalogoUsuarios.addCliente(user);
-		return true;		//CAMBIAr
+	public boolean registrarCliente(String nombre_completo, String email, String usuario, String password, String fecha_nacimiento) {
+		if(catalogoUsuarios.getCliente(usuario) == null) {
+			Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
+			adaptadorCliente.registrarCliente(user);
+			catalogoUsuarios.addCliente(user);
+			return true;	
+		}
+		return false;
 	}
 
 	public void registrarVideo(String titulo, String url, List<Etiqueta> etiquetas) {
-		// No se controla que el valor del string precio sea un double
-		Video video = new Video(titulo, url, etiquetas);
-		adaptadorVideo.registrarVideo(video);
-		catalogoVideos.addVideo(video);
+		if(catalogoVideos.getVideo(url) == null){
+			Video video = new Video(titulo, url, etiquetas);
+			adaptadorVideo.registrarVideo(video);
+			catalogoVideos.addVideo(video);
+			for(Etiqueta e: etiquetas){
+				registrarEtiqueta(e);
+			}
+		}
+		
+	}
+	
+	public void registrarEtiqueta(Etiqueta etiqueta) {
+		catalogoEtiquetas.addEtiqueta(etiqueta);
 	}
 	
 	public List<Etiqueta> stringToEtiquetas(List<String> etiquetasString){
@@ -158,13 +174,14 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		if(arg0 instanceof ArchivoVideosEvent){
 			ArchivoVideosEvent evento = (ArchivoVideosEvent)arg0;
 			Videos listaVideos = evento.getVideos();
-			List<String> etiquetas = new ArrayList<String>();
 			for(umu.tds.componente.Video video: listaVideos.getVideo()) {
-				etiquetas.addAll(video.getEtiqueta());
-				registrarVideo(video.getTitulo(), video.getURL(), stringToEtiquetas(etiquetas));
-				etiquetas.clear();
+				registrarVideo(video.getTitulo(), video.getURL(), stringToEtiquetas(video.getEtiqueta()));
 			}
 		}
 		
+	}
+	
+	public VideoWeb getVideoWeb() {
+		return videoWeb;
 	}
 }

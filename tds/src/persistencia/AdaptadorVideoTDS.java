@@ -31,19 +31,15 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 	/* cuando se registra un Video se le asigna un identificador unico */
 	public void registrarVideo(Video video) {
 		Entidad eVideo = null;
-		// Si la entidad está registrada no la registra de nuevo
-		boolean existe = true; 
+		// Si la entidad esta registrada no la registra de nuevo
 		try {
 			eVideo = servPersistencia.recuperarEntidad(video.getCodigo());
-		} catch (NullPointerException e) {
-			existe = false;
-		}
-		if (existe) return;
+		} catch (NullPointerException e) {}
+		if (eVideo != null) return;
 		
 		// registrar primero los atributos que son objetos
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		adaptadorEtiqueta.registrarListaEtiqueta(video.getEtiquetas());
-
 		
 		// crear entidad Video
 		eVideo = new Entidad();
@@ -97,7 +93,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 
 	public List<Video> recuperarTodosVideos() {
 		List<Video> videos = new LinkedList<Video>();
-		List<Entidad> entidades = servPersistencia.recuperarEntidades("Video");
+		List<Entidad> entidades = servPersistencia.recuperarEntidades("video");
 
 		for (Entidad eVideo : entidades) {
 			videos.add(recuperarVideo(eVideo.getId()));

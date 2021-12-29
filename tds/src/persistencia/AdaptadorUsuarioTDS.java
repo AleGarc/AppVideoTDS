@@ -32,21 +32,13 @@ public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 
 	/* cuando se registra un cliente se le asigna un identificador único */
 	public void registrarCliente(Usuario usuario) {
-		Entidad eCliente;
-		boolean existe = true; 
+		Entidad eCliente = null;
 		
 		// Si la entidad está registrada no la registra de nuevo
 		try {
 			eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
-		} catch (NullPointerException e) {
-			existe = false;
-		}
-		if (existe) return;
-
-		// registrar primero los atributos que son objetos
-		AdaptadorVentaTDS adaptadorVenta = AdaptadorVentaTDS.getUnicaInstancia();
-		/*for (Venta v : cliente.getVentas())
-			adaptadorVenta.registrarVenta(v);*/
+		} catch (NullPointerException e) {}
+		if (eCliente != null) return;
 
 		// crear entidad Cliente
 		eCliente = new Entidad();
@@ -66,6 +58,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 		// asignar identificador unico
 		// Se aprovecha el que genera el servicio de persistencia
 		usuario.setCodigo(eCliente.getId()); 
+
 	}
 
 	public void borrarCliente(Usuario usuario) {
@@ -148,23 +141,4 @@ public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 		return usuarios;
 	}
 
-	// -------------------Funciones auxiliares-----------------------------
-	private String obtenerCodigosVentas(List<Venta> listaVentas) {
-		String aux = "";
-		for (Venta v : listaVentas) {
-			aux += v.getCodigo() + " ";
-		}
-		return aux.trim();
-	}
-
-	private List<Venta> obtenerVentasDesdeCodigos(String ventas) {
-
-		List<Venta> listaVentas = new LinkedList<Venta>();
-		StringTokenizer strTok = new StringTokenizer(ventas, " ");
-		AdaptadorVentaTDS adaptadorV = AdaptadorVentaTDS.getUnicaInstancia();
-		while (strTok.hasMoreTokens()) {
-			listaVentas.add(adaptadorV.recuperarVenta(Integer.valueOf((String) strTok.nextElement())));
-		}
-		return listaVentas;
-	}
 }

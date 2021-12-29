@@ -32,14 +32,12 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 	/* cuando se registra un Etiqueta se le asigna un identificador unico */
 	public void registrarEtiqueta(Etiqueta etiqueta) {
 		Entidad eEtiqueta = null;
+		
 		// Si la entidad está registrada no la registra de nuevo
-		boolean existe = true; 
 		try {
 			eEtiqueta = servPersistencia.recuperarEntidad(etiqueta.getCodigo());
-		} catch (NullPointerException e) {
-			existe = false;
-		}
-		if (existe) return;
+		} catch (NullPointerException e) {}
+		if (eEtiqueta != null) return;
 		
 		// crear entidad Etiqueta
 		eEtiqueta = new Entidad();
@@ -51,7 +49,7 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 		eEtiqueta = servPersistencia.registrarEntidad(eEtiqueta);
 		// asignar identificador unico
 		// Se aprovecha el que genera el servicio de persistencia
-		etiqueta.setCodigo(eEtiqueta.getId());  
+		etiqueta.setCodigo(eEtiqueta.getId()); 
 	}
 
 	public void borrarEtiqueta(Etiqueta etiqueta) {
@@ -81,7 +79,7 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 
 	public List<Etiqueta> recuperarTodosEtiquetas() {
 		List<Etiqueta> etiquetas = new LinkedList<Etiqueta>();
-		List<Entidad> entidades = servPersistencia.recuperarEntidades("Etiqueta");
+		List<Entidad> entidades = servPersistencia.recuperarEntidades("etiqueta");
 
 		for (Entidad eEtiqueta : entidades) {
 			etiquetas.add(recuperarEtiqueta(eEtiqueta.getId()));

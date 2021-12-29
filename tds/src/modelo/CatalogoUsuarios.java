@@ -52,8 +52,8 @@ public class CatalogoUsuarios {
 		}
 		return null;
 	}
-	public Usuario getCliente(String dni) {
-		return usuarios.get(dni); 
+	public Usuario getCliente(String usuario) {
+		return usuarios.get(usuario); 
 	}
 	
 	public void addCliente(Usuario cli) {
