@@ -72,7 +72,7 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 	}
 
 	public void registrarVideo(String titulo, String url, List<Etiqueta> etiquetas) {
-		if(catalogoVideos.getVideo(url) == null){
+		if(catalogoVideos.getVideo(titulo) == null){
 			Video video = new Video(titulo, url, etiquetas);
 			adaptadorVideo.registrarVideo(video);
 			catalogoVideos.addVideo(video);
@@ -93,6 +93,10 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 			etiquetas.add(new Etiqueta(e));
 		}
 		return etiquetas;
+	}
+	
+	public List<Video> buscarVideos(String subCadena, List<String> etiquetas){
+		return catalogoVideos.buscarVideos(subCadena,etiquetas);
 	}
 
 	public void registrarVenta(String dni, Date fecha) {

@@ -18,6 +18,7 @@ import persistencia.IAdaptadorVideoDAO;
  */
 public class CatalogoVideos {
 	private Map<String,Video> videos; 
+	private Map<String,List<Video>> videosIndexadosEtiquetas;
 	private static CatalogoVideos unicaInstancia = new CatalogoVideos();
 	private CatalogoEtiquetas catalogoEtiquetas = CatalogoEtiquetas.getUnicaInstancia();
 	
@@ -29,6 +30,7 @@ public class CatalogoVideos {
   			dao = FactoriaDAO.getInstancia(FactoriaDAO.DAO_TDS);
   			adaptadorVideo = dao.getVideoDAO();
   			videos = new HashMap<String,Video>();
+  			videosIndexadosEtiquetas =  new HashMap<String, List<Video>>();
   			this.cargarCatalogo();
   		} catch (DAOException eDAO) {
   			eDAO.printStackTrace();
@@ -53,8 +55,8 @@ public class CatalogoVideos {
 		}
 		return null;
 	}
-	public Video getVideo(String url) {
-		return videos.get(url); 
+	public Video getVideo(String titulo) {
+		return videos.get(titulo); 
 	}
 	
 	public void addVideo(Video vid) {
@@ -64,14 +66,51 @@ public class CatalogoVideos {
 		}
 	}
 	public void removeVideo(Video pro) {
-		videos.remove(pro.getUrl());
+		videos.remove(pro.getTitulo());
 	}
 	
 	/*Recupera todos los Videos para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
 		 List<Video> VideosBD = adaptadorVideo.recuperarTodosVideos();
 		 for (Video pro: VideosBD) 
-			     videos.put(pro.getUrl(),pro);
+			     videos.put(pro.getTitulo(),pro);
+		 
+		 for(Etiqueta e: catalogoEtiquetas.getEtiquetas()) {
+			 List<Video> videosEtiquetados = new ArrayList<Video>();
+			 for (Video pro: VideosBD) {
+			     if(pro.contieneEtiqueta(e)) {
+			    	 videosEtiquetados.add(pro);
+			     }
+			 }
+			 videosIndexadosEtiquetas.put(e.getNombre(), videosEtiquetados);
+		 }
 	}
 	
+	
+	public List<Video> buscarVideos(String subCadena, List<String> etiquetasSeleccionadas){
+		List<Video> resultados = new ArrayList<Video>();
+		if(etiquetasSeleccionadas.isEmpty()) {
+			videos.forEach((t,v) ->{
+				if(t.contains(subCadena))
+					resultados.add(v);
+			});
+		}
+		else{
+			resultados.addAll(buscarVideosEtiquetados(subCadena, etiquetasSeleccionadas));
+		}
+		return resultados;
+	}
+	
+	public List<Video> buscarVideosEtiquetados(String subCadena, List<String> etiquetasSeleccionadas){
+		List<Video> resultadosEtiquetados = new ArrayList<Video>();
+		for(String etiqueta : etiquetasSeleccionadas){
+			List<Video> posiblesVideos = videosIndexadosEtiquetas.get(etiqueta);
+			for(Video v: posiblesVideos){
+				if(v.getTitulo().contains(subCadena))
+					if(!resultadosEtiquetados.contains(v))
+						resultadosEtiquetados.add(v);
+			}
+		}
+		return resultadosEtiquetados;
+	}
 }

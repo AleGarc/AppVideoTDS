@@ -69,6 +69,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 	private JButton loginMainButton;
 	private JButton playMainButton;
+	private JButton btnBusqueda;
 	
 	private final String panelLoginCard = "panelLoginCard";
 	private final String panelExplorarCard = "panelExplorar";
@@ -108,6 +109,12 @@ public class VentanaMain extends JFrame implements ActionListener{
 		panelCrearVenta = new PanelCrearVenta(this);
 		panelExplorar = new PanelExplorar(this, videoWeb);
 		panelExplorar.setPlayMainButton(playMainButton);
+		panelExplorar.update(controladorTienda.getEtiquetasDisponibles());
+		btnBusqueda = new JButton();
+		btnBusqueda.addActionListener(ev -> {
+			panelExplorar.updateVideos(controladorTienda.buscarVideos(panelExplorar.getSubcadenaBusqueda(), panelExplorar.getEtiquetasBusqueda()));
+		});
+		panelExplorar.setBotonBusqueda(btnBusqueda);
 		panelNuevaLista = new PanelNuevaLista(this, videoWeb);
 		panelMisListas = new PanelMisListas(this, videoWeb);
 		
@@ -274,14 +281,15 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    return;
 		}
 		if (e.getSource() == btnExplorar) {
-			panelExplorar.update(controladorTienda.getEtiquetasDisponibles());
 			
 			
-			List<Video> videos = controladorTienda.getVideos();
+			
+			/*List<Video> videos = controladorTienda.getVideos();
 			
 			panelExplorar.updateVideos(videos);
 			//panelExplorar.updateResultados();
-			
+			*/
+			panelExplorar.limpiar();
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
 		    validate();

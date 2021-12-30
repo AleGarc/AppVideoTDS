@@ -55,6 +55,14 @@ public class Video {
 		this.codigo = codigo;
 	}
 	
+	public boolean contieneEtiqueta(Etiqueta e) {
+		for(Etiqueta et: etiquetas){
+			if(et.getNombre().equals(e.getNombre()))
+				return true;
+		}
+		return false;
+	}
+	
 	/*Util para mostrar el objeto en ComboBox
 	@Override
 	public String toString() {

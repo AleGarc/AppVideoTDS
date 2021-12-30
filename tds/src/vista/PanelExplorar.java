@@ -52,6 +52,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JButton playButton;
 	private JButton btnPlay;
 	private JButton btnNuevaBusqueda;
+	private JButton btnBusqueda;
 	private String usuario;
 	private Video selectedVideo;
 	private List<Video> videosEncontrados = new ArrayList<Video>();
@@ -61,6 +62,9 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	DefaultListModel<String> model2 = new DefaultListModel<String>();
 	
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
+	
+	private String subCadenaBusqueda;
+	private List<String> etiquetasBusqueda = new ArrayList<String>();
 	
 	//JPanel resultados = new JPanel();
 	public PanelExplorar(VentanaMain v, VideoWeb vWeb){
@@ -183,11 +187,25 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panel.add(textField);
 		textField.setColumns(40);
 		
+		
+		
 		JButton btnNewButton = new JButton("Buscar");
+		btnNewButton.addActionListener(ev -> {
+			subCadenaBusqueda = textField.getText();
+			for(ActionListener a: btnBusqueda.getActionListeners()) {
+			    a.actionPerformed(new ActionEvent(btnBusqueda, ActionEvent.ACTION_PERFORMED, null) {
+			          //Nothing need go here, the actionPerformed method (with the
+			          //above arguments) will trigger the respective listener
+			    	
+			    });
+			    }
+		});
 		panel.add(btnNewButton);
 		
 		btnNuevaBusqueda = new JButton("Nueva Busqueda");
-		btnNuevaBusqueda.addActionListener(this);
+		btnNuevaBusqueda.addActionListener(ev ->{
+			limpiar();
+		});
 		panel.add(btnNuevaBusqueda);
 			
 		
@@ -266,7 +284,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 					@SuppressWarnings("unchecked")
 					JList<String> source = (JList<String>)event.getSource();
 					String selected = source.getSelectedValue();
-					if(!model2.contains(selected)) model2.addElement(selected);
+					if(!model2.contains(selected)) {
+						model2.addElement(selected);
+						etiquetasBusqueda.add(selected);
+					}
 					
 				}
 			}
@@ -275,10 +296,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		etiquetasSeleccionadas.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()){
-					 int index = etiquetasSeleccionadas.getSelectedIndex();
-					 if (index != -1) {
-				        model2.remove(index);
-					 }
+					String selected = etiquetasSeleccionadas.getSelectedValue();
+			        model2.removeElement(selected);
+					etiquetasBusqueda.remove(selected);
+					 
 				}
 			}	
 		});
@@ -302,6 +323,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		playButton = playMainButton;
 	}
 
+	public void setBotonBusqueda(JButton btnBusqueda) {
+		this.btnBusqueda = btnBusqueda; 
+	}
+	
 	public void update(List<String> etiquetasDadas) {	
 		model.removeAllElements();
 		for (String etiqueta: etiquetasDadas) 
@@ -317,11 +342,20 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		}
 	}*/
 	
+	public void limpiar() {
+		textField.setText("");
+		model2.removeAllElements();
+		modelVideos.removeAllElements();
+		etiquetasBusqueda.clear();
+	}
+	
 	public void updateVideos(List<Video> videos) {
 		videosEncontrados = videos;
+		modelVideos.removeAllElements();
 		for(Video v: videos) {
 			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
 		}
+		validate();
 	}
 	
 	public void setVideoWeb(VideoWeb v){
@@ -337,4 +371,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public String getSubcadenaBusqueda() {
+		return subCadenaBusqueda;
+	}
+	
+	public List<String> getEtiquetasBusqueda(){
+		return etiquetasBusqueda;
+	}
+	
 }
