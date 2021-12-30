@@ -24,6 +24,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -47,6 +48,7 @@ import modelo.VideoDisplayListRenderer;
 
 public class PanelExplorar extends JPanel implements ActionListener{
 	private JTextField textField;
+	private JTextField txtLista;
 	private VentanaMain ventana;
 	private static VideoWeb videoWeb;
 	private JButton playButton;
@@ -56,15 +58,19 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private String usuario;
 	private Video selectedVideo;
 	private List<Video> videosEncontrados = new ArrayList<Video>();
+	private JPanel panelIzquierdo,panelCentral, panelDerecho;
 	//private List<JLabel> videosBuscados = new ArrayList<JLabel>();
 	
 	DefaultListModel<String> model = new DefaultListModel<String>();
 	DefaultListModel<String> model2 = new DefaultListModel<String>();
 	
+	DefaultListModel<VideoDisplay> modelLista = new DefaultListModel<VideoDisplay>();
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
 	
 	private String subCadenaBusqueda;
 	private List<String> etiquetasBusqueda = new ArrayList<String>();
+	
+	ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
 	
 	//JPanel resultados = new JPanel();
 	public PanelExplorar(VentanaMain v, VideoWeb vWeb){
@@ -93,21 +99,101 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		//panelExplorar.getContentPane().add(Ventana);
 		panelExplorar.add(Ventana);
 		//Ventana.setLayout(new BoxLayout(Ventana, BoxLayout.Y_AXIS));
+
+
+		panelIzquierdo = new JPanel();
+		panelIzquierdo.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panelIzquierdo.setBackground(Color.LIGHT_GRAY);
+		panelIzquierdo.setLayout(new FlowLayout(FlowLayout.LEFT, 5,5));
+		//panelIzquierdo.setAlignmentX(Component.LEFT_ALIGNMENT);
+		fixedSize(panelIzquierdo, 270,525 );
+		Ventana.add(panelIzquierdo);
+		JLabel lbLista = new JLabel("Introducir nombre lista:");
+		panelIzquierdo.add(lbLista);
 		
-		JPanel PanelIzquierdo = new JPanel();
-		PanelIzquierdo.setBackground(Color.LIGHT_GRAY);
-		PanelIzquierdo.setLayout(new BoxLayout(PanelIzquierdo, BoxLayout.Y_AXIS));
-		fixedSize(PanelIzquierdo, 700, Constantes.ventana_y_size-195);
-		Ventana.add(PanelIzquierdo);
+		txtLista = new JTextField();
+		fixedSize(txtLista, 177,20);
+		panelIzquierdo.add(txtLista);
+		
+		
+		JButton btnBuscarLista = new JButton("Buscar");
+		btnBuscarLista.addActionListener(ev ->{
+			if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario)) {
+				
+			}
+				
+		});
+		panelIzquierdo.add(btnBuscarLista);
+		
+		/*JPanel pnPrueba = new JPanel();
+		pnPrueba.setLayout(new BoxLayout(pnPrueba, BoxLayout.Y_AXIS));
+		pnPrueba.setBackground(Color.LIGHT_GRAY);
+		//panelIzquierdo.add(pnPrueba);
+		JScrollPane scrollerResultados = new JScrollPane(pnPrueba);
+		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		//scrollerResultados.getViewport().setBackground(Color.LIGHT_GRAY);
+		scrollerResultados.setBorder(new LineBorder(new Color(0, 0, 0)));*/
+		//pnPrueba.add(prueba);
+		
+		
+		
+		/*JLabel prueba = new JLabel("VAMOS");
+		ImageIcon imageIcon = new ImageIcon(VentanaMain.class.getResource("/Titulo.png")); 
+		Image image = imageIcon.getImage(); 
+		Image newimg = image.getScaledInstance(656/7, 278/7,  java.awt.Image.SCALE_SMOOTH);
+		imageIcon = new ImageIcon(newimg); 
+		prueba.setIcon(imageIcon);*/
+		
+		
+		JList<VideoDisplay> listaVideos = new JList<VideoDisplay>();
+		listaVideos.setBackground(Color.LIGHT_GRAY);
+		listaVideos.setBorder(new LineBorder(new Color(0, 0, 0)));
+		listaVideos.setCellRenderer(new VideoDisplayListRenderer());
+		listaVideos.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		listaVideos.setVisibleRowCount(-1);
+		listaVideos.setModel(modelLista);
+		listaVideos.addMouseListener(new MouseAdapter(){
+			@SuppressWarnings("serial")
+			public void mouseClicked(MouseEvent e)
+			{
+				if (e.getClickCount() == 2)
+				{
+					modelLista.removeElement(listaVideos.getSelectedValue());
+				}
+			}
+		});
+		
+		JScrollPane scrollerListaVideos = new JScrollPane(listaVideos);
+		scrollerListaVideos.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollerListaVideos.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		fixedSize(scrollerListaVideos, 258,460);
+		panelIzquierdo.add(scrollerListaVideos);
+		
+		//fixedSize(scrollerResultados, 204, 400);
+		//JButton btnCancelar = new JButton("Cancelar");
+		//scrollerResultados.setViewportView(Ventana);
+		//panelIzquierdo.add(scrollerResultados);
+		//panelIzquierdo.add(btnCancelar);
+		//scrollerResultados.setVisible(false);
+		
+		//panelIzquierdo.setVisible(false);
+		
+		
+		panelCentral = new JPanel();
+		panelCentral.setBackground(Color.LIGHT_GRAY);
+		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
+		fixedSize(panelCentral, 700, Constantes.ventana_y_size-195);
+		Ventana.add(panelCentral);
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.setBackground(Color.LIGHT_GRAY);
 		fixedSize(panel, 700,80);
-		PanelIzquierdo.add(panel);
-		//PanelIzquierdo.setBackground(Color.YELLOW);
+		panelCentral.add(panel);
+		//panelCentral.setBackground(Color.YELLOW);
 		
 		Component rigidArea2 = Box.createRigidArea(new Dimension(5, 5));
-		PanelIzquierdo.add(rigidArea2);
+		panelCentral.add(rigidArea2);
 		
 		/*resultados = new JPanel();
 		resultados.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -132,14 +218,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			{
 				if (e.getClickCount() == 2)
 				{
-					selectedVideo = videosEncontrados.get(lista.getSelectedIndex());
-					for(ActionListener a: playButton.getActionListeners()) {
-					    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
-					          //Nothing need go here, the actionPerformed method (with the
-					          //above arguments) will trigger the respective listener
-					    	
-					    });
-					    }
+					if(!modelLista.contains(lista.getSelectedValue()))
+						modelLista.addElement(lista.getSelectedValue());
 				}
 			}
 		});
@@ -148,8 +228,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		fixedSize(scrollerResultados, 700,439);
-		PanelIzquierdo.add(scrollerResultados);
-		//PanelIzquierdo.add(resultados);
+		panelCentral.add(scrollerResultados);
+		//panelCentral.add(resultados);
 		
 		//updateResultados();
 		
@@ -209,7 +289,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panel.add(btnNuevaBusqueda);
 			
 		
-		JPanel panelDerecho = new JPanel();
+		panelDerecho = new JPanel();
 		Ventana.add(panelDerecho);
 		panelDerecho.setBackground(Color.LIGHT_GRAY);
 		fixedSize(panelDerecho, 270, Constantes.ventana_y_size-195);
@@ -380,4 +460,25 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		return etiquetasBusqueda;
 	}
 	
+	public void switchMode(Mode m) {
+		if (m == Mode.EXPLORAR){
+			panelIzquierdo.setVisible(false);
+			//fixedSize(panelDerecho, 977,525 );
+			panelDerecho.setVisible(true);
+			//panelDerechoInv.setVisible(false);
+			
+		}
+		else if (m == Mode.NUEVALISTA){
+			panelIzquierdo.setVisible(true);
+			//fixedSize(panelDerecho, 770,525 );
+			panelDerecho.setVisible(false);
+			//panelDerechoInv.setVisible(true);
+		}
+	}
+	
+	public void setUsuario(String user) {
+		usuario = user;
+	}
 }
+
+

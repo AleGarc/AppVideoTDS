@@ -13,8 +13,10 @@ import modelo.CatalogoUsuarios;
 import modelo.CatalogoVideos;
 import modelo.Etiqueta;
 import modelo.CatalogoVentas;
+import modelo.CatalogoVideoList;
 import modelo.Usuario;
 import modelo.Video;
+import modelo.VideoList;
 import modelo.Venta;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
@@ -40,6 +42,7 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 	private CatalogoVentas catalogoVentas;
 	private CatalogoVideos catalogoVideos;
 	private CatalogoEtiquetas catalogoEtiquetas;
+	private CatalogoVideoList catalogoVideoList;
 
 	private Venta ventaActual;
 	
@@ -131,6 +134,7 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		catalogoVentas = CatalogoVentas.getUnicaInstancia();
 		catalogoVideos = CatalogoVideos.getUnicaInstancia();
 		catalogoEtiquetas = CatalogoEtiquetas.getUnicaInstancia();
+		catalogoVideoList = CatalogoVideoList.getUnicaInstancia();
 	}
 
 	public boolean existeCliente(String dni) {
@@ -188,4 +192,30 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 	public VideoWeb getVideoWeb() {
 		return videoWeb;
 	}
+	
+	public List<VideoList> getListasAutor(String autor){
+		return catalogoVideoList.getVideoListAutor(autor);
+	}
+	
+	public void crearListaVideo(String nombre, String autor) {
+		VideoList videoLista = new VideoList(nombre, autor);
+		catalogoVideoList.addVideoList(videoLista);
+	}
+	
+	public void borrarListaVideo(String nombre, String autor) {
+		catalogoVideoList.removeVideoList(nombre, autor);
+	}
+	
+	public void addVideoToLista(String nombre,String autor, Video v) {
+		catalogoVideoList.addVideoToList(nombre, autor, v);
+	}
+
+	public void removeVideoFromLista(String nombre,String autor, Video v) {
+		catalogoVideoList.removeVideoFromList(nombre, autor, v);
+	}
+	
+	public boolean checkVideoListExiste(String nombre, String autor){
+		return catalogoVideoList.existeVideoList(nombre, autor);
+	}
+
 }

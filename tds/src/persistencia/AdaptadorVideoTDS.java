@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 import beans.Entidad;
 import beans.Propiedad;
-
+import modelo.Etiqueta;
 import modelo.Video;
 
 public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
@@ -101,4 +102,21 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		return videos;
 	}
 
+	
+	public String obtenerCodigosListaVideos(List<Video> listaVideos) { 
+		String codigoVideos = ""; 
+		for (Video v: listaVideos)
+			codigoVideos += v.getCodigo() + " ";
+		return codigoVideos.trim();
+	} 
+	
+	public List<Video> obtenerVideosDesdeCodigos(String listaCodigoVideos) { 
+		List<Video> listaVideos = new LinkedList<Video>();
+		StringTokenizer strTok = new StringTokenizer(listaCodigoVideos, " "); 
+		while (strTok.hasMoreTokens()) { 
+			listaVideos.add(recuperarVideo(Integer.valueOf((String)strTok.nextElement()))); 
+		} 
+		return listaVideos; 
+	}
+	
 }

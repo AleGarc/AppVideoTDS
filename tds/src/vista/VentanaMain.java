@@ -63,7 +63,6 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private PanelAltaVideo panelAltaProducto;
 	private PanelCrearVenta panelCrearVenta;
 	private PanelExplorar panelExplorar;
-	private PanelNuevaLista panelNuevaLista;
 	private PanelMisListas panelMisListas;
 	
 	
@@ -74,7 +73,6 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private final String panelLoginCard = "panelLoginCard";
 	private final String panelExplorarCard = "panelExplorar";
 	private final String panelMisListasCard = "panelMisListas";
-	private final String panelNuevaListaCard = "panelNuevaLista";
 	private String usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
@@ -115,7 +113,6 @@ public class VentanaMain extends JFrame implements ActionListener{
 			panelExplorar.updateVideos(controladorTienda.buscarVideos(panelExplorar.getSubcadenaBusqueda(), panelExplorar.getEtiquetasBusqueda()));
 		});
 		panelExplorar.setBotonBusqueda(btnBusqueda);
-		panelNuevaLista = new PanelNuevaLista(this, videoWeb);
 		panelMisListas = new PanelMisListas(this, videoWeb);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -134,7 +131,6 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		contenido.add(panelMisListas, panelMisListasCard);
 		
-		contenido.add(panelNuevaLista, panelNuevaListaCard);
 		
 		//contenido.add(panelAltaCliente, panelRegistroCard);
 		
@@ -290,6 +286,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 			//panelExplorar.updateResultados();
 			*/
 			panelExplorar.limpiar();
+			panelExplorar.switchMode(Mode.EXPLORAR);
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
 		    validate();
@@ -304,6 +301,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 			btnRegistro.setVisible(false);
 			btnLogout.setVisible(true);
 			btnPremium.setVisible(true);
+			panelExplorar.setUsuario(usuario);
 			validate();
 			return;
 		}
@@ -340,12 +338,12 @@ public class VentanaMain extends JFrame implements ActionListener{
 			return;
 		}
 		if (e.getSource() == btnNuevaLista) {
+			panelExplorar.limpiar();
+			panelExplorar.switchMode(Mode.NUEVALISTA);
 			CardLayout cl = (CardLayout)(contenido.getLayout());
-		    cl.show(contenido, panelNuevaListaCard);
+		    cl.show(contenido, panelExplorarCard);
 		    validate();
 		    
-		    List<Video> videos = controladorTienda.getVideos();
-			panelNuevaLista.updateVideos(videos);
 			return;
 		}
 	}
