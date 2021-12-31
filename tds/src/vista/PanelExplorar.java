@@ -44,6 +44,7 @@ import tds.video.VideoWeb;
 import modelo.Video;
 import modelo.VideoDisplay;
 import modelo.VideoDisplayListRenderer;
+import modelo.VideoList;
 
 
 public class PanelExplorar extends JPanel implements ActionListener{
@@ -71,6 +72,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private List<String> etiquetasBusqueda = new ArrayList<String>();
 	
 	ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
+	
+	private VideoList videoLista = null;
+	
+	private Mode modo = Mode.EXPLORAR;
 	
 	//JPanel resultados = new JPanel();
 	public PanelExplorar(VentanaMain v, VideoWeb vWeb){
@@ -119,9 +124,16 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JButton btnBuscarLista = new JButton("Buscar");
 		btnBuscarLista.addActionListener(ev ->{
 			if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario)) {
-				
+				videoLista = controladorTienda.getListaVideo(txtLista.getText(), usuario);
+				updateVideosLista(videoLista.getListaVideos());
 			}
-				
+			else {
+				int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea crear la lista " + txtLista.getText() + "?", "Lista inexistente",JOptionPane.YES_NO_OPTION);
+				if(eleccion == 0) {
+					videoLista = controladorTienda.crearListaVideo(txtLista.getText(), usuario);
+					modelLista.removeAllElements();
+				}	
+			}	
 		});
 		panelIzquierdo.add(btnBuscarLista);
 		
@@ -157,9 +169,11 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			@SuppressWarnings("serial")
 			public void mouseClicked(MouseEvent e)
 			{
-				if (e.getClickCount() == 2)
+				if (e.getClickCount() == 2 && !modelLista.isEmpty())
 				{
+					videoLista.removeVideo(controladorTienda.getVideo(listaVideos.getSelectedValue().getTitulo()));
 					modelLista.removeElement(listaVideos.getSelectedValue());
+					controladorTienda.actualizarLista(videoLista);
 				}
 			}
 		});
@@ -216,10 +230,23 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			@SuppressWarnings("serial")
 			public void mouseClicked(MouseEvent e)
 			{
-				if (e.getClickCount() == 2)
+				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
-					if(!modelLista.contains(lista.getSelectedValue()))
+					if(modo == Mode.NUEVALISTA && !videoLista.contieneVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()))) {
+						videoLista.addVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()));
 						modelLista.addElement(lista.getSelectedValue());
+						controladorTienda.actualizarLista(videoLista);
+					}
+					else if(modo == Mode.EXPLORAR) {
+						selectedVideo = videosEncontrados.get(lista.getSelectedIndex());
+						for(ActionListener a: playButton.getActionListeners()) {
+						    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
+						          //Nothing need go here, the actionPerformed method (with the
+						          //above arguments) will trigger the respective listener
+						    	
+						    });
+						 }
+					}
 				}
 			}
 		});
@@ -412,7 +439,6 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		for (String etiqueta: etiquetasDadas) 
 			model.addElement(etiqueta);
 		model2.removeAllElements();
-				//HAY QUE USAR VALIDATE() MIRAR 
 	}
 	
 	/*public void updateResultados() {
@@ -424,7 +450,6 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	
 	public void limpiar() {
 		textField.setText("");
-		model2.removeAllElements();
 		modelVideos.removeAllElements();
 		etiquetasBusqueda.clear();
 	}
@@ -434,6 +459,14 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		modelVideos.removeAllElements();
 		for(Video v: videos) {
 			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
+		}
+		validate();
+	}
+	
+	public void updateVideosLista(List<Video> videos) {
+		modelLista.removeAllElements();
+		for(Video v: videos) {
+			modelLista.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
 		}
 		validate();
 	}
@@ -462,6 +495,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	
 	public void switchMode(Mode m) {
 		if (m == Mode.EXPLORAR){
+			modo = Mode.EXPLORAR;
 			panelIzquierdo.setVisible(false);
 			//fixedSize(panelDerecho, 977,525 );
 			panelDerecho.setVisible(true);
@@ -469,6 +503,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			
 		}
 		else if (m == Mode.NUEVALISTA){
+			modo = Mode.NUEVALISTA;
 			panelIzquierdo.setVisible(true);
 			//fixedSize(panelDerecho, 770,525 );
 			panelDerecho.setVisible(false);
@@ -478,6 +513,17 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	
 	public void setUsuario(String user) {
 		usuario = user;
+	}
+	
+	public Video getVideoInLista(JList<VideoDisplay> lista) {
+		System.out.println(lista.getSelectedValue().getTitulo());
+		Video video = null;
+		for(Video v: videosEncontrados) {
+			System.out.println(v.getTitulo());
+			if(v.getUrl().equals(lista.getSelectedValue().getUrl()))
+				return v;
+		}
+		return video;
 	}
 }
 

@@ -101,6 +101,10 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 	public List<Video> buscarVideos(String subCadena, List<String> etiquetas){
 		return catalogoVideos.buscarVideos(subCadena,etiquetas);
 	}
+	
+	public Video getVideo(String titulo){
+		return catalogoVideos.getVideo(titulo);
+	}
 
 	public void registrarVenta(String dni, Date fecha) {
 		Usuario usuario = catalogoUsuarios.getCliente(dni);
@@ -197,17 +201,22 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		return catalogoVideoList.getVideoListAutor(autor);
 	}
 	
-	public void crearListaVideo(String nombre, String autor) {
+	public VideoList getListaVideo(String nombre, String autor) {
+		return catalogoVideoList.getListaVideo(nombre, autor);
+	}
+	
+	public VideoList crearListaVideo(String nombre, String autor) {
 		VideoList videoLista = new VideoList(nombre, autor);
 		catalogoVideoList.addVideoList(videoLista);
+		return videoLista;
 	}
 	
 	public void borrarListaVideo(String nombre, String autor) {
 		catalogoVideoList.removeVideoList(nombre, autor);
 	}
 	
-	public void addVideoToLista(String nombre,String autor, Video v) {
-		catalogoVideoList.addVideoToList(nombre, autor, v);
+	public void actualizarLista(VideoList videoLista) {
+		catalogoVideoList.actualizarVideoList(videoLista);
 	}
 
 	public void removeVideoFromLista(String nombre,String autor, Video v) {

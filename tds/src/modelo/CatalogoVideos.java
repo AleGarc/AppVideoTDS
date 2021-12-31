@@ -60,9 +60,18 @@ public class CatalogoVideos {
 	}
 	
 	public void addVideo(Video vid) {
-		videos.put(vid.getUrl(),vid);
+		videos.put(vid.getTitulo(),vid);
 		for(Etiqueta e: vid.getEtiquetas()) {
 			catalogoEtiquetas.addEtiqueta(e);
+			if(videosIndexadosEtiquetas.containsKey(e.getNombre())) {
+				List<Video> videosEtiquetados = videosIndexadosEtiquetas.get(e.getNombre());
+				videosEtiquetados.add(vid);
+			}
+			else {
+				List<Video> videosEtiquetados = new ArrayList<Video>();
+				videosEtiquetados.add(vid);
+				videosIndexadosEtiquetas.put(e.getNombre(), videosEtiquetados);
+			}
 		}
 	}
 	public void removeVideo(Video pro) {

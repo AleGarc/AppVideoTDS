@@ -2,8 +2,11 @@ package modelo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Video {
+
+
 
 	private int codigo;
 	private String titulo;
@@ -69,5 +72,17 @@ public class Video {
 		return nombre;
 	}*/
 	
+	@Override
+	public int hashCode() {
+		return Objects.hash(codigo, etiquetas, titulo, url);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		Video other = (Video) obj;
+		return codigo == other.codigo && Objects.equals(titulo, other.titulo) && Objects.equals(url, other.url);
+	}
 
 }

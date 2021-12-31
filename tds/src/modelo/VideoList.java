@@ -51,4 +51,12 @@ public class VideoList {
 		return videos;
 	}
 	
+	public boolean contieneVideo(Video video) {
+		for(Video v: videos) {
+			if(v.getUrl().equals(video.getUrl()))
+				return true;
+		}
+		
+		return false;
+	}
 }

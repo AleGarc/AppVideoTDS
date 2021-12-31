@@ -286,6 +286,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 			//panelExplorar.updateResultados();
 			*/
 			panelExplorar.limpiar();
+			panelExplorar.update(controladorTienda.getEtiquetasDisponibles());
 			panelExplorar.switchMode(Mode.EXPLORAR);
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);

@@ -64,16 +64,35 @@ public class AdaptadorVideoListTDS implements IAdaptadorVideoListDAO {
 	}
 
 	public void modificarVideoList(VideoList videoList) {
-		Entidad eVideoList = servPersistencia.recuperarEntidad(videoList.getCodigo());
+/*		Entidad eVideoList = servPersistencia.recuperarEntidad(videoList.getCodigo());
 
 		servPersistencia.eliminarPropiedadEntidad(eVideoList, "nombre");
-		servPersistencia.anadirPropiedadEntidad(eVideoList, "nombre", String.valueOf(videoList.getNombre()));
+		servPersistencia.anadirPropiedadEntidad(eVideoList, "nombre", videoList.getNombre());
 		servPersistencia.eliminarPropiedadEntidad(eVideoList, "autor");
 		servPersistencia.anadirPropiedadEntidad(eVideoList, "autor", videoList.getAutor());
 		
-		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
+		
 		servPersistencia.eliminarPropiedadEntidad(eVideoList, "videos");
 		servPersistencia.anadirPropiedadEntidad(eVideoList, "videos", adaptadorVideo.obtenerCodigosListaVideos(videoList.getListaVideos())); 
+		System.out.println(adaptadorVideo.obtenerCodigosListaVideos(videoList.getListaVideos()));
+	*/
+		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
+	
+		Entidad eCliente = servPersistencia.recuperarEntidad(videoList.getCodigo());
+
+		for (Propiedad prop : eCliente.getPropiedades()) {
+			if (prop.getNombre().equals("codigo")) {
+				prop.setValor(String.valueOf(videoList.getCodigo()));
+			} else if (prop.getNombre().equals("nombre")) {
+				prop.setValor(videoList.getNombre());
+			} else if (prop.getNombre().equals("autor")) {
+				prop.setValor(videoList.getAutor());
+			} else if (prop.getNombre().equals("videos")) {
+				String ventas = adaptadorVideo.obtenerCodigosListaVideos(videoList.getListaVideos());
+				prop.setValor(ventas);
+			}
+			servPersistencia.modificarPropiedad(prop);
+		}
 	}
 
 	public VideoList recuperarVideoList(int codigo) {

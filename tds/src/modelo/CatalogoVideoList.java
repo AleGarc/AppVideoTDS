@@ -17,7 +17,7 @@ import persistencia.IAdaptadorVideoListDAO;
  * directamente la base de datos
  */
 public class CatalogoVideoList {
-	private Map<String,List<VideoList>> videoLists; 
+	private Map<String,List<VideoList>> videoListMap; 
 	private static CatalogoVideoList unicaInstancia = new CatalogoVideoList();
 	
 	private FactoriaDAO dao;
@@ -27,7 +27,7 @@ public class CatalogoVideoList {
 		try {
   			dao = FactoriaDAO.getInstancia(FactoriaDAO.DAO_TDS);
   			adaptadorVideoList = dao.getVideoListDAO();
-  			videoLists = new HashMap<String,List<VideoList>>();
+  			videoListMap = new HashMap<String,List<VideoList>>();
   			this.cargarCatalogo();
   		} catch (DAOException eDAO) {
   			eDAO.printStackTrace();
@@ -39,12 +39,19 @@ public class CatalogoVideoList {
 	}
 	
 	public void addVideoList(VideoList vid) {
-		videoLists.get(vid.getAutor()).add(vid);
 		adaptadorVideoList.registrarVideoList(vid);
+		if(videoListMap.containsKey(vid.getAutor())) {
+			videoListMap.get(vid.getAutor()).add(vid);	
+		}
+		else {
+			List<VideoList> lista = new ArrayList<VideoList>();
+			lista.add(vid);
+			videoListMap.put(vid.getAutor(), lista);
+		}
 	}
 	
 	public void removeVideoList(String nombre, String autor) {
-		List<VideoList> lista =  videoLists.get(autor);
+		List<VideoList> lista =  videoListMap.get(autor);
 		for(VideoList v : lista){
 			if(v.getNombre().equals(nombre)) {
 				lista.remove(v);
@@ -54,11 +61,11 @@ public class CatalogoVideoList {
 	}
 	
 	public List<VideoList> getVideoListAutor(String autor){
-		return videoLists.get(autor);
+		return videoListMap.get(autor);
 	}
 	
 	public void addVideoToList(String nombre, String autor, Video v){
-		List<VideoList> list = videoLists.get(autor);
+		List<VideoList> list = videoListMap.get(autor);
 		for(VideoList vL: list){
 			if(vL.getNombre().equals(nombre)) {
 				vL.addVideo(v);
@@ -69,7 +76,7 @@ public class CatalogoVideoList {
 	}
 	
 	public void removeVideoFromList(String nombre, String autor, Video v){
-		List<VideoList> list = videoLists.get(autor);
+		List<VideoList> list = videoListMap.get(autor);
 		for(VideoList vL: list){
 			if(vL.getNombre().equals(nombre)) {
 				vL.removeVideo(v);
@@ -82,23 +89,39 @@ public class CatalogoVideoList {
 	private void cargarCatalogo() throws DAOException {
 		 List<VideoList> VideoListsBD = adaptadorVideoList.recuperarTodosVideoLists();
 		 for (VideoList pro: VideoListsBD) {
-			    if(videoLists.containsKey(pro.getAutor()))
-			    	videoLists.get(pro.getAutor()).add(pro);
+			    if(videoListMap.containsKey(pro.getAutor()))
+			    	videoListMap.get(pro.getAutor()).add(pro);
 			    else{
 			    	List<VideoList> nuevaLista = new ArrayList<VideoList>();
 			    	nuevaLista.add(pro);
-			    	videoLists.put(pro.getAutor(), nuevaLista);
+			    	videoListMap.put(pro.getAutor(), nuevaLista);
 			    }    	
 		 }
 	}
 	
 	public boolean existeVideoList(String nombre, String autor) {
-		List<VideoList> lista =  videoLists.get(autor);
-		for(VideoList v : lista){
-			if(v.getNombre().equals(nombre)) {
-				return true;
+		if(videoListMap.containsKey(autor)) {
+			List<VideoList> lista =  videoListMap.get(autor);
+			for(VideoList v : lista){
+				if(v.getNombre().equals(nombre)) {
+					return true;
+				}
 			}
 		}
 		return false;
+	}
+	
+	public VideoList getListaVideo(String nombre, String autor) {
+		List<VideoList> lista =  videoListMap.get(autor);
+		for(VideoList v : lista){
+			if(v.getNombre().equals(nombre)) {
+				return v;
+			}
+		}
+		return null;
+	}
+	
+	public void actualizarVideoList(VideoList videoLista) {
+		adaptadorVideoList.modificarVideoList(videoLista);
 	}
 }
