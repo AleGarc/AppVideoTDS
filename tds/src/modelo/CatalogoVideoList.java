@@ -131,4 +131,12 @@ public class CatalogoVideoList {
 	public void actualizarVideoList(VideoList videoLista) {
 		adaptadorVideoList.modificarVideoList(videoLista);
 	}
+	
+	public VideoList getVideosMasVistos(List<Video> videosTopTen) {
+		VideoList topTen = new VideoList("topTen", "controlador");
+		for(Video v:  videosTopTen) {
+			topTen.addVideo(v);
+		}
+		return topTen;
+	}
 }

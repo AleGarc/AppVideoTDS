@@ -2,6 +2,8 @@ package modelo;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,5 +135,31 @@ public class CatalogoVideos {
 			}
 		}
 		return resultadosEtiquetados;
+	}
+	
+	public List<Video> getVideosMasVistos(){
+		List<Video> topTen = new ArrayList<Video>();
+		
+		Map<Video,Integer> candidatos = new HashMap<Video,Integer>();
+		for(Video v: videos.values()) {
+			candidatos.put(v, v.getReproducciones());
+		}
+		int max = 0;
+		Video quitar;
+		while(!candidatos.isEmpty() && topTen.size() < 10) {
+			max = Collections.max(candidatos.values());
+			quitar = null;
+			for(Video v: candidatos.keySet()) {
+				if(topTen.size() >= 10)
+					break;
+				else if(v.getReproducciones() == max) {
+					topTen.add(v);
+					quitar = v;
+					break;
+				}
+			}
+			candidatos.remove(quitar);
+		}
+		return topTen;
 	}
 }

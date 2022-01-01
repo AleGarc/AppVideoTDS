@@ -298,8 +298,9 @@ public class PanelMisListas extends JPanel{
 			txtLista.setVisible(false);
 			boxListas.setVisible(false);
 			
-			videoLista = controladorTienda.getListaVideo(boxListas.getSelectedItem().toString(), usuario.getUsuario());
+			videoLista = controladorTienda.getVideosMasVistos();
 			updateVideos(videoLista.getListaVideos());
+			
 		}
 	}
 	

@@ -254,4 +254,8 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		catalogoUsuarios.cambiarRol(usuario, b);
 		adaptadorUsuario.modificarUsuario(usuario);
 	}
+	
+	public VideoList getVideosMasVistos() {
+		return catalogoVideoList.getVideosMasVistos(catalogoVideos.getVideosMasVistos());
+	}
 }

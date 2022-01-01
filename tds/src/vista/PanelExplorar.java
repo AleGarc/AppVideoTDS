@@ -171,6 +171,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		});
 		
 		btnPDF = new JButton("Generar PDF");
+		btnPDF.setForeground(Color.RED);
 		panelIzquierdo.add(btnPDF);
 		btnPDF.setEnabled(false);
 		btnPDF.addActionListener(ev ->{    
