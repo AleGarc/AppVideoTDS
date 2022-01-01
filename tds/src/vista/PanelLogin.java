@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 
 
 public class PanelLogin extends JPanel implements ActionListener{
@@ -33,7 +33,7 @@ public class PanelLogin extends JPanel implements ActionListener{
 	private JTextArea descripcion;
 	private JButton btnLogin, btnCancelar;
 	private VentanaMain ventana;
-	
+	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
 	private JButton loginMainButton;
 	
 	private String usuario;
@@ -193,7 +193,7 @@ public class PanelLogin extends JPanel implements ActionListener{
 				String auxPassword=txtPassword.getText().trim();
 				//double doubleprecio=Double.parseDouble(auxPrecio);
 				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
-				else if (!ControladorTienda.getUnicaInstancia().autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
+				else if (!controladorAppVideo.autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
 				else { /*lalerta.setVisible(false);
 					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
 					   JOptionPane.showMessageDialog(ventana,

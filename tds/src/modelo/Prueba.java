@@ -5,7 +5,7 @@ import java.util.GregorianCalendar;
 
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
-import persistencia.IAdaptadorClienteDAO;
+import persistencia.IAdaptadorUsuarioDAO;
 import persistencia.IAdaptadorVideoDAO;
 import persistencia.IAdaptadorVentaDAO;
 import persistencia.PoolDAO;
@@ -37,7 +37,7 @@ public class Prueba {
 			e.printStackTrace();
 		}
 
-		IAdaptadorClienteDAO adaptadorCliente = miFactoria.getClienteDAO();
+		IAdaptadorUsuarioDAO adaptadorCliente = miFactoria.getClienteDAO();
 		IAdaptadorVentaDAO adaptadorVenta = miFactoria.getVentaDAO();
 		IAdaptadorVideoDAO adaptadorProducto = miFactoria.getProductoDAO();
 

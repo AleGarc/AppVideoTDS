@@ -26,7 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 import modelo.LineaVenta;
 import modelo.Video;
 
@@ -130,7 +130,7 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 	
 	//almacena los Videos en la ComboBox
 	public void cargarVideos() {
-		List<Video> listaVideos= ControladorTienda.getUnicaInstancia().getVideos();
+		List<Video> listaVideos= ControladorAppVideo.getUnicaInstancia().getVideos();
 		VideoCombo.removeAllItems();
 		for(Video p:listaVideos) VideoCombo.addItem(p);
 	}
@@ -184,7 +184,7 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 			Video auxVideo=(Video) VideoCombo.getSelectedItem();
 			Integer auxUnidades=Integer.parseInt(unidades.getText());
 			
-			ControladorTienda.getUnicaInstancia().anadirLineaVenta(auxUnidades,auxVideo);
+			ControladorAppVideo.getUnicaInstancia().anadirLineaVenta(auxUnidades,auxVideo);
 			
 			/*double total=auxUnidades*auxVideo.getPrecio();*/
 			double total = 0.0;
@@ -215,20 +215,20 @@ public class PanelCrearVenta extends JPanel implements ActionListener{
 				return;
 			}
 			if (modelo.getRowCount()==0) return;
-			if (!(ControladorTienda.getUnicaInstancia().existeCliente(dni.getText()))) {
+			if (!(ControladorAppVideo.getUnicaInstancia().existeCliente(dni.getText()))) {
 				JOptionPane.showMessageDialog(ventana,
 						"No existe un cliente con ese DNI",
 						"Registrar venta",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			ControladorTienda.getUnicaInstancia().registrarVenta(dni.getText(),fechaActual);
+			ControladorAppVideo.getUnicaInstancia().registrarVenta(dni.getText(),fechaActual);
 			JOptionPane.showMessageDialog(ventana,
 					"Venta registrada correctamente",
 					"Crear venta",JOptionPane.PLAIN_MESSAGE);
 			while(modelo.getRowCount()>0) modelo.removeRow(0);
 			unidades.setText("");
 			dni.setText("");
-			ControladorTienda.getUnicaInstancia().crearVenta();
+			ControladorAppVideo.getUnicaInstancia().crearVenta();
 		}
 	}
 }

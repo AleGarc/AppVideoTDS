@@ -36,7 +36,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 import modelo.CatalogoUsuarios;
 import modelo.CatalogoVentas;
 import modelo.Usuario;
@@ -52,7 +52,7 @@ import modelo.Venta;
 public class VentanaMain extends JFrame implements ActionListener{
 	
 
-	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista;
+	private JButton btnExplorar, btnMisListas, btnRecientes, btnLogin, btnRegistro, btnLogout, btnPremium, btnNuevaLista, btnMasVistos;
 	private final String panelRegistroCard = "panelRegistroCard";
 	private JPanel contenedorPrincipal;
 	private JPanel contenido;
@@ -73,16 +73,16 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private final String panelLoginCard = "panelLoginCard";
 	private final String panelExplorarCard = "panelExplorar";
 	private final String panelMisListasCard = "panelMisListas";
-	private String usuario;
+	private Usuario usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
 	
 	private Luz pulsador;
 	
 	
-	private static ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
+	private static ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
 	
-	private static VideoWeb videoWeb = controladorTienda.getVideoWeb();
+	private static VideoWeb videoWeb = controladorAppVideo.getVideoWeb();
 	
 	public VentanaMain(){
 		//setSize(Constantes.ventana_x_size,Constantes.ventana_y_size);
@@ -107,10 +107,10 @@ public class VentanaMain extends JFrame implements ActionListener{
 		panelCrearVenta = new PanelCrearVenta(this);
 		panelExplorar = new PanelExplorar(this, videoWeb);
 		panelExplorar.setPlayMainButton(playMainButton);
-		panelExplorar.update(controladorTienda.getEtiquetasDisponibles());
+		panelExplorar.update(controladorAppVideo.getEtiquetasDisponibles());
 		btnBusqueda = new JButton();
 		btnBusqueda.addActionListener(ev -> {
-			panelExplorar.updateVideos(controladorTienda.buscarVideos(panelExplorar.getSubcadenaBusqueda(), panelExplorar.getEtiquetasBusqueda()));
+			panelExplorar.updateVideos(controladorAppVideo.buscarVideos(panelExplorar.getSubcadenaBusqueda(), panelExplorar.getEtiquetasBusqueda()));
 		});
 		panelExplorar.setBotonBusqueda(btnBusqueda);
 		panelMisListas = new PanelMisListas(this, videoWeb);
@@ -228,12 +228,18 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnNuevaLista.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Opciones.add(btnNuevaLista);
 		
-		Component espacio = Box.createRigidArea(new Dimension(515, 2));
+		btnMasVistos = new JButton("Mas Vistos");
+		btnMasVistos.setForeground(Color.RED);
+		btnMasVistos.setEnabled(false);
+		btnMasVistos.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		Opciones.add(btnMasVistos);
+		
+		Component espacio = Box.createRigidArea(new Dimension(400, 2));
 		Opciones.add(espacio);
 		
 		pulsador = new Luz();
 		pulsador.setColor(Color.GREEN);
-		pulsador.addEncendidoListener(controladorTienda);
+		pulsador.addEncendidoListener(controladorAppVideo);
 		Opciones.add(pulsador);
 		
 		btnExplorar.addActionListener(this);
@@ -243,6 +249,9 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnRegistro.addActionListener(this);
 		btnLogout.addActionListener(this);
 		btnNuevaLista.addActionListener(this);
+		btnPremium.addActionListener(this);
+		btnMasVistos.addActionListener(this);
+		logeado(false); 
 	}
 	
 	
@@ -282,13 +291,13 @@ public class VentanaMain extends JFrame implements ActionListener{
 			
 			
 			videoWeb.cancel();
-			/*List<Video> videos = controladorTienda.getVideos();
+			/*List<Video> videos = controladorAppVideo.getVideos();
 			
 			panelExplorar.updateVideos(videos);
 			//panelExplorar.updateResultados();
 			*/
 			panelExplorar.limpiar();
-			panelExplorar.update(controladorTienda.getEtiquetasDisponibles());
+			panelExplorar.update(controladorAppVideo.getEtiquetasDisponibles());
 			panelExplorar.switchMode(Mode.EXPLORAR);
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelExplorarCard);
@@ -296,10 +305,10 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    return;
 		}
 		if(e.getSource() == loginMainButton) {
-			usuario = panelLogin.getUsuario();
+			usuario = controladorAppVideo.getUsuario();
+			logeado(true);
 			panelMisListas.setUsuario(usuario);
-			logeado = true;
-			saludoUsuario.setText("Hola " + usuario);
+			saludoUsuario.setText("Hola " + usuario.getNombre_completo());
 			saludoUsuario.setVisible(true);
 			btnLogin.setVisible(false);
 			btnRegistro.setVisible(false);
@@ -310,12 +319,14 @@ public class VentanaMain extends JFrame implements ActionListener{
 			return;
 		}
 		if(e.getSource() == btnLogout) {
-			logeado = false;
+			logeado(false);
 			saludoUsuario.setVisible(false);
 			btnLogin.setVisible(true);
 			btnRegistro.setVisible(true);
 			btnLogout.setVisible(false);
 			btnPremium.setVisible(false);
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelLoginCard);
 			validate();
 			return;
 		}
@@ -349,59 +360,47 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    
 			return;
 		}
+		if(e.getSource() == btnPremium) {
+			//btnPremium.setEnabled(false);
+			//btnMasVistos.setEnabled(true);
+			if(usuario.esPremium()) {
+				controladorAppVideo.cambiarRolUsuario(usuario, false);
+				funcionalidadPremium(false);
+			}
+			else {
+				controladorAppVideo.cambiarRolUsuario(usuario, true);
+				funcionalidadPremium(true);
+				
+			}
+			
+			
+		}
+		if(e.getSource() == btnMasVistos) {
+			videoWeb.cancel();
+			panelMisListas.switchMode(Mode.MASVISTOS);
+			//panelMisListas.updateBoxListas();
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelMisListasCard);
+		    validate();
+			return;
+		}
 	}
 	
-	public void listadoProductos(JTextArea listado) {
-  		listado.setText("Codigo     Nombre                         Precio\n");
-  		listado.append("---------- ------------------------------ --------\n");
-  		
-  		for (Video p: controladorTienda.getVideos()) {
-  			String codigo=String.format("%1$10d",p.getTitulo());
-  			String nombre=String.format("%1$-30s",p.getUrl());
-  			//String precio=String.format("%1$8.2f",p.getPrecio());
-  			listado.append(codigo+" "+nombre+"\n");
-  		}
-  	}
-	
-	public void listadoClientes(JTextArea listado) {
-  		List<Usuario> listaClientes = CatalogoUsuarios.getUnicaInstancia().getClientes();
-  		listado.setText("dni        Nombre                         N.ventas\n");
-  		listado.append("---------- ------------------------------ --------\n");
-  		for (Usuario c: listaClientes) {
-  			String dni=String.format("%1$-10s",c.getNombre_completo());
-  			String nombre=String.format("%1$-30s",c.getUsuario());
-  			//String numVentas=String.format("%1$-8s",String.valueOf(c.getVentas().size()));
-  			//listado.append(dni+" "+nombre+" "+numVentas+"\n");
-  			listado.append(dni+" "+nombre+"\n");
-  		}
+	private void logeado(boolean b) {
+		btnExplorar.setEnabled(b);
+		btnMisListas.setEnabled(b);
+		btnRecientes.setEnabled(b);
+		btnNuevaLista.setEnabled(b);
+		funcionalidadPremium(b);
 	}
-	public void listadoVentas(JTextArea listado, Date f1, Date f2) {
-  		SimpleDateFormat datef = new SimpleDateFormat("dd/MMM/yyyy");
-  		List<Venta> listaVentas;
-  		if (f1==null) listaVentas = CatalogoVentas.getUnicaInstancia().getAllVentas();
-  		else listaVentas = CatalogoVentas.getUnicaInstancia().getVentasPeriodo(f1, f2);
-  		
-  		listado.setText("fecha       Nombre                         Total\n");
-  		listado.append("----------- ------------------------------ --------\n");
-  		System.out.println("hay "+listaVentas.size());
-  		for (Venta v: listaVentas) {
-  			String fecha=datef.format(v.getFecha());
-  			//String nombre=String.format("%1$-30s",v.getCliente().getNombre());
-  			String nombre = "Pruebaaaa";
-  			String total=String.format("%1$-8s",String.valueOf(v.getTotal()));
-  			listado.append(fecha+" "+nombre+" "+total+"\n");
-  			mostrarVenta(v);
-  		}
-  	}
-	private void mostrarVenta(Venta v) {
-  		System.out.println("-------------------------------------------------------------");
-  		System.out.println("Fecha:"+v.getFecha());
-  		//System.out.println("Dni:"+v.getCliente().getDni());
-  		for(LineaVenta lv:v.getLineasVenta()){
-  			//System.out.println(""+lv.getUnidades()+" "+lv.getProducto().getNombre()+" "+lv.getSubTotal());
-  		}
-  		System.out.println("Total:"+v.getTotal());
-  	}
 
+	private void funcionalidadPremium(boolean b) {
+		if(b && usuario.esPremium()) {
+			btnMasVistos.setEnabled(true);
+		}
+		else {
+			btnMasVistos.setEnabled(false);
+		}
+	}
 	
 }

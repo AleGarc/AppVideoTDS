@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 
 @SuppressWarnings("serial")
 public class PanelAltaVideo extends JPanel {
@@ -94,7 +94,7 @@ public class PanelAltaVideo extends JPanel {
 				//double doubleprecio=Double.parseDouble(auxPrecio);
 				if (auxNombre.isEmpty()||auxPrecio.isEmpty()) lalerta.setVisible(true);
 				else { lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarVideo(auxNombre, descripcion.getText());
+					   ControladorAppVideo.getUnicaInstancia().registrarVideo(auxNombre, descripcion.getText());
 					   JOptionPane.showMessageDialog(ventana,
 								"Producto dado de alta",
 								"Registrar producto",JOptionPane.PLAIN_MESSAGE);

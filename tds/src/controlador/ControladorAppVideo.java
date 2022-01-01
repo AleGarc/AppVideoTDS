@@ -20,7 +20,7 @@ import modelo.VideoList;
 import modelo.Venta;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
-import persistencia.IAdaptadorClienteDAO;
+import persistencia.IAdaptadorUsuarioDAO;
 import persistencia.IAdaptadorEtiquetaDAO;
 import persistencia.IAdaptadorVideoDAO;
 import pulsador.IEncendidoListener;
@@ -31,10 +31,10 @@ import umu.tds.componente.CargadorVideos;
 import umu.tds.componente.IArchivoVideosListener;
 import umu.tds.componente.Videos;
 
-public class ControladorTienda implements IEncendidoListener, IArchivoVideosListener{
+public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosListener{
 
-	private static ControladorTienda unicaInstancia;
-	private IAdaptadorClienteDAO adaptadorCliente;
+	private static ControladorAppVideo unicaInstancia;
+	private IAdaptadorUsuarioDAO adaptadorUsuario;
 	private IAdaptadorVideoDAO adaptadorVideo;
 	private IAdaptadorVentaDAO adaptadorVenta;
 
@@ -50,25 +50,28 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 
 	private static VideoWeb videoWeb;
 	
-	private ControladorTienda() {
+	private Usuario usuario;
+	
+	private ControladorAppVideo() {
 		inicializarAdaptadores(); // debe ser la primera linea para evitar error
 								  // de sincronización
 		inicializarCatalogos();
 		
 		videoWeb = new VideoWeb();
+		
 	}
 
-	public static ControladorTienda getUnicaInstancia() {
+	public static ControladorAppVideo getUnicaInstancia() {
 		if (unicaInstancia == null)
-			unicaInstancia = new ControladorTienda();
+			unicaInstancia = new ControladorAppVideo();
 		return unicaInstancia;
 	}
 
-	public boolean registrarCliente(String nombre_completo, String email, String usuario, String password, String fecha_nacimiento) {
-		if(catalogoUsuarios.getCliente(usuario) == null) {
+	public boolean registrarUsuario(String nombre_completo, String email, String usuario, String password, String fecha_nacimiento) {
+		if(catalogoUsuarios.getUsuario(usuario) == null) {
 			Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
-			adaptadorCliente.registrarCliente(user);
-			catalogoUsuarios.addCliente(user);
+			adaptadorUsuario.registrarUsuario(user);
+			catalogoUsuarios.addUsuario(user);
 			return true;	
 		}
 		return false;
@@ -117,17 +120,17 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		return catalogoVideos.getVideo(titulo);
 	}
 
-	public void registrarVenta(String dni, Date fecha) {
-		Usuario usuario = catalogoUsuarios.getCliente(dni);
-		ventaActual.setCliente(usuario);
+	/*public void registrarVenta(String dni, Date fecha) {
+		Usuario usuario = catalogoUsuarios.getUsuario(dni);
+		ventaActual.setUsuario(usuario);
 		ventaActual.setFecha(fecha);
 
 		adaptadorVenta.registrarVenta(ventaActual);
 
 		catalogoVentas.addVenta(ventaActual);
 
-		adaptadorCliente.modificarCliente(usuario);
-	}
+		adaptadorUsuario.modificarUsuario(usuario);
+	}*/
 
 	private void inicializarAdaptadores() {
 		FactoriaDAO factoria = null;
@@ -136,7 +139,7 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		} catch (DAOException e) {
 			e.printStackTrace();
 		}
-		adaptadorCliente = factoria.getClienteDAO();
+		adaptadorUsuario = factoria.getUsuarioDAO();
 		adaptadorVideo = factoria.getVideoDAO();
 		adaptadorVenta = factoria.getVentaDAO();
 		
@@ -152,12 +155,16 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		catalogoVideoList = CatalogoVideoList.getUnicaInstancia();
 	}
 
-	public boolean existeCliente(String dni) {
-		return catalogoUsuarios.getCliente(dni) != null;
+	public boolean existeUsuario(String dni) {
+		return catalogoUsuarios.getUsuario(dni) != null;
 	}
 	
 	public boolean autenticarUsuario(String user, String password) {
-		return catalogoUsuarios.authUsuario(user, password);
+		if(catalogoUsuarios.authUsuario(user, password)) {
+			usuario = catalogoUsuarios.getUsuario(user);
+			return true;
+		}
+		return false;
 	}
 
 	public List<Video> getVideos() {
@@ -239,4 +246,12 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		return catalogoVideoList.existeVideoList(nombre, autor);
 	}
 
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	
+	public void cambiarRolUsuario(Usuario usuario, boolean b) {
+		catalogoUsuarios.cambiarRol(usuario, b);
+		adaptadorUsuario.modificarUsuario(usuario);
+	}
 }

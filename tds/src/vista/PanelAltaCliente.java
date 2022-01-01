@@ -33,7 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 
 
 public class PanelAltaCliente extends JPanel{
@@ -284,8 +284,8 @@ public class PanelAltaCliente extends JPanel{
 				OK = checkFields();
 				if (OK) {
 					boolean registrado = false;
-					String nombre_completo = txtNombre.getText() + txtApellidos.getText();
-					registrado = ControladorTienda.getUnicaInstancia().registrarCliente(nombre_completo, txtEmail.getText(), txtUsuario.getText(),
+					String nombre_completo = txtNombre.getText() + " " +txtApellidos.getText();
+					registrado = ControladorAppVideo.getUnicaInstancia().registrarUsuario(nombre_completo, txtEmail.getText(), txtUsuario.getText(),
 							new String(txtPassword.getPassword()), 
 							txtFechaNacimiento.getText());
 					if (registrado) {

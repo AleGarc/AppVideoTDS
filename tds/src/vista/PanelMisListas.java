@@ -35,8 +35,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 import modelo.Etiqueta;
+import modelo.Usuario;
 import modelo.Video;
 import modelo.VideoDisplay;
 import modelo.VideoDisplayListRenderer;
@@ -52,15 +53,16 @@ public class PanelMisListas extends JPanel{
 	private JPanel panelIzquierdo;
 	private JPanel panelDerecho;
 	private JPanel panelDerechoInv;
-	private String usuario;
+	private Usuario usuario;
 	private JLabel tituloVideo, reproducciones;
 	private JPanel panelEtiquetas;
+	private JLabel txtLista;
 	private List<JLabel> etiquetas = new ArrayList<JLabel>();
 	JComboBox<String> boxListas;
 	private VideoList videoLista;
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
 	
-	ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
+	ControladorAppVideo controladorTienda = ControladorAppVideo.getUnicaInstancia();
 	private static VideoWeb videoWeb;
 	
 	private Video videoSeleccionado;
@@ -91,12 +93,12 @@ public class PanelMisListas extends JPanel{
 		panelIzquierdo.setLayout(new BoxLayout(panelIzquierdo, BoxLayout.Y_AXIS));
 		fixedSize(panelIzquierdo, 200,525 );
 		Ventana.add(panelIzquierdo);
-		JLabel txtLista = new JLabel("Seleccione la lista:");
+		txtLista = new JLabel("Seleccione la lista:");
 		panelIzquierdo.add(txtLista);
 		boxListas = new JComboBox<String>();
 		boxListas.setMaximumSize(new Dimension(292,20));
 		boxListas.setEditable(false);
-		updateBoxListas();
+		//updateBoxListas();
 		actualizarLista();
 		panelIzquierdo.add(boxListas);
 	
@@ -233,6 +235,7 @@ public class PanelMisListas extends JPanel{
 					controladorTienda.addEtiquetaToVideo(txtEtiqueta.getText(), videoSeleccionado);
 					mostrarEtiquetas(videoSeleccionado);
 					validate();
+					txtEtiqueta.setText("");
 				}
 				
 			}
@@ -284,6 +287,19 @@ public class PanelMisListas extends JPanel{
 			fixedSize(panelDerecho, 770,525 );
 			panelDerecho.setVisible(false);
 			panelDerechoInv.setVisible(true);
+			txtLista.setVisible(true);
+			boxListas.setVisible(true);
+		}
+		else if(m == Mode.MASVISTOS) {
+			panelIzquierdo.setVisible(true);
+			fixedSize(panelDerecho, 770,525 );
+			panelDerecho.setVisible(false);
+			panelDerechoInv.setVisible(true);
+			txtLista.setVisible(false);
+			boxListas.setVisible(false);
+			
+			videoLista = controladorTienda.getListaVideo(boxListas.getSelectedItem().toString(), usuario.getUsuario());
+			updateVideos(videoLista.getListaVideos());
 		}
 	}
 	
@@ -308,7 +324,7 @@ public class PanelMisListas extends JPanel{
 		boxListas.removeAllItems();
 		modelVideos.removeAllElements();
 		boxListas.addItem("");
-		for(VideoList v: controladorTienda.getListasAutor(usuario)) {
+		for(VideoList v: controladorTienda.getListasAutor(usuario.getUsuario())) {
 			boxListas.addItem(v.getNombre());
 		}
 		
@@ -317,7 +333,7 @@ public class PanelMisListas extends JPanel{
 
 	}
 	
-	public void setUsuario(String user) {
+	public void setUsuario(Usuario user) {
 		usuario = user;
 	}
 	
@@ -325,7 +341,7 @@ public class PanelMisListas extends JPanel{
 		boxListas.addActionListener(ev ->{
 			//System.out.println(boxListas.getSelectedItem());
 			if(boxListas.getSelectedItem() != null && !boxListas.getSelectedItem().toString().isEmpty()) {
-				videoLista = controladorTienda.getListaVideo(boxListas.getSelectedItem().toString(), usuario);
+				videoLista = controladorTienda.getListaVideo(boxListas.getSelectedItem().toString(), usuario.getUsuario());
 				updateVideos(videoLista.getListaVideos());
 				//updateVideosLista(videoLista.getListaVideos());
 			}

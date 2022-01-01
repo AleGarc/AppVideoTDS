@@ -10,6 +10,7 @@ public class Usuario {
 	private String email;
 	private String usuario;
 	private String password;
+	private boolean premium;
 	
 	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		codigo = 0;
@@ -18,7 +19,12 @@ public class Usuario {
 		this.email = email;
 		this.usuario = usuario;
 		this.password = password;
-		
+		this.premium = false;
+	}
+	
+	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password, boolean premium) {
+		this(nombre_completo,fecha_nacimiento,email,usuario,password);
+		this.premium = premium;
 	}
 
 	public String getNombre_completo() {
@@ -69,6 +75,12 @@ public class Usuario {
 		return codigo;
 	}
 
-
+	public void cambiarRol(boolean b) {
+		this.premium = b;
+	}
+	
+	public boolean esPremium() {
+		return this.premium;
+	}
 
 }

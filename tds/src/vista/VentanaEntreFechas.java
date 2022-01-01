@@ -17,7 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import controlador.ControladorTienda;
+import controlador.ControladorAppVideo;
 
 @SuppressWarnings("serial")
 public class VentanaEntreFechas extends JFrame implements ActionListener{

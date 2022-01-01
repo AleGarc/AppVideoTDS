@@ -13,6 +13,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +45,14 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import controlador.ControladorTienda;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+
+import controlador.ControladorAppVideo;
 import tds.video.VideoWeb;
+import modelo.Usuario;
 import modelo.Video;
 import modelo.VideoDisplay;
 import modelo.VideoDisplayListRenderer;
@@ -55,8 +67,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JButton playButton;
 	private JButton btnPlay;
 	private JButton btnNuevaBusqueda;
-	private JButton btnBusqueda, btnEliminar;
-	private String usuario;
+	private JButton btnBusqueda, btnEliminar, btnPDF;
+	private Usuario usuario;
 	private Video selectedVideo;
 	private List<Video> videosEncontrados = new ArrayList<Video>();
 	private JPanel panelIzquierdo,panelCentral, panelDerecho;
@@ -71,7 +83,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private String subCadenaBusqueda;
 	private List<String> etiquetasBusqueda = new ArrayList<String>();
 	
-	ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
+	ControladorAppVideo controladorTienda = ControladorAppVideo.getUnicaInstancia();
 	
 	private VideoList videoLista = null;
 	
@@ -126,15 +138,17 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			if(txtLista.getText().equals(""))
 				JOptionPane.showMessageDialog(Ventana,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
 			else{
-				if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario)) {
-					videoLista = controladorTienda.getListaVideo(txtLista.getText(), usuario);
+				if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario.getUsuario())) {
+					videoLista = controladorTienda.getListaVideo(txtLista.getText(), usuario.getUsuario());
 					updateVideosLista(videoLista.getListaVideos());
 					btnEliminar.setEnabled(true);
+					if(usuario.esPremium())
+						btnPDF.setEnabled(true);
 				}
 				else {
 					int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea crear la lista " + txtLista.getText() + "?", "Lista inexistente",JOptionPane.YES_NO_OPTION);
 					if(eleccion == 0) {
-						videoLista = controladorTienda.crearListaVideo(txtLista.getText(), usuario);
+						videoLista = controladorTienda.crearListaVideo(txtLista.getText(), usuario.getUsuario());
 						modelLista.removeAllElements();
 						btnEliminar.setEnabled(true);
 					}	
@@ -143,7 +157,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		});
 		panelIzquierdo.add(btnBuscarLista);
 		
-		Component rigidArea_1 = Box.createRigidArea(new Dimension(80, 5));
+		Component rigidArea_1 = Box.createRigidArea(new Dimension(30, 5));
 		panelIzquierdo.add(rigidArea_1);
 		btnEliminar = new JButton("Eliminar");
 		panelIzquierdo.add(btnEliminar);
@@ -155,26 +169,15 @@ public class PanelExplorar extends JPanel implements ActionListener{
 				limpiarLista();
 			}
 		});
+		
+		btnPDF = new JButton("Generar PDF");
+		panelIzquierdo.add(btnPDF);
+		btnPDF.setEnabled(false);
+		btnPDF.addActionListener(ev ->{    
+		     generarPDF();
+			
+		});
 
-		/*JPanel pnPrueba = new JPanel();
-		pnPrueba.setLayout(new BoxLayout(pnPrueba, BoxLayout.Y_AXIS));
-		pnPrueba.setBackground(Color.LIGHT_GRAY);
-		//panelIzquierdo.add(pnPrueba);
-		JScrollPane scrollerResultados = new JScrollPane(pnPrueba);
-		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		//scrollerResultados.getViewport().setBackground(Color.LIGHT_GRAY);
-		scrollerResultados.setBorder(new LineBorder(new Color(0, 0, 0)));*/
-		//pnPrueba.add(prueba);
-		
-		
-		
-		/*JLabel prueba = new JLabel("VAMOS");
-		ImageIcon imageIcon = new ImageIcon(VentanaMain.class.getResource("/Titulo.png")); 
-		Image image = imageIcon.getImage(); 
-		Image newimg = image.getScaledInstance(656/7, 278/7,  java.awt.Image.SCALE_SMOOTH);
-		imageIcon = new ImageIcon(newimg); 
-		prueba.setIcon(imageIcon);*/
 		
 		
 		JList<VideoDisplay> listaVideos = new JList<VideoDisplay>();
@@ -439,10 +442,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		c.setPreferredSize(new Dimension(x,y));
 	}
 	
-	public String getUsuario() {
-		return usuario;
-	}
-	
+
 	public void setPlayMainButton(JButton playMainButton)
 	{
 		playButton = playMainButton;
@@ -470,12 +470,14 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		textField.setText("");
 		modelVideos.removeAllElements();
 		etiquetasBusqueda.clear();
+		model2.clear();
 		limpiarLista();
 	}
 	
 	public void limpiarLista() {
 		modelLista.removeAllElements();
 		btnEliminar.setEnabled(false);
+		btnPDF.setEnabled(false);
 		videoLista = null;
 		txtLista.setText("");
 	}
@@ -537,7 +539,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		}
 	}
 	
-	public void setUsuario(String user) {
+	public void setUsuario(Usuario user) {
 		usuario = user;
 	}
 	
@@ -550,6 +552,34 @@ public class PanelExplorar extends JPanel implements ActionListener{
 				return v;
 		}
 		return video;
+	}
+	
+	public void generarPDF() {
+		 String dest = "C:\\Users\\Alex\\Desktop\\sample.pdf";       //CAMBIAR EL DIRECOTRIO!
+	      PdfWriter writer = null;
+	      try {
+				writer = new PdfWriter(dest);
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+	      
+	      PdfDocument pdfDoc = new PdfDocument(writer);              
+	   
+	      pdfDoc.addNewPage();               
+	         
+	      Document document = new Document(pdfDoc);    
+	      String info = "Nombre: "+ usuario.getNombre_completo() + "\n" + "Usuario: " + usuario.getUsuario() + "\n" +
+	      "Email: "+ usuario.getEmail() + "\n" + "Fecha de nacimiento: "+ usuario.getFecha_nacimiento();
+	      document.add(new Paragraph (info));
+	      document.add(new Paragraph ("\n"));
+	      document.add(new Paragraph ("Lista de reproducción: "+ videoLista.getNombre()));
+	      for(Video v: videoLista.getListaVideos()) {
+	    	  document.add(new Paragraph ("Video: " + v.getTitulo() + "\n URL: " + v.getUrl() + "\n Reproducciones: " + v.getReproducciones()));
+	      }	      
+	      document.close();     
+	      JOptionPane.showMessageDialog(null, "El PDF se ha generado con éxito.", "PDF generado",
+					JOptionPane.INFORMATION_MESSAGE);
 	}
 }
 

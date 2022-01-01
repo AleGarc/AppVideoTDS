@@ -8,7 +8,7 @@ import java.util.Map;
 
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
-import persistencia.IAdaptadorClienteDAO;
+import persistencia.IAdaptadorUsuarioDAO;
 
 
 /* El catálogo mantiene los objetos en memoria, en una tabla hash
@@ -21,12 +21,12 @@ public class CatalogoUsuarios {
 	private static CatalogoUsuarios unicaInstancia = new CatalogoUsuarios();
 	
 	private FactoriaDAO dao;
-	private IAdaptadorClienteDAO adaptadorCliente;
+	private IAdaptadorUsuarioDAO adaptadorUsuario;
 	
 	private CatalogoUsuarios() {
 		try {
   			dao = FactoriaDAO.getInstancia(FactoriaDAO.DAO_TDS);
-  			adaptadorCliente = dao.getClienteDAO();
+  			adaptadorUsuario = dao.getUsuarioDAO();
   			usuarios = new HashMap<String,Usuario>();
   			this.cargarCatalogo();
   		} catch (DAOException eDAO) {
@@ -39,32 +39,31 @@ public class CatalogoUsuarios {
 	}
 	
 	/*devuelve todos los clientes*/
-	public List<Usuario> getClientes(){
+	public List<Usuario> getUsuarios(){
 		ArrayList<Usuario> lista = new ArrayList<Usuario>();
 		for (Usuario c:usuarios.values()) 
 			lista.add(c);
 		return lista;
 	}
 	
-	public Usuario getCliente(int codigo) {
+	public Usuario getUsuario(int codigo) {
 		for (Usuario c:usuarios.values()) {
 			if (c.getCodigo()==codigo) return c;
 		}
 		return null;
 	}
-	public Usuario getCliente(String usuario) {
+	public Usuario getUsuario(String usuario) {
 		return usuarios.get(usuario); 
 	}
 	
-	public void addCliente(Usuario cli) {
+	public void addUsuario(Usuario cli) {
 		usuarios.put(cli.getUsuario(),cli);
 	}
-	public void removeCliente (Usuario cli) {
+	public void removeUsuario (Usuario cli) {
 		usuarios.remove(cli.getUsuario());
 	}
 	
 	public boolean authUsuario(String user, String password) {
-		
 		Usuario u = usuarios.get(user);
 		if(u == null) return false;
 		return u.getPassword().equals(password);
@@ -72,9 +71,12 @@ public class CatalogoUsuarios {
 	
 	/*Recupera todos los clientes para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
-		 List<Usuario> clientesBD = adaptadorCliente.recuperarTodosClientes();
+		 List<Usuario> clientesBD = adaptadorUsuario.recuperarTodosUsuarios();
 		 for (Usuario cli: clientesBD) 
 			     usuarios.put(cli.getUsuario(),cli);
 	}
 	
+	public void cambiarRol(Usuario usuario, boolean b) {
+		usuario.cambiarRol(b);
+	}
 }

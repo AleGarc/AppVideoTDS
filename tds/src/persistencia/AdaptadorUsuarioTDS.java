@@ -15,7 +15,7 @@ import modelo.Usuario;
 import modelo.Venta;
 
 //Usa un pool para evitar problemas doble referencia con ventas
-public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
+public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 	private static ServicioPersistencia servPersistencia;
 	private static AdaptadorUsuarioTDS unicaInstancia = null;
 
@@ -31,89 +31,98 @@ public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 	}
 
 	/* cuando se registra un cliente se le asigna un identificador único */
-	public void registrarCliente(Usuario usuario) {
-		Entidad eCliente = null;
+	public void registrarUsuario(Usuario usuario) {
+		Entidad eUsuario = null;
 		
 		// Si la entidad está registrada no la registra de nuevo
 		try {
-			eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
+			eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
 		} catch (NullPointerException e) {}
-		if (eCliente != null) return;
+		if (eUsuario != null) return;
 
-		// crear entidad Cliente
-		eCliente = new Entidad();
-		eCliente.setNombre("cliente");
-		eCliente.setPropiedades(new ArrayList<Propiedad>(
+		// crear entidad Usuario
+		eUsuario = new Entidad();
+		eUsuario.setNombre("usuario");
+		eUsuario.setPropiedades(new ArrayList<Propiedad>(
 				Arrays.asList(new Propiedad("nombre_completo", usuario.getNombre_completo()), 
 						new Propiedad("fecha_nacimiento", usuario.getFecha_nacimiento()),
 						new Propiedad("email", usuario.getEmail()),
 						new Propiedad("usuario", usuario.getUsuario()),
-						new Propiedad("password", usuario.getPassword()))));
-		/*eCliente.setPropiedades(new ArrayList<Propiedad>(
+						new Propiedad("password", usuario.getPassword()),
+						new Propiedad("premium", String.valueOf(usuario.esPremium())))));
+	
+		/*eUsuario.setPropiedades(new ArrayList<Propiedad>(
 				Arrays.asList(new Propiedad("dni", cliente.getDni()), new Propiedad("nombre", cliente.getNombre()),
 						new Propiedad("ventas", obtenerCodigosVentas(cliente.getVentas())))));*/
 		
 		// registrar entidad cliente
-		eCliente = servPersistencia.registrarEntidad(eCliente);
+		eUsuario = servPersistencia.registrarEntidad(eUsuario);
 		// asignar identificador unico
 		// Se aprovecha el que genera el servicio de persistencia
-		usuario.setCodigo(eCliente.getId()); 
+		usuario.setCodigo(eUsuario.getId()); 
 
 	}
 
-	public void borrarCliente(Usuario usuario) {
+	public void borrarUsuario(Usuario usuario) {
 		// No se comprueban restricciones de integridad con Venta
-		Entidad eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
+		Entidad eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
 		
-		servPersistencia.borrarEntidad(eCliente);
+		servPersistencia.borrarEntidad(eUsuario);
 	}
 
-	public void modificarCliente(Usuario usuario) {
+	public void modificarUsuario(Usuario usuario) {
 
-		Entidad eCliente = servPersistencia.recuperarEntidad(usuario.getCodigo());
-
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "nombre_completo");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "nombre_completo", usuario.getNombre_completo());
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "fecha_nacimiento");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "fecha_nacimiento", usuario.getFecha_nacimiento());
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "email");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "email", usuario.getEmail());
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "usuario");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "usuario", usuario.getUsuario());
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "password");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "password", usuario.getPassword());
-		
-		/*String ventas = obtenerCodigosVentas(cliente.getVentas());
-		servPersistencia.eliminarPropiedadEntidad(eCliente, "ventas");
-		servPersistencia.anadirPropiedadEntidad(eCliente, "ventas", ventas);*/
+		Entidad eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
+			
+		for (Propiedad prop : eUsuario.getPropiedades()) {
+			if (prop.getNombre().equals("codigo")) {
+				prop.setValor(String.valueOf(usuario.getCodigo()));
+			} else if (prop.getNombre().equals("nombre_completo")) {
+				prop.setValor(usuario.getNombre_completo());
+			} else if (prop.getNombre().equals("fecha_nacimiento")) {
+				prop.setValor(usuario.getFecha_nacimiento());
+			} else if (prop.getNombre().equals("email")) {
+				prop.setValor(usuario.getEmail());
+			} else if (prop.getNombre().equals("usuario")) {
+				prop.setValor(usuario.getUsuario());
+			} else if (prop.getNombre().equals("password")) {
+				prop.setValor(usuario.getPassword());
+			} else if (prop.getNombre().equals("premium")) {
+				prop.setValor( String.valueOf(usuario.esPremium()));
+			}
+			
+			servPersistencia.modificarPropiedad(prop);
+		}
 	}
 
-	public Usuario recuperarCliente(int codigo) {
+	public Usuario recuperarUsuario(int codigo) {
 
 		// Si la entidad está en el pool la devuelve directamente
 		if (PoolDAO.getUnicaInstancia().contiene(codigo))
 			return (Usuario) PoolDAO.getUnicaInstancia().getObjeto(codigo);
 
 		// si no, la recupera de la base de datos
-		Entidad eCliente;
+		Entidad eUsuario;
 		//List<Venta> ventas = new LinkedList<Venta>();
 		String nombre_completo;
 		String fecha_nacimiento;
 		String email;
 		String usuario;
 		String password;
+		boolean premium;
 		
 		// recuperar entidad
-		eCliente = servPersistencia.recuperarEntidad(codigo);
+		eUsuario = servPersistencia.recuperarEntidad(codigo);
 
 		// recuperar propiedades que no son objetos
-		nombre_completo = servPersistencia.recuperarPropiedadEntidad(eCliente, "nombre_completo");
-		fecha_nacimiento = servPersistencia.recuperarPropiedadEntidad(eCliente, "fecha_nacimiento");
-		email = servPersistencia.recuperarPropiedadEntidad(eCliente, "email");
-		usuario = servPersistencia.recuperarPropiedadEntidad(eCliente, "usuario");
-		password = servPersistencia.recuperarPropiedadEntidad(eCliente, "password");
+		nombre_completo = servPersistencia.recuperarPropiedadEntidad(eUsuario, "nombre_completo");
+		fecha_nacimiento = servPersistencia.recuperarPropiedadEntidad(eUsuario, "fecha_nacimiento");
+		email = servPersistencia.recuperarPropiedadEntidad(eUsuario, "email");
+		usuario = servPersistencia.recuperarPropiedadEntidad(eUsuario, "usuario");
+		password = servPersistencia.recuperarPropiedadEntidad(eUsuario, "password");
+		premium = Boolean.parseBoolean(servPersistencia.recuperarPropiedadEntidad(eUsuario, "premium"));
 		
-		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password);
+		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password, premium);
 		user.setCodigo(codigo);
 
 		// IMPORTANTE:añadir el cliente al pool antes de llamar a otros
@@ -122,7 +131,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 
 		// recuperar propiedades que son objetos llamando a adaptadores
 		// ventas
-		/*ventas = obtenerVentasDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eCliente, "ventas"));
+		/*ventas = obtenerVentasDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "ventas"));
 
 		for (Venta v : ventas)
 			cliente.addVenta(v);*/
@@ -130,15 +139,16 @@ public class AdaptadorUsuarioTDS implements IAdaptadorClienteDAO {
 		return user;
 	}
 
-	public List<Usuario> recuperarTodosClientes() {
+	public List<Usuario> recuperarTodosUsuarios() {
 
-		List<Entidad> eClientes = servPersistencia.recuperarEntidades("cliente");
+		List<Entidad> eUsuarios = servPersistencia.recuperarEntidades("usuario");
 		List<Usuario> usuarios = new LinkedList<Usuario>();
 
-		for (Entidad eCliente : eClientes) {
-			usuarios.add(recuperarCliente(eCliente.getId()));
+		for (Entidad eUsuario : eUsuarios) {
+			usuarios.add(recuperarUsuario(eUsuario.getId()));
 		}
 		return usuarios;
 	}
+
 
 }
