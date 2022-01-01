@@ -17,7 +17,7 @@ import persistencia.IAdaptadorEtiquetaDAO;
  * directamente la base de datos
  */
 public class CatalogoEtiquetas {
-	private Map<String,Etiqueta> etiqueta; 
+	private Map<String,Etiqueta> etiquetas; 
 	private static CatalogoEtiquetas unicaInstancia = new CatalogoEtiquetas();
 	
 	private FactoriaDAO dao;
@@ -27,7 +27,7 @@ public class CatalogoEtiquetas {
 		try {
   			dao = FactoriaDAO.getInstancia(FactoriaDAO.DAO_TDS);
   			adaptadorEtiqueta = dao.getEtiquetaDAO();
-  			etiqueta = new HashMap<String,Etiqueta>();
+  			etiquetas = new HashMap<String,Etiqueta>();
   			this.cargarCatalogo();
   		} catch (DAOException eDAO) {
   			eDAO.printStackTrace();
@@ -41,40 +41,51 @@ public class CatalogoEtiquetas {
 	/*devuelve todas las Etiquetas*/
 	public List<Etiqueta> getEtiquetas(){
 		ArrayList<Etiqueta> lista = new ArrayList<Etiqueta>();
-		for (Etiqueta c:etiqueta.values()) 
+		for (Etiqueta c:etiquetas.values()) 
 			lista.add(c);
 		return lista;
 	}
 	
 	public List<String> getEtiquetasString(){
 		ArrayList<String> lista = new ArrayList<String>();
-		for (Etiqueta c:etiqueta.values()) 
+		for (Etiqueta c:etiquetas.values()) 
 			lista.add(c.getNombre());
 		return lista;
 	}
 	
 	public Etiqueta getEtiqueta(int codigo) {
-		for (Etiqueta p : etiqueta.values()) {
+		for (Etiqueta p : etiquetas.values()) {
 			if (p.getCodigo()==codigo) return p;
 		}
 		return null;
 	}
 	public Etiqueta getEtiqueta(String nombre) {
-		return etiqueta.get(nombre); 
+		return etiquetas.get(nombre); 
 	}
 	
 	public void addEtiqueta(Etiqueta e) {
-		etiqueta.put(e.getNombre(),e);
+		etiquetas.put(e.getNombre(),e);
 	}
 	public void removeEtiqueta(Etiqueta e) {
-		etiqueta.remove(e.getNombre());
+		etiquetas.remove(e.getNombre());
+	}
+	
+	public Etiqueta nuevaEtiqueta(String nombreEtiqueta) {
+		Etiqueta e = new Etiqueta(nombreEtiqueta);
+		etiquetas.put(nombreEtiqueta, e);
+		adaptadorEtiqueta.registrarEtiqueta(e);
+		return e;
 	}
 	
 	/*Recupera todos los Etiquetas para trabajar con ellos en memoria*/
 	private void cargarCatalogo() throws DAOException {
 		 List<Etiqueta> EtiquetasBD = adaptadorEtiqueta.recuperarTodosEtiquetas();
 		 for (Etiqueta pro: EtiquetasBD) 
-			     etiqueta.put(pro.getNombre(),pro);
+			     etiquetas.put(pro.getNombre(),pro);
+	}
+	
+	public Etiqueta existeEtiqueta(String e) {
+		return etiquetas.get(e);
 	}
 	
 }

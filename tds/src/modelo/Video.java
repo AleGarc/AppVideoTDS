@@ -12,20 +12,27 @@ public class Video {
 	private String titulo;
 	private String url;
 	private List<Etiqueta> etiquetas;
+	private int reproducciones;
 	
 	public Video(String titulo, String url) {
 		this.codigo = 0;
 		this.titulo = titulo;
 		this.url = url;
 		this.etiquetas = new LinkedList<Etiqueta>();
+		this.reproducciones = 0;
 	}
 	
+
 	public Video(String titulo, String url, List<Etiqueta> etiquetas) {
-		this.codigo = 0;
-		this.titulo = titulo;
-		this.url = url;
+		this(titulo, url);
 		this.etiquetas = etiquetas;
 	}
+	
+	public Video(String titulo, String url, List<Etiqueta> etiquetas, int reproducciones) {
+		this(titulo, url, etiquetas);
+		this.reproducciones = reproducciones;
+	}
+	
 	
 	public String getTitulo() {
 		return titulo;
@@ -50,6 +57,10 @@ public class Video {
 	public void setEtiquetas(List<Etiqueta> etiquetas) {
 		this.etiquetas = etiquetas;
 	}
+	
+	public void addEtiqueta(Etiqueta e) {
+		this.etiquetas.add(e);
+	}
 
 	public int getCodigo() {
 		return codigo;
@@ -66,11 +77,13 @@ public class Video {
 		return false;
 	}
 	
-	/*Util para mostrar el objeto en ComboBox
-	@Override
-	public String toString() {
-		return nombre;
-	}*/
+	public int getReproducciones() {
+		return reproducciones;
+	}
+	
+	public void addReproducciones() {
+		reproducciones = reproducciones + 1;
+	}
 	
 	@Override
 	public int hashCode() {
@@ -82,7 +95,7 @@ public class Video {
 		if (obj == null)
 			return false;
 		Video other = (Video) obj;
-		return codigo == other.codigo && Objects.equals(titulo, other.titulo) && Objects.equals(url, other.url);
+		return codigo == other.codigo && Objects.equals(titulo, other.titulo) && Objects.equals(url, other.url) && Objects.equals(reproducciones, other.reproducciones);
 	}
 
 }

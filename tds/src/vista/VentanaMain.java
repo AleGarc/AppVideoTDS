@@ -264,6 +264,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnLogin) {
+			videoWeb.cancel();
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelLoginCard);
 		    validate();
@@ -271,6 +272,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		    
 		}
 		if (e.getSource() == btnRegistro) {
+			videoWeb.cancel();
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelRegistroCard);
 		    validate();
@@ -279,7 +281,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		if (e.getSource() == btnExplorar) {
 			
 			
-			
+			videoWeb.cancel();
 			/*List<Video> videos = controladorTienda.getVideos();
 			
 			panelExplorar.updateVideos(videos);
@@ -295,6 +297,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		}
 		if(e.getSource() == loginMainButton) {
 			usuario = panelLogin.getUsuario();
+			panelMisListas.setUsuario(usuario);
 			logeado = true;
 			saludoUsuario.setText("Hola " + usuario);
 			saludoUsuario.setVisible(true);
@@ -317,6 +320,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 			return;
 		}
 		if(e.getSource() == playMainButton) {
+			videoWeb.cancel();
 			panelMisListas.switchMode(Mode.REPRODUCTOR);
 			panelMisListas.setVideo(panelExplorar.getSelectedVideo());
 			/*CardLayout cl = (CardLayout)(contenido.getLayout());
@@ -327,18 +331,16 @@ public class VentanaMain extends JFrame implements ActionListener{
 			return;
 		}
 		if (e.getSource() == btnMisListas) {
+			videoWeb.cancel();
 			panelMisListas.switchMode(Mode.MISLISTAS);
+			panelMisListas.updateBoxListas();
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelMisListasCard);
 		    validate();
-		    
-		    List<Video> videos = controladorTienda.getVideos();
-			
-			panelMisListas.updateVideos(videos);
-			
 			return;
 		}
 		if (e.getSource() == btnNuevaLista) {
+			videoWeb.cancel();
 			panelExplorar.limpiar();
 			panelExplorar.switchMode(Mode.NUEVALISTA);
 			CardLayout cl = (CardLayout)(contenido.getLayout());

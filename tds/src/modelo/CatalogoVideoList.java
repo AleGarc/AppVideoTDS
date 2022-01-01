@@ -50,18 +50,23 @@ public class CatalogoVideoList {
 		}
 	}
 	
-	public void removeVideoList(String nombre, String autor) {
-		List<VideoList> lista =  videoListMap.get(autor);
-		for(VideoList v : lista){
+	public void removeVideoList(VideoList videoLista) {
+		List<VideoList> lista =  videoListMap.get(videoLista.getAutor());
+		/*for(VideoList v : lista){
 			if(v.getNombre().equals(nombre)) {
 				lista.remove(v);
 				adaptadorVideoList.borrarVideoList(v);
 			}
-		}
+		}*/
+		lista.remove(videoLista);
+		adaptadorVideoList.borrarVideoList(videoLista);
 	}
 	
 	public List<VideoList> getVideoListAutor(String autor){
-		return videoListMap.get(autor);
+		if(videoListMap.containsKey(autor))
+			return videoListMap.get(autor);
+		return new ArrayList<VideoList>();
+		
 	}
 	
 	public void addVideoToList(String nombre, String autor, Video v){
@@ -113,12 +118,14 @@ public class CatalogoVideoList {
 	
 	public VideoList getListaVideo(String nombre, String autor) {
 		List<VideoList> lista =  videoListMap.get(autor);
+		//if(lista == null)
+			
 		for(VideoList v : lista){
 			if(v.getNombre().equals(nombre)) {
 				return v;
 			}
 		}
-		return null;
+		return new VideoList(nombre,autor);
 	}
 	
 	public void actualizarVideoList(VideoList videoLista) {

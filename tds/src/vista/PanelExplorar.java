@@ -55,7 +55,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JButton playButton;
 	private JButton btnPlay;
 	private JButton btnNuevaBusqueda;
-	private JButton btnBusqueda;
+	private JButton btnBusqueda, btnEliminar;
 	private String usuario;
 	private Video selectedVideo;
 	private List<Video> videosEncontrados = new ArrayList<Video>();
@@ -123,20 +123,39 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 		JButton btnBuscarLista = new JButton("Buscar");
 		btnBuscarLista.addActionListener(ev ->{
-			if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario)) {
-				videoLista = controladorTienda.getListaVideo(txtLista.getText(), usuario);
-				updateVideosLista(videoLista.getListaVideos());
+			if(txtLista.getText().equals(""))
+				JOptionPane.showMessageDialog(Ventana,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
+			else{
+				if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario)) {
+					videoLista = controladorTienda.getListaVideo(txtLista.getText(), usuario);
+					updateVideosLista(videoLista.getListaVideos());
+					btnEliminar.setEnabled(true);
+				}
+				else {
+					int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea crear la lista " + txtLista.getText() + "?", "Lista inexistente",JOptionPane.YES_NO_OPTION);
+					if(eleccion == 0) {
+						videoLista = controladorTienda.crearListaVideo(txtLista.getText(), usuario);
+						modelLista.removeAllElements();
+						btnEliminar.setEnabled(true);
+					}	
+				}
 			}
-			else {
-				int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea crear la lista " + txtLista.getText() + "?", "Lista inexistente",JOptionPane.YES_NO_OPTION);
-				if(eleccion == 0) {
-					videoLista = controladorTienda.crearListaVideo(txtLista.getText(), usuario);
-					modelLista.removeAllElements();
-				}	
-			}	
 		});
 		panelIzquierdo.add(btnBuscarLista);
 		
+		Component rigidArea_1 = Box.createRigidArea(new Dimension(80, 5));
+		panelIzquierdo.add(rigidArea_1);
+		btnEliminar = new JButton("Eliminar");
+		panelIzquierdo.add(btnEliminar);
+		btnEliminar.setEnabled(false);
+		btnEliminar.addActionListener(ev ->{
+			int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Estás seguro que quieres eliminar la lista " + txtLista.getText() + "?", "Eliminar lista",JOptionPane.YES_NO_OPTION);
+			if(eleccion == 0) {
+				controladorTienda.borrarListaVideo(videoLista);
+				limpiarLista();
+			}
+		});
+
 		/*JPanel pnPrueba = new JPanel();
 		pnPrueba.setLayout(new BoxLayout(pnPrueba, BoxLayout.Y_AXIS));
 		pnPrueba.setBackground(Color.LIGHT_GRAY);
@@ -181,7 +200,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JScrollPane scrollerListaVideos = new JScrollPane(listaVideos);
 		scrollerListaVideos.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollerListaVideos.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		fixedSize(scrollerListaVideos, 258,460);
+		fixedSize(scrollerListaVideos, 258,430);
 		panelIzquierdo.add(scrollerListaVideos);
 		
 		//fixedSize(scrollerResultados, 204, 400);
@@ -232,7 +251,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			{
 				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
-					if(modo == Mode.NUEVALISTA && !videoLista.contieneVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()))) {
+					if(modo == Mode.NUEVALISTA && !(videoLista == null) && !videoLista.contieneVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()))) {
 						videoLista.addVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()));
 						modelLista.addElement(lista.getSelectedValue());
 						controladorTienda.actualizarLista(videoLista);
@@ -241,8 +260,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 						selectedVideo = videosEncontrados.get(lista.getSelectedIndex());
 						for(ActionListener a: playButton.getActionListeners()) {
 						    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
-						          //Nothing need go here, the actionPerformed method (with the
-						          //above arguments) will trigger the respective listener
+						          
 						    	
 						    });
 						 }
@@ -452,6 +470,14 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		textField.setText("");
 		modelVideos.removeAllElements();
 		etiquetasBusqueda.clear();
+		limpiarLista();
+	}
+	
+	public void limpiarLista() {
+		modelLista.removeAllElements();
+		btnEliminar.setEnabled(false);
+		videoLista = null;
+		txtLista.setText("");
 	}
 	
 	public void updateVideos(List<Video> videos) {

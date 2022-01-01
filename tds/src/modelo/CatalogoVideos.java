@@ -59,6 +59,12 @@ public class CatalogoVideos {
 		return videos.get(titulo); 
 	}
 	
+	public void addEtiquetaToVideo(Etiqueta e, Video v) {
+		Video vid = videos.get(v.getTitulo());
+		vid.addEtiqueta(e);
+		adaptadorVideo.modificarVideo(vid);
+	}
+	
 	public void addVideo(Video vid) {
 		videos.put(vid.getTitulo(),vid);
 		for(Etiqueta e: vid.getEtiquetas()) {
@@ -76,6 +82,12 @@ public class CatalogoVideos {
 	}
 	public void removeVideo(Video pro) {
 		videos.remove(pro.getTitulo());
+	}
+	
+	public void addReproduccion(Video v) {
+		Video video = videos.get(v.getTitulo());
+		video.addReproducciones();
+		adaptadorVideo.modificarVideo(video);
 	}
 	
 	/*Recupera todos los Videos para trabajar con ellos en memoria*/

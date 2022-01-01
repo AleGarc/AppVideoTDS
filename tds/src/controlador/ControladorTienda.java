@@ -86,6 +86,17 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		
 	}
 	
+	public void addEtiquetaToVideo(String etiqueta, Video v) {
+		Etiqueta e = catalogoEtiquetas.existeEtiqueta(etiqueta);
+		if(e == null)
+			e = catalogoEtiquetas.nuevaEtiqueta(etiqueta);
+		catalogoVideos.addEtiquetaToVideo(e, v);
+	}
+	
+	public void addReproduccion(Video v) {
+		catalogoVideos.addReproduccion(v);
+	}
+	
 	public void registrarEtiqueta(Etiqueta etiqueta) {
 		catalogoEtiquetas.addEtiqueta(etiqueta);
 	}
@@ -189,6 +200,7 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 			for(umu.tds.componente.Video video: listaVideos.getVideo()) {
 				registrarVideo(video.getTitulo(), video.getURL(), stringToEtiquetas(video.getEtiqueta()));
 			}
+			inicializarCatalogos();
 		}
 		
 	}
@@ -211,8 +223,8 @@ public class ControladorTienda implements IEncendidoListener, IArchivoVideosList
 		return videoLista;
 	}
 	
-	public void borrarListaVideo(String nombre, String autor) {
-		catalogoVideoList.removeVideoList(nombre, autor);
+	public void borrarListaVideo(VideoList videoLista) {
+		catalogoVideoList.removeVideoList(videoLista);
 	}
 	
 	public void actualizarLista(VideoList videoLista) {

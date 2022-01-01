@@ -9,6 +9,11 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +36,11 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import controlador.ControladorTienda;
+import modelo.Etiqueta;
 import modelo.Video;
 import modelo.VideoDisplay;
 import modelo.VideoDisplayListRenderer;
+import modelo.VideoList;
 import tds.video.VideoWeb;
 
 
@@ -46,11 +53,17 @@ public class PanelMisListas extends JPanel{
 	private JPanel panelDerecho;
 	private JPanel panelDerechoInv;
 	private String usuario;
-	private JLabel tituloVideo;
-
+	private JLabel tituloVideo, reproducciones;
+	private JPanel panelEtiquetas;
+	private List<JLabel> etiquetas = new ArrayList<JLabel>();
+	JComboBox<String> boxListas;
+	private VideoList videoLista;
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
 	
+	ControladorTienda controladorTienda = ControladorTienda.getUnicaInstancia();
 	private static VideoWeb videoWeb;
+	
+	private Video videoSeleccionado;
 	
 	public PanelMisListas(VentanaMain v, VideoWeb vWeb){
 		ventana=v; 
@@ -80,17 +93,13 @@ public class PanelMisListas extends JPanel{
 		Ventana.add(panelIzquierdo);
 		JLabel txtLista = new JLabel("Seleccione la lista:");
 		panelIzquierdo.add(txtLista);
-		JComboBox<String> boxListas = new JComboBox<String>();
-		boxListas.addItem("Prueba");
-		boxListas.addItem("Prueba2");
+		boxListas = new JComboBox<String>();
 		boxListas.setMaximumSize(new Dimension(292,20));
 		boxListas.setEditable(false);
-		boxListas.addItemListener(ev -> {
-			System.out.println(boxListas.getSelectedItem());
-		});
+		updateBoxListas();
+		actualizarLista();
 		panelIzquierdo.add(boxListas);
-		JButton btnReproducir = new JButton("Reproducir");
-		panelIzquierdo.add(btnReproducir);
+	
 		
 		/*JPanel pnPrueba = new JPanel();
 		pnPrueba.setLayout(new BoxLayout(pnPrueba, BoxLayout.Y_AXIS));
@@ -120,6 +129,18 @@ public class PanelMisListas extends JPanel{
 		lista.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		lista.setVisibleRowCount(-1);
 		lista.setModel(modelVideos);
+		lista.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e)
+			{
+				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
+				{
+					setVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()));
+					panelDerecho.setVisible(true);
+					panelDerechoInv.setVisible(false);
+					
+				}
+			}
+		});
 		
 		JScrollPane scrollerResultados = new JScrollPane(lista);
 		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -128,10 +149,10 @@ public class PanelMisListas extends JPanel{
 		panelIzquierdo.add(scrollerResultados);
 		
 		//fixedSize(scrollerResultados, 204, 400);
-		JButton btnCancelar = new JButton("Cancelar");
+	
 		//scrollerResultados.setViewportView(Ventana);
 		//panelIzquierdo.add(scrollerResultados);
-		panelIzquierdo.add(btnCancelar);
+	
 		//scrollerResultados.setVisible(false);
 		
 		//panelIzquierdo.setVisible(false);
@@ -162,12 +183,25 @@ public class PanelMisListas extends JPanel{
 		tituloVideo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panelDerecho.add(tituloVideo);
 		
+		reproducciones = new JLabel();
+		reproducciones.setFont(new Font("Arial",0,18));
+		reproducciones.setHorizontalTextPosition(JLabel.CENTER);
+		reproducciones.setVerticalTextPosition(JLabel.CENTER);
+		reproducciones.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panelDerecho.add(reproducciones);
+		
 		Component h2 = Box.createRigidArea(new Dimension(40, 40));
 		panelDerecho.add(h2);
 		//videoWeb.playVideo("https://www.youtube.com/watch?v=EdVMSYomYJY");
 	
-		validate();
+		//validate();
 		panelDerecho.add(videoWeb);
+
+		panelEtiquetas = new JPanel();
+		panelEtiquetas.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panelEtiquetas.setBackground(Color.LIGHT_GRAY);
+		fixedSize(panelEtiquetas, 500,100);
+		panelDerecho.add(panelEtiquetas);
 		
 		JLabel nuevaEtiqueta = new JLabel("Nueva etiqueta:");
 		JTextField txtEtiqueta = new JTextField();
@@ -182,11 +216,27 @@ public class PanelMisListas extends JPanel{
 		anadirNuevaEtiqueta.add(txtEtiqueta);
 		anadirNuevaEtiqueta.add(btnAnadir);
 		
-		Component h3 = Box.createRigidArea(new Dimension(80, 80));
+		Component h3 = Box.createRigidArea(new Dimension(80, 10));
 		panelDerecho.add(h3);
 		
 		panelDerecho.add(anadirNuevaEtiqueta);
 		
+		btnAnadir.addActionListener(ev ->{
+			if(txtEtiqueta.getText().equals(""))
+				JOptionPane.showMessageDialog(Ventana,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
+			else if(checkEtiquetas(txtEtiqueta.getText(), videoSeleccionado)){
+				JOptionPane.showMessageDialog(Ventana,"El video ya tiene esa etiqueta","Etiqueta no válida", JOptionPane.ERROR_MESSAGE);	
+			}
+			else {
+				int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea añadir la etiqueta " + txtEtiqueta.getText() + " al video " + tituloVideo.getText() + " ?", "Añadir etiqueta",JOptionPane.YES_NO_OPTION);
+				if(eleccion == 0) {
+					controladorTienda.addEtiquetaToVideo(txtEtiqueta.getText(), videoSeleccionado);
+					mostrarEtiquetas(videoSeleccionado);
+					validate();
+				}
+				
+			}
+		});
 		
 		}
 		
@@ -203,9 +253,18 @@ public class PanelMisListas extends JPanel{
 	
 	public void updateVideos(List<Video> videos) {
 		//ImageIcon n = new ImageIcon((Image) videoWeb.getThumb(videos.get(0).getUrl()));
+		modelVideos.removeAllElements();
 		for(Video v: videos) {
 			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
 		}
+	}
+	
+	private boolean checkEtiquetas(String etiqueta, Video v) {
+		for(Etiqueta e: v.getEtiquetas()) {
+			if(e.getNombre().equals(etiqueta))
+				return true;
+		}
+		return false;
 	}
 	
 	public void setVideoWeb(VideoWeb v){
@@ -229,8 +288,48 @@ public class PanelMisListas extends JPanel{
 	}
 	
 	public void setVideo(Video v){
+		videoSeleccionado = v;
 		videoWeb.playVideo(v.getUrl());
 		tituloVideo.setText(v.getTitulo());
+		reproducciones.setText("Visto por: " + v.getReproducciones() +" usuarios");
+		controladorTienda.addReproduccion(v);
+		mostrarEtiquetas(v);
+	}
+	
+	public void mostrarEtiquetas(Video v) {
+		panelEtiquetas.removeAll();
+		for(Etiqueta e : v.getEtiquetas()) {
+			JLabel et = new JLabel(e.getNombre());
+			panelEtiquetas.add(et);
+		}
+	}
+	
+	public void updateBoxListas() {
+		boxListas.removeAllItems();
+		modelVideos.removeAllElements();
+		boxListas.addItem("");
+		for(VideoList v: controladorTienda.getListasAutor(usuario)) {
+			boxListas.addItem(v.getNombre());
+		}
+		
+		
+
+
+	}
+	
+	public void setUsuario(String user) {
+		usuario = user;
+	}
+	
+	private void actualizarLista() {
+		boxListas.addActionListener(ev ->{
+			//System.out.println(boxListas.getSelectedItem());
+			if(boxListas.getSelectedItem() != null && !boxListas.getSelectedItem().toString().isEmpty()) {
+				videoLista = controladorTienda.getListaVideo(boxListas.getSelectedItem().toString(), usuario);
+				updateVideos(videoLista.getListaVideos());
+				//updateVideosLista(videoLista.getListaVideos());
+			}
+		});
 	}
 }
 

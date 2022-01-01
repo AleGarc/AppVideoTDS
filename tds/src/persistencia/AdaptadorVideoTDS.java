@@ -41,12 +41,12 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		// registrar primero los atributos que son objetos
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		adaptadorEtiqueta.registrarListaEtiqueta(video.getEtiquetas());
-		
 		// crear entidad Video
 		eVideo = new Entidad();
 		eVideo.setNombre("video");
 		eVideo.setPropiedades(new ArrayList<Propiedad>(Arrays.asList(new Propiedad("titulo", video.getTitulo()),
-				new Propiedad("url", video.getUrl()),
+				new Propiedad("url", video.getUrl()), 
+				new Propiedad("views", Integer.toString(video.getReproducciones())),
 				new Propiedad("etiquetas", adaptadorEtiqueta.obtenerCodigosListaEtiquetas(video.getEtiquetas())))));
 		
 		// registrar entidad Video
@@ -66,7 +66,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 
 	public void modificarVideo(Video video) {
 		Entidad eVideo = servPersistencia.recuperarEntidad(video.getCodigo());
-
+/*
 		servPersistencia.eliminarPropiedadEntidad(eVideo, "titulo");
 		servPersistencia.anadirPropiedadEntidad(eVideo, "titulo", String.valueOf(video.getTitulo()));
 		servPersistencia.eliminarPropiedadEntidad(eVideo, "url");
@@ -75,19 +75,44 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		servPersistencia.eliminarPropiedadEntidad(eVideo, "etiquetas");
 		servPersistencia.anadirPropiedadEntidad(eVideo, "etiquetas", adaptadorEtiqueta.obtenerCodigosListaEtiquetas(video.getEtiquetas())); 
+		*/
+		//AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
+		
+		//Entidad eCliente = servPersistencia.recuperarEntidad(videoList.getCodigo());
+
+		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
+		
+		for (Propiedad prop : eVideo.getPropiedades()) {
+			if (prop.getNombre().equals("codigo")) {
+				prop.setValor(String.valueOf(video.getCodigo()));
+			} else if (prop.getNombre().equals("titulo")) {
+				prop.setValor(video.getTitulo());
+			} else if (prop.getNombre().equals("url")) {
+				prop.setValor(video.getUrl());
+			} else if (prop.getNombre().equals("views")) {
+				prop.setValor(Integer.toString(video.getReproducciones()));
+			} else if (prop.getNombre().equals("etiquetas")) {
+				String etiquetas = adaptadorEtiqueta.obtenerCodigosListaEtiquetas(video.getEtiquetas());
+				prop.setValor(etiquetas);
+			}
+			servPersistencia.modificarPropiedad(prop);
+		}
+	
 	}
 
 	public Video recuperarVideo(int codigo) {
 		Entidad eVideo;
-		String titulo;
+		String titulo; 
 		String url;
+		int reproducciones;
 		eVideo = servPersistencia.recuperarEntidad(codigo);
 		titulo = servPersistencia.recuperarPropiedadEntidad(eVideo, "titulo");
 		url = servPersistencia.recuperarPropiedadEntidad(eVideo, "url");
+		reproducciones = Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eVideo, "views"));
 		
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		String listaCodigosEtiquetas = servPersistencia.recuperarPropiedadEntidad(eVideo, "etiquetas");
-		Video video = new Video(titulo, url, adaptadorEtiqueta.obtenerEtiquetasDesdeCodigos(listaCodigosEtiquetas));
+		Video video = new Video(titulo, url, adaptadorEtiqueta.obtenerEtiquetasDesdeCodigos(listaCodigosEtiquetas), reproducciones);
 		video.setCodigo(codigo);
 		return video;
 	}
