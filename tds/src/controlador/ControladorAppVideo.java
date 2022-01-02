@@ -216,8 +216,8 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		return videoWeb;
 	}
 	
-	public List<VideoList> getListasAutor(String autor){
-		return catalogoVideoList.getVideoListAutor(autor);
+	public List<VideoList> getListasAutor(Usuario usuario){
+		return catalogoVideoList.getVideoListAutor(usuario.getUsuario());
 	}
 	
 	public VideoList getListaVideo(String nombre, String autor) {
@@ -257,5 +257,16 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	
 	public VideoList getVideosMasVistos() {
 		return catalogoVideoList.getVideosMasVistos(catalogoVideos.getVideosMasVistos());
+	}
+	
+	public List<Video> getVideosRecientesUsuario(){
+		return usuario.getVideosRecientes();
+	}
+	
+	public void addVideoReciente(Usuario user, Video v) {
+		if(user.equals(usuario))
+			user.addVideoReciente(v);
+		adaptadorUsuario.modificarUsuario(usuario);
+		
 	}
 }

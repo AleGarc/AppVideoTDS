@@ -62,7 +62,7 @@ public class PanelMisListas extends JPanel{
 	private VideoList videoLista;
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
 	
-	ControladorAppVideo controladorTienda = ControladorAppVideo.getUnicaInstancia();
+	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
 	private static VideoWeb videoWeb;
 	
 	private Video videoSeleccionado;
@@ -136,7 +136,9 @@ public class PanelMisListas extends JPanel{
 			{
 				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
-					setVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()));
+					Video videoSeleccionado = controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo());
+					setVideo(videoSeleccionado);
+					controladorAppVideo.addVideoReciente(usuario, videoSeleccionado);
 					panelDerecho.setVisible(true);
 					panelDerechoInv.setVisible(false);
 					
@@ -232,7 +234,7 @@ public class PanelMisListas extends JPanel{
 			else {
 				int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea añadir la etiqueta " + txtEtiqueta.getText() + " al video " + tituloVideo.getText() + " ?", "Añadir etiqueta",JOptionPane.YES_NO_OPTION);
 				if(eleccion == 0) {
-					controladorTienda.addEtiquetaToVideo(txtEtiqueta.getText(), videoSeleccionado);
+					controladorAppVideo.addEtiquetaToVideo(txtEtiqueta.getText(), videoSeleccionado);
 					mostrarEtiquetas(videoSeleccionado);
 					validate();
 					txtEtiqueta.setText("");
@@ -298,8 +300,19 @@ public class PanelMisListas extends JPanel{
 			txtLista.setVisible(false);
 			boxListas.setVisible(false);
 			
-			videoLista = controladorTienda.getVideosMasVistos();
+			videoLista = controladorAppVideo.getVideosMasVistos();
 			updateVideos(videoLista.getListaVideos());
+			
+		}
+		else if(m == Mode.RECIENTES) {
+			panelIzquierdo.setVisible(true);
+			fixedSize(panelDerecho, 770,525 );
+			panelDerecho.setVisible(false);
+			panelDerechoInv.setVisible(true);
+			txtLista.setVisible(false);
+			boxListas.setVisible(false);
+			
+			updateVideos(controladorAppVideo.getVideosRecientesUsuario());
 			
 		}
 	}
@@ -309,7 +322,7 @@ public class PanelMisListas extends JPanel{
 		videoWeb.playVideo(v.getUrl());
 		tituloVideo.setText(v.getTitulo());
 		reproducciones.setText("Visto por: " + v.getReproducciones() +" usuarios");
-		controladorTienda.addReproduccion(v);
+		controladorAppVideo.addReproduccion(v);
 		mostrarEtiquetas(v);
 	}
 	
@@ -325,7 +338,7 @@ public class PanelMisListas extends JPanel{
 		boxListas.removeAllItems();
 		modelVideos.removeAllElements();
 		boxListas.addItem("");
-		for(VideoList v: controladorTienda.getListasAutor(usuario.getUsuario())) {
+		for(VideoList v: controladorAppVideo.getListasAutor(usuario)) {
 			boxListas.addItem(v.getNombre());
 		}
 		
@@ -342,7 +355,7 @@ public class PanelMisListas extends JPanel{
 		boxListas.addActionListener(ev ->{
 			//System.out.println(boxListas.getSelectedItem());
 			if(boxListas.getSelectedItem() != null && !boxListas.getSelectedItem().toString().isEmpty()) {
-				videoLista = controladorTienda.getListaVideo(boxListas.getSelectedItem().toString(), usuario.getUsuario());
+				videoLista = controladorAppVideo.getListaVideo(boxListas.getSelectedItem().toString(), usuario.getUsuario());
 				updateVideos(videoLista.getListaVideos());
 				//updateVideosLista(videoLista.getListaVideos());
 			}

@@ -64,7 +64,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private PanelCrearVenta panelCrearVenta;
 	private PanelExplorar panelExplorar;
 	private PanelMisListas panelMisListas;
-	
+	private PanelPremium panelPremium;
 	
 	private JButton loginMainButton;
 	private JButton playMainButton;
@@ -73,6 +73,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 	private final String panelLoginCard = "panelLoginCard";
 	private final String panelExplorarCard = "panelExplorar";
 	private final String panelMisListasCard = "panelMisListas";
+	private final String panelPremiumCard = "panelPremium";
 	private Usuario usuario;
 	private JLabel saludoUsuario;
 	private boolean logeado = false;
@@ -114,6 +115,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		});
 		panelExplorar.setBotonBusqueda(btnBusqueda);
 		panelMisListas = new PanelMisListas(this, videoWeb);
+		panelPremium = new PanelPremium(this);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -131,7 +133,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		
 		contenido.add(panelMisListas, panelMisListasCard);
 		
-		
+		contenido.add(panelPremium, panelPremiumCard);
 		//contenido.add(panelAltaCliente, panelRegistroCard);
 		
 		CardLayout c1 = (CardLayout)(contenido.getLayout());
@@ -315,7 +317,12 @@ public class VentanaMain extends JFrame implements ActionListener{
 			btnLogout.setVisible(true);
 			btnPremium.setVisible(true);
 			panelExplorar.setUsuario(usuario);
-			validate();
+
+			panelMisListas.switchMode(Mode.RECIENTES);
+			//panelMisListas.updateBoxListas();
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelMisListasCard);
+		    validate();
 			return;
 		}
 		if(e.getSource() == btnLogout) {
@@ -362,8 +369,11 @@ public class VentanaMain extends JFrame implements ActionListener{
 		}
 		if(e.getSource() == btnPremium) {
 			//btnPremium.setEnabled(false);
-			//btnMasVistos.setEnabled(true);
-			if(usuario.esPremium()) {
+			panelPremium.switchMode();
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelPremiumCard);
+		    validate();
+			/*if(usuario.esPremium()) {
 				controladorAppVideo.cambiarRolUsuario(usuario, false);
 				funcionalidadPremium(false);
 			}
@@ -371,13 +381,22 @@ public class VentanaMain extends JFrame implements ActionListener{
 				controladorAppVideo.cambiarRolUsuario(usuario, true);
 				funcionalidadPremium(true);
 				
-			}
+			}*/
 			
 			
 		}
 		if(e.getSource() == btnMasVistos) {
 			videoWeb.cancel();
 			panelMisListas.switchMode(Mode.MASVISTOS);
+			//panelMisListas.updateBoxListas();
+			CardLayout cl = (CardLayout)(contenido.getLayout());
+		    cl.show(contenido, panelMisListasCard);
+		    validate();
+			return;
+		}
+		if(e.getSource() == btnRecientes) {
+			videoWeb.cancel();
+			panelMisListas.switchMode(Mode.RECIENTES);
 			//panelMisListas.updateBoxListas();
 			CardLayout cl = (CardLayout)(contenido.getLayout());
 		    cl.show(contenido, panelMisListasCard);
@@ -394,7 +413,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		funcionalidadPremium(b);
 	}
 
-	private void funcionalidadPremium(boolean b) {
+	public void funcionalidadPremium(boolean b) {
 		if(b && usuario.esPremium()) {
 			btnMasVistos.setEnabled(true);
 		}

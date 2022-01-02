@@ -17,6 +17,9 @@ import javax.swing.JComponent;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.BoxLayout;
 import java.awt.Color;
@@ -32,7 +35,12 @@ import java.awt.Dimension;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+
+import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
+
 import controlador.ControladorAppVideo;
 
 
@@ -48,7 +56,7 @@ public class PanelAltaCliente extends JPanel{
 	private JLabel lblPasswordChk;
 	private JTextField txtNombre;
 	private JTextField txtApellidos;
-	private JTextField txtFechaNacimiento;
+	private JDateChooser fechaNacimiento;
 	private JTextField txtEmail;
 	private JTextField txtUsuario;
 	private JPasswordField txtPassword;
@@ -57,9 +65,7 @@ public class PanelAltaCliente extends JPanel{
 	private JButton btnCancelar;
 
 	private JLabel lblNombreError;
-	private JLabel lblApellidosError;
 	private JLabel lblFechaNacimientoError;
-	private JLabel lblEmailError;
 	private JLabel lblUsuarioError;
 	private JLabel lblPasswordError;
 	private JPanel panelCampoNombre;
@@ -68,8 +74,9 @@ public class PanelAltaCliente extends JPanel{
 	private JPanel panelCamposEmail;
 	private JPanel panelCamposUsuario;
 	private JPanel panelCamposFechaNacimiento;
-
+	private JPanel datosPersonales;
 	private JPanel frmRegistro;
+	private JPanel panelInvisible;
 	/**
 	 * Launch the application.
 	 */
@@ -87,28 +94,39 @@ public class PanelAltaCliente extends JPanel{
 	 */
 	private void initialize() {
 
-
 		
 		frmRegistro = new JPanel();
+		frmRegistro.setLayout(new BoxLayout(frmRegistro, BoxLayout.Y_AXIS));
+		//frmRegistro.
 		//frmRegistro.setTitle("Registro AppMusic");
 		//frmRegistro.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frmRegistro.getContentPane().setLayout(new BorderLayout());
 		//frmRegistro.setResizable(false);
 		//frmRegistro.getContentPane().setLayout(new BorderLayout());
-
+		fixedSize(frmRegistro, Constantes.ventana_x_size-35, Constantes.ventana_y_size-180);
+		frmRegistro.setBorder(new LineBorder(new Color(0, 0, 0)));
 		//Container contentPane = frmRegistro.getContentPane();
-
-		JPanel datosPersonales = new JPanel();
+		panelInvisible = new JPanel();
+		panelInvisible.setBackground(Color.LIGHT_GRAY);
+		
+		frmRegistro.add(panelInvisible);
+		frmRegistro.setBackground(Color.LIGHT_GRAY);
+		
+		datosPersonales = new JPanel();
 		frmRegistro.add(datosPersonales);
-		datosPersonales.setBorder(new TitledBorder(null, "Datos de Registro", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		datosPersonales.setBackground(Color.LIGHT_GRAY);
+		datosPersonales.setBorder(new LineBorder(new Color(0, 0, 0)));
+		fixedSize(datosPersonales,400,300);
+		//datosPersonales.setBorder(new TitledBorder(null, "Datos de Registro", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		datosPersonales.setLayout(new BoxLayout(datosPersonales, BoxLayout.Y_AXIS));
-
+		
 		datosPersonales.add(creaLineaNombre());
 		datosPersonales.add(crearLineaApellidos());
+		datosPersonales.add(crearLineaFechaNacimiento());
 		datosPersonales.add(crearLineaEmail());
 		datosPersonales.add(crearLineaUsuario());
 		datosPersonales.add(crearLineaPassword());
-		datosPersonales.add(crearLineaFechaNacimiento());
+		
 
 		datosPersonales.add(crearPanelBotones());
 
@@ -120,21 +138,23 @@ public class PanelAltaCliente extends JPanel{
 }
 	private JPanel creaLineaNombre() {
 		JPanel lineaNombre = new JPanel();
-		lineaNombre.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-		lineaNombre.setLayout(new BorderLayout(0, 0));
-		
+		//lineaNombre.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+		lineaNombre.setLayout(new BoxLayout(lineaNombre, BoxLayout.Y_AXIS));
+		lineaNombre.setBackground(Color.LIGHT_GRAY);
 		panelCampoNombre = new JPanel();
-		lineaNombre.add(panelCampoNombre, BorderLayout.CENTER);
-		
-		lblNombre = new JLabel("Nombre: ", JLabel.RIGHT);
+		panelCampoNombre.setBackground(Color.LIGHT_GRAY);
+		lineaNombre.add(panelCampoNombre);//, BorderLayout.CENTER);
+		//fixedSize(panelCampoNombre, 400,30);
+		lblNombre = new JLabel("*Nombre: ", JLabel.RIGHT);
 		panelCampoNombre.add(lblNombre);
 		fixedSize(lblNombre, 75, 20);
 		txtNombre = new JTextField();
 		panelCampoNombre.add(txtNombre);
 		fixedSize(txtNombre, 270, 20);
 		
-		lblNombreError = new JLabel("El nombre es obligatorio", SwingConstants.CENTER);
-		lineaNombre.add(lblNombreError, BorderLayout.SOUTH);
+		lblNombreError = new JLabel("El nombre es obligatorio", SwingConstants.LEFT);
+		
+		lineaNombre.add(lblNombreError);//, BorderLayout.SOUTH);
 		fixedSize(lblNombreError, 224, 15);
 		lblNombreError.setForeground(Color.RED);
 		
@@ -143,10 +163,11 @@ public class PanelAltaCliente extends JPanel{
 
 	private JPanel crearLineaApellidos() {
 		JPanel lineaApellidos = new JPanel();
-		lineaApellidos.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-		lineaApellidos.setLayout(new BorderLayout(0, 0));
-		
+		//lineaApellidos.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+		lineaApellidos.setLayout(new BoxLayout(lineaApellidos, BoxLayout.Y_AXIS));
+		lineaApellidos.setBackground(Color.LIGHT_GRAY);
 		panelCampoApellidos = new JPanel();
+		panelCampoApellidos.setBackground(Color.LIGHT_GRAY);
 		lineaApellidos.add(panelCampoApellidos);
 		
 		lblApellidos = new JLabel("Apellidos: ", JLabel.RIGHT);
@@ -157,21 +178,19 @@ public class PanelAltaCliente extends JPanel{
 		fixedSize(txtApellidos, 270, 20);
 
 		
-		lblApellidosError = new JLabel("Los apellidos son obligatorios", SwingConstants.CENTER);
-		lineaApellidos.add(lblApellidosError, BorderLayout.SOUTH);
-		fixedSize(lblApellidosError, 255, 15);
-		lblApellidosError.setForeground(Color.RED);
+		
 		
 		return lineaApellidos;
 	}
 
 	private JPanel crearLineaEmail() {
 		JPanel lineaEmail = new JPanel();
-		lineaEmail.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-		lineaEmail.setLayout(new BorderLayout(0, 0));
-		
+		//lineaEmail.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+		lineaEmail.setLayout(new BoxLayout(lineaEmail, BoxLayout.Y_AXIS));
+		lineaEmail.setBackground(Color.LIGHT_GRAY);
 		panelCamposEmail = new JPanel();
-		lineaEmail.add(panelCamposEmail, BorderLayout.CENTER);
+		panelCamposEmail.setBackground(Color.LIGHT_GRAY);
+		lineaEmail.add(panelCamposEmail);
 		
 		lblEmail = new JLabel("Email: ", JLabel.RIGHT);
 		panelCamposEmail.add(lblEmail);
@@ -179,82 +198,87 @@ public class PanelAltaCliente extends JPanel{
 		txtEmail = new JTextField();
 		panelCamposEmail.add(txtEmail);
 		fixedSize(txtEmail, 270, 20);
-		lblEmailError = new JLabel("El Email es obligatorio", SwingConstants.CENTER);
-		fixedSize(lblEmailError, 150, 15);
-		lblEmailError.setForeground(Color.RED);
-		lineaEmail.add(lblEmailError, BorderLayout.SOUTH);
+	
 		
 		return lineaEmail;
 	}
 
 	private JPanel crearLineaUsuario() {
 		JPanel lineaUsuario = new JPanel();
-		lineaUsuario.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-		lineaUsuario.setLayout(new BorderLayout(0, 0));
-		
+		//lineaUsuario.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+		lineaUsuario.setLayout(new BoxLayout(lineaUsuario, BoxLayout.Y_AXIS));
+		lineaUsuario.setBackground(Color.LIGHT_GRAY);
 		panelCamposUsuario = new JPanel();
-		lineaUsuario.add(panelCamposUsuario, BorderLayout.CENTER);
+		panelCamposUsuario.setBackground(Color.LIGHT_GRAY);
+		lineaUsuario.add(panelCamposUsuario);
 		
-		lblUsuario = new JLabel("Usuario: ", JLabel.RIGHT);
+		lblUsuario = new JLabel("*Usuario: ", JLabel.RIGHT);
 		panelCamposUsuario.add(lblUsuario);
 		fixedSize(lblUsuario, 75, 20);
 		txtUsuario = new JTextField();
 		panelCamposUsuario.add(txtUsuario);
 		fixedSize(txtUsuario, 270, 20);
-		lblUsuarioError = new JLabel("El usuario ya existe", SwingConstants.CENTER);
+		lblUsuarioError = new JLabel("El usuario ya existe", SwingConstants.LEFT);
 		fixedSize(lblUsuarioError, 150, 15);
 		lblUsuarioError.setForeground(Color.RED);
-		lineaUsuario.add(lblUsuarioError, BorderLayout.SOUTH);
+		lineaUsuario.add(lblUsuarioError);
 		
 		return lineaUsuario;
 	}
 
 	private JPanel crearLineaPassword() {
 		JPanel lineaPassword = new JPanel();
-		lineaPassword.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-		lineaPassword.setLayout(new BorderLayout(0, 0));
-		
+		//lineaPassword.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+		lineaPassword.setLayout(new BoxLayout(lineaPassword, BoxLayout.Y_AXIS));
+		lineaPassword.setBackground(Color.LIGHT_GRAY);
 		panel = new JPanel();
-		lineaPassword.add(panel, BorderLayout.CENTER);
+		panel.setBackground(Color.LIGHT_GRAY);
+		lineaPassword.add(panel);
 		
-		lblPassword = new JLabel("Password: ", JLabel.RIGHT);
+		lblPassword = new JLabel("*Password: ", JLabel.RIGHT);
 		panel.add(lblPassword);
 		fixedSize(lblPassword, 75, 20);
 		txtPassword = new JPasswordField();
 		panel.add(txtPassword);
 		fixedSize(txtPassword, 100, 20);
-		lblPasswordChk = new JLabel("Otra vez:", JLabel.RIGHT);
+		lblPasswordChk = new JLabel("*Otra vez:", JLabel.RIGHT);
 		panel.add(lblPasswordChk);
 		fixedSize(lblPasswordChk, 60, 20);
 		txtPasswordChk = new JPasswordField();
 		panel.add(txtPasswordChk);
 		fixedSize(txtPasswordChk, 100, 20);
 
-		lblPasswordError = new JLabel("Error al introducir las contraseñas", JLabel.CENTER);
-		lineaPassword.add(lblPasswordError, BorderLayout.SOUTH);
+		lblPasswordError = new JLabel("Error al introducir las contraseñas", JLabel.LEFT);
+		lineaPassword.add(lblPasswordError);
 		lblPasswordError.setForeground(Color.RED);
 		
 		return lineaPassword;
 	}
 
 	private JPanel crearLineaFechaNacimiento() {
+		
 		JPanel lineaFechaNacimiento = new JPanel();
-		lineaFechaNacimiento.setAlignmentX(JLabel.LEFT_ALIGNMENT);
-		lineaFechaNacimiento.setLayout(new BorderLayout(0, 0));
-		
+		//lineaFechaNacimiento.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+		lineaFechaNacimiento.setLayout(new BoxLayout(lineaFechaNacimiento, BoxLayout.Y_AXIS));
+		lineaFechaNacimiento.setBackground(Color.LIGHT_GRAY);
 		panelCamposFechaNacimiento = new JPanel();
-		lineaFechaNacimiento.add(panelCamposFechaNacimiento, BorderLayout.CENTER);
+		panelCamposFechaNacimiento.setBackground(Color.LIGHT_GRAY);
+		lineaFechaNacimiento.add(panelCamposFechaNacimiento);
 		
-		lblFechaNacimiento = new JLabel("Fecha de Nacimiento: ", JLabel.RIGHT);
+		lblFechaNacimiento = new JLabel("*Fecha de Nacimiento: ", JLabel.RIGHT);
 		panelCamposFechaNacimiento.add(lblFechaNacimiento);
 		fixedSize(lblFechaNacimiento, 130, 20);
-		txtFechaNacimiento = new JTextField();
-		panelCamposFechaNacimiento.add(txtFechaNacimiento);
-		fixedSize(txtFechaNacimiento, 215, 20);
-		lblFechaNacimientoError = new JLabel("Introduce la fecha de nacimiento", SwingConstants.CENTER);
+		
+		
+		fechaNacimiento = new JDateChooser();
+		fixedSize(fechaNacimiento, 215,20);
+		//txtFechaNacimiento = new JTextField();
+		panelCamposFechaNacimiento.add(fechaNacimiento);
+		//fixedSize(txtFechaNacimiento, 215, 20);
+		lblFechaNacimientoError = new JLabel("Introduce la fecha de nacimiento", SwingConstants.LEFT);
 		fixedSize(lblFechaNacimientoError, 150, 15);
 		lblFechaNacimientoError.setForeground(Color.RED);
-		lineaFechaNacimiento.add(lblFechaNacimientoError, BorderLayout.SOUTH);
+		lineaFechaNacimiento.add(lblFechaNacimientoError);
 		
 		return lineaFechaNacimiento;
 	}
@@ -264,6 +288,7 @@ public class PanelAltaCliente extends JPanel{
 		//frmRegistro.getContentPane().add(lineaBotones, BorderLayout.SOUTH);
 		lineaBotones.setBorder(new EmptyBorder(5, 0, 0, 0));
 		lineaBotones.setLayout(new FlowLayout(FlowLayout.CENTER));
+		lineaBotones.setBackground(Color.LIGHT_GRAY);
 		
 		btnRegistrar = new JButton("Registrar");
 		lineaBotones.add(btnRegistrar);
@@ -284,17 +309,20 @@ public class PanelAltaCliente extends JPanel{
 				OK = checkFields();
 				if (OK) {
 					boolean registrado = false;
+					Date fecha = fechaNacimiento.getDate();
+					SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+					String fechaString = formato.format(fecha);
 					String nombre_completo = txtNombre.getText() + " " +txtApellidos.getText();
 					registrado = ControladorAppVideo.getUnicaInstancia().registrarUsuario(nombre_completo, txtEmail.getText(), txtUsuario.getText(),
 							new String(txtPassword.getPassword()), 
-							txtFechaNacimiento.getText());
+							fechaString);
 					if (registrado) {
 						JOptionPane.showMessageDialog(frmRegistro, "Asistente registrado correctamente.", "Registro",
 								JOptionPane.INFORMATION_MESSAGE);
 						
 						txtNombre.setText(""); txtApellidos.setText(""); 
 						txtEmail.setText(""); txtPassword.setText(""); 
-						txtUsuario.setText(""); txtFechaNacimiento.setText("");
+						txtUsuario.setText(""); fechaNacimiento.setCalendar(null);
 						txtPasswordChk.setText("");
 					} else {
 						JOptionPane.showMessageDialog(frmRegistro, "No se ha podido llevar a cabo el registro.\n",
@@ -309,9 +337,15 @@ public class PanelAltaCliente extends JPanel{
 	private void crearManejadorBotonCancelar() {
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//LoginView loginView = new LoginView();
-				//loginView.mostrarVentana();
-				//frmRegistro.dispose();
+				txtNombre.setText("");
+				txtApellidos.setText("");
+				txtEmail.setText("");
+				txtUsuario.setText("");
+				txtPassword.setText("");
+				txtPasswordChk.setText("");
+				txtUsuario.setText("");
+				fechaNacimiento.setCalendar(null);
+				ocultarErrores();
 			}
 		});
 	}
@@ -328,18 +362,9 @@ public class PanelAltaCliente extends JPanel{
 			lblNombre.setForeground(Color.RED);
 			txtNombre.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
-		}
-		if (txtApellidos.getText().trim().isEmpty()) {
-			lblApellidosError.setVisible(true);
-			lblApellidos.setForeground(Color.RED);
-			txtApellidos.setBorder(BorderFactory.createLineBorder(Color.RED));
-			salida = false;
-		}
-		if (txtEmail.getText().trim().isEmpty()) {
-			lblEmailError.setVisible(true);
-			lblEmail.setForeground(Color.RED);
-			txtEmail.setBorder(BorderFactory.createLineBorder(Color.RED));
-			salida = false;
+			fixedSize(datosPersonales,400,400);
+			fixedSize(panelInvisible,400,50);
+			//rigidArea5;
 		}
 		if (txtUsuario.getText().trim().isEmpty()) {
 			lblUsuarioError.setText("El usuario es obligatorio");
@@ -347,6 +372,8 @@ public class PanelAltaCliente extends JPanel{
 			lblUsuario.setForeground(Color.RED);
 			txtUsuario.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
+			fixedSize(datosPersonales,400,400);
+			fixedSize(panelInvisible,400,50);
 		}
 		String password = new String(txtPassword.getPassword());
 		String password2 = new String(txtPasswordChk.getPassword());
@@ -356,6 +383,8 @@ public class PanelAltaCliente extends JPanel{
 			lblPassword.setForeground(Color.RED);
 			txtPassword.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
+			fixedSize(datosPersonales,400,400);
+			fixedSize(panelInvisible,400,50);
 		} 
 		if (password2.isEmpty()) {
 			lblPasswordError.setText("El password no puede estar vacio");
@@ -363,6 +392,8 @@ public class PanelAltaCliente extends JPanel{
 			lblPasswordChk.setForeground(Color.RED);
 			txtPasswordChk.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
+			fixedSize(datosPersonales,400,400);
+			fixedSize(panelInvisible,400,50);
 		} 
 		if (!password.equals(password2)) {
 			lblPasswordError.setText("Los dos passwords no coinciden");
@@ -372,6 +403,8 @@ public class PanelAltaCliente extends JPanel{
 			txtPassword.setBorder(BorderFactory.createLineBorder(Color.RED));
 			txtPasswordChk.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
+			fixedSize(datosPersonales,400,400);
+			fixedSize(panelInvisible,400,50);
 		}
 		/* Comprobar que no exista otro usuario con igual login */
 		/*if (!lblUsuarioError.getText().isEmpty() && Controlador.getUnicaInstancia().esUsuarioRegistrado(txtUsuario.getText())) {
@@ -381,11 +414,12 @@ public class PanelAltaCliente extends JPanel{
 			txtUsuario.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
 		}*/
-		if (txtFechaNacimiento.getText().isEmpty()) {
+		if (fechaNacimiento.getDate() == null) {
 			lblFechaNacimientoError.setVisible(true);
 			lblFechaNacimiento.setForeground(Color.RED);
-			txtFechaNacimiento.setBorder(BorderFactory.createLineBorder(Color.RED));
+			fechaNacimiento.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
+			fixedSize(datosPersonales,400,400);
 		}
 
 		frmRegistro.revalidate();
@@ -399,24 +433,22 @@ public class PanelAltaCliente extends JPanel{
 	 */
 	private void ocultarErrores() {
 		lblNombreError.setVisible(false);
-		lblApellidosError.setVisible(false);
 		lblFechaNacimientoError.setVisible(false);
-		lblEmailError.setVisible(false);
 		lblUsuarioError.setVisible(false);
 		lblPasswordError.setVisible(false);
 		lblFechaNacimientoError.setVisible(false);
 		
 		Border border = new JTextField().getBorder();
 		txtNombre.setBorder(border);
-		txtApellidos.setBorder(border);
-		txtEmail.setBorder(border);
+		//txtApellidos.setBorder(border);
+		//txtEmail.setBorder(border);
 		txtUsuario.setBorder(border);
 		txtPassword.setBorder(border);
 		txtPasswordChk.setBorder(border);
 		txtPassword.setBorder(border);
 		txtPasswordChk.setBorder(border);
 		txtUsuario.setBorder(border);
-		txtFechaNacimiento.setBorder(border);
+		fechaNacimiento.setBorder(border);
 		
 		lblNombre.setForeground(Color.BLACK);
 		lblApellidos.setForeground(Color.BLACK);
@@ -425,6 +457,8 @@ public class PanelAltaCliente extends JPanel{
 		lblPassword.setForeground(Color.BLACK);
 		lblPasswordChk.setForeground(Color.BLACK);
 		lblFechaNacimiento.setForeground(Color.BLACK);
+		fixedSize(datosPersonales,400,300);
+		fixedSize(panelInvisible,400,110);
 	}
 
 	/**

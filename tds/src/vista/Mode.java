@@ -6,4 +6,5 @@ public enum Mode {
 	MISLISTAS,
 	REPRODUCTOR,
 	MASVISTOS,
+	RECIENTES
 }

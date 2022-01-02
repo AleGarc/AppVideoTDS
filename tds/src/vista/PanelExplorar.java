@@ -69,7 +69,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JButton btnNuevaBusqueda;
 	private JButton btnBusqueda, btnEliminar, btnPDF;
 	private Usuario usuario;
-	private Video selectedVideo;
+	private Video videoSeleccionado;
 	private List<Video> videosEncontrados = new ArrayList<Video>();
 	private JPanel panelIzquierdo,panelCentral, panelDerecho;
 	//private List<JLabel> videosBuscados = new ArrayList<JLabel>();
@@ -83,7 +83,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private String subCadenaBusqueda;
 	private List<String> etiquetasBusqueda = new ArrayList<String>();
 	
-	ControladorAppVideo controladorTienda = ControladorAppVideo.getUnicaInstancia();
+	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
 	
 	private VideoList videoLista = null;
 	
@@ -138,17 +138,16 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			if(txtLista.getText().equals(""))
 				JOptionPane.showMessageDialog(Ventana,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
 			else{
-				if(controladorTienda.checkVideoListExiste(txtLista.getText(), usuario.getUsuario())) {
-					videoLista = controladorTienda.getListaVideo(txtLista.getText(), usuario.getUsuario());
+				if(controladorAppVideo.checkVideoListExiste(txtLista.getText(), usuario.getUsuario())) {
+					videoLista = controladorAppVideo.getListaVideo(txtLista.getText(), usuario.getUsuario());
 					updateVideosLista(videoLista.getListaVideos());
 					btnEliminar.setEnabled(true);
-					if(usuario.esPremium())
-						btnPDF.setEnabled(true);
+					
 				}
 				else {
 					int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea crear la lista " + txtLista.getText() + "?", "Lista inexistente",JOptionPane.YES_NO_OPTION);
 					if(eleccion == 0) {
-						videoLista = controladorTienda.crearListaVideo(txtLista.getText(), usuario.getUsuario());
+						videoLista = controladorAppVideo.crearListaVideo(txtLista.getText(), usuario.getUsuario());
 						modelLista.removeAllElements();
 						btnEliminar.setEnabled(true);
 					}	
@@ -165,7 +164,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		btnEliminar.addActionListener(ev ->{
 			int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Estás seguro que quieres eliminar la lista " + txtLista.getText() + "?", "Eliminar lista",JOptionPane.YES_NO_OPTION);
 			if(eleccion == 0) {
-				controladorTienda.borrarListaVideo(videoLista);
+				controladorAppVideo.borrarListaVideo(videoLista);
 				limpiarLista();
 			}
 		});
@@ -194,9 +193,9 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			{
 				if (e.getClickCount() == 2 && !modelLista.isEmpty())
 				{
-					videoLista.removeVideo(controladorTienda.getVideo(listaVideos.getSelectedValue().getTitulo()));
+					videoLista.removeVideo(controladorAppVideo.getVideo(listaVideos.getSelectedValue().getTitulo()));
 					modelLista.removeElement(listaVideos.getSelectedValue());
-					controladorTienda.actualizarLista(videoLista);
+					controladorAppVideo.actualizarLista(videoLista);
 				}
 			}
 		});
@@ -255,13 +254,14 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			{
 				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
-					if(modo == Mode.NUEVALISTA && !(videoLista == null) && !videoLista.contieneVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()))) {
-						videoLista.addVideo(controladorTienda.getVideo(lista.getSelectedValue().getTitulo()));
+					if(modo == Mode.NUEVALISTA && !(videoLista == null) && !videoLista.contieneVideo(controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo()))) {
+						videoLista.addVideo(controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo()));
 						modelLista.addElement(lista.getSelectedValue());
-						controladorTienda.actualizarLista(videoLista);
+						controladorAppVideo.actualizarLista(videoLista);
 					}
 					else if(modo == Mode.EXPLORAR) {
-						selectedVideo = videosEncontrados.get(lista.getSelectedIndex());
+						videoSeleccionado = videosEncontrados.get(lista.getSelectedIndex());
+						controladorAppVideo.addVideoReciente(usuario, videoSeleccionado);
 						for(ActionListener a: playButton.getActionListeners()) {
 						    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
 						          
@@ -479,6 +479,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		modelLista.removeAllElements();
 		btnEliminar.setEnabled(false);
 		btnPDF.setEnabled(false);
+		if(usuario.esPremium())
+			btnPDF.setEnabled(true);
 		videoLista = null;
 		txtLista.setText("");
 	}
@@ -505,7 +507,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	}
 	
 	public Video getSelectedVideo() {
-		return selectedVideo;
+		return videoSeleccionado;
 	}
 
 	@Override
@@ -574,10 +576,17 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	      "Email: "+ usuario.getEmail() + "\n" + "Fecha de nacimiento: "+ usuario.getFecha_nacimiento();
 	      document.add(new Paragraph (info));
 	      document.add(new Paragraph ("\n"));
-	      document.add(new Paragraph ("Lista de reproducción: "+ videoLista.getNombre()));
-	      for(Video v: videoLista.getListaVideos()) {
-	    	  document.add(new Paragraph ("Video: " + v.getTitulo() + "\n URL: " + v.getUrl() + "\n Reproducciones: " + v.getReproducciones()));
-	      }	      
+	      
+	      List<VideoList> listasVideos = controladorAppVideo.getListasAutor(usuario);
+	      for(VideoList v: listasVideos) {
+	    	  document.add(new Paragraph ("Lista de reproducción: "+ v.getNombre() ));
+		      for(Video vid: v.getListaVideos()) {
+		    	  document.add(new Paragraph ("Video: " + vid.getTitulo() + "\n URL: " + vid.getUrl() + "\n Reproducciones: " + vid.getReproducciones()));
+		      }	
+		      document.add(new Paragraph ("\n\n"));
+	      }
+	      
+	            
 	      document.close();     
 	      JOptionPane.showMessageDialog(null, "El PDF se ha generado con éxito.", "PDF generado",
 					JOptionPane.INFORMATION_MESSAGE);

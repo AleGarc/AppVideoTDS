@@ -13,6 +13,8 @@ import beans.Propiedad;
 
 import modelo.Usuario;
 import modelo.Venta;
+import modelo.Video;
+import modelo.VideoList;
 
 //Usa un pool para evitar problemas doble referencia con ventas
 public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
@@ -40,6 +42,8 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		} catch (NullPointerException e) {}
 		if (eUsuario != null) return;
 
+		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
+		
 		// crear entidad Usuario
 		eUsuario = new Entidad();
 		eUsuario.setNombre("usuario");
@@ -49,8 +53,9 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 						new Propiedad("email", usuario.getEmail()),
 						new Propiedad("usuario", usuario.getUsuario()),
 						new Propiedad("password", usuario.getPassword()),
-						new Propiedad("premium", String.valueOf(usuario.esPremium())))));
-	
+						new Propiedad("premium", String.valueOf(usuario.esPremium())),
+						new Propiedad("recientes",adaptadorVideo.obtenerCodigosListaVideos(usuario.getVideosRecientes())))));
+			
 		/*eUsuario.setPropiedades(new ArrayList<Propiedad>(
 				Arrays.asList(new Propiedad("dni", cliente.getDni()), new Propiedad("nombre", cliente.getNombre()),
 						new Propiedad("ventas", obtenerCodigosVentas(cliente.getVentas())))));*/
@@ -73,6 +78,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 	public void modificarUsuario(Usuario usuario) {
 
 		Entidad eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
+		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
 			
 		for (Propiedad prop : eUsuario.getPropiedades()) {
 			if (prop.getNombre().equals("codigo")) {
@@ -89,6 +95,8 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 				prop.setValor(usuario.getPassword());
 			} else if (prop.getNombre().equals("premium")) {
 				prop.setValor( String.valueOf(usuario.esPremium()));
+			} else if (prop.getNombre().equals("recientes")) {
+				prop.setValor( adaptadorVideo.obtenerCodigosListaVideos(usuario.getVideosRecientes()));
 			}
 			
 			servPersistencia.modificarPropiedad(prop);
@@ -122,7 +130,11 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		password = servPersistencia.recuperarPropiedadEntidad(eUsuario, "password");
 		premium = Boolean.parseBoolean(servPersistencia.recuperarPropiedadEntidad(eUsuario, "premium"));
 		
-		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password, premium);
+		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
+		String listaCodigosVideos = servPersistencia.recuperarPropiedadEntidad(eUsuario, "recientes");
+		
+		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password, premium, 
+				adaptadorVideo.obtenerVideosDesdeCodigos(listaCodigosVideos));
 		user.setCodigo(codigo);
 
 		// IMPORTANTE:añadir el cliente al pool antes de llamar a otros

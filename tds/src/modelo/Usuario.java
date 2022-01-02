@@ -1,5 +1,6 @@
 package modelo;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class Usuario {
 	private String usuario;
 	private String password;
 	private boolean premium;
+	private List<Video> videosRecientes;
 	
 	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		codigo = 0;
@@ -20,11 +22,13 @@ public class Usuario {
 		this.usuario = usuario;
 		this.password = password;
 		this.premium = false;
+		this.videosRecientes = new ArrayList<Video>();
 	}
 	
-	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password, boolean premium) {
+	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password, boolean premium, List<Video> videosRecientes) {
 		this(nombre_completo,fecha_nacimiento,email,usuario,password);
 		this.premium = premium;
+		this.videosRecientes = videosRecientes;
 	}
 
 	public String getNombre_completo() {
@@ -82,5 +86,29 @@ public class Usuario {
 	public boolean esPremium() {
 		return this.premium;
 	}
+	
+	public List<Video> getVideosRecientes(){
+		return this.videosRecientes;
+	}
 
+	public void addVideoReciente(Video v) {
+		List<Video> nuevosRecientes = new ArrayList<Video>();
+		/*for(Video vid : videosRecientes) {
+			if(vid.equals(v) && !exists)
+				exists = true;
+			else if(exists)
+				videosRecientes.add(videosRecientes.indexOf(vid)-1, vid);
+				
+		}
+		videosRecientes.add(0, v);
+		if(videosRecientes.size() > 5) videosRecientes.remove(5);*/
+		
+		for(Video vid : videosRecientes) {
+			if(!vid.equals(v)) 
+				nuevosRecientes.add(vid);	
+		}
+		videosRecientes = nuevosRecientes;
+		videosRecientes.add(0, v);
+		if(videosRecientes.size() > 5) videosRecientes.remove(5);
+	}
 }

@@ -47,8 +47,9 @@ public class PanelLogin extends JPanel implements ActionListener{
 		JPanel Ventana = new JPanel();
 		Ventana.setBorder(new LineBorder(new Color(0, 0, 0)));
 		Ventana.setBackground(Color.LIGHT_GRAY);
-		Ventana.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
-		Ventana.setMaximumSize(Ventana.getPreferredSize());
+		//Ventana.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
+		//Ventana.setMaximumSize(Ventana.getPreferredSize());
+		fixedSize(Ventana, Constantes.ventana_x_size-35, Constantes.ventana_y_size-180);
 		
 		//frmAppVideo.getContentPane().add(Ventana);
 		
