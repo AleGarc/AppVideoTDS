@@ -79,4 +79,12 @@ public class CatalogoUsuarios {
 	public void cambiarRol(Usuario usuario, boolean b) {
 		usuario.cambiarRol(b);
 	}
+	
+	public void setFiltro(Usuario usuario, String filtro) {
+		usuario.setFiltro(filtro);
+	}
+	
+	public String getFiltroUsuario(Usuario usuario) {
+		return usuario.getFiltroString();
+	}
 }

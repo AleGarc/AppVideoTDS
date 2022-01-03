@@ -25,6 +25,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -80,6 +81,9 @@ public class VentanaMain extends JFrame implements ActionListener{
 	
 	private Luz pulsador;
 	
+	private JComboBox<String> boxFiltros;
+	
+	private JPanel separador;
 	
 	private static ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
 	
@@ -236,8 +240,25 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnMasVistos.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		Opciones.add(btnMasVistos);
 		
-		Component espacio = Box.createRigidArea(new Dimension(400, 2));
-		Opciones.add(espacio);
+		boxFiltros = new JComboBox<String>();
+		for(String filtro : controladorAppVideo.getFiltrosDisponibles()) {
+			boxFiltros.addItem(filtro);
+		}
+		boxFiltros.setVisible(false);
+		boxFiltros.addActionListener(ev ->{
+			if(boxFiltros.getSelectedItem() != null){
+				controladorAppVideo.setFiltroUsuario(boxFiltros.getSelectedItem().toString());
+			}
+		});
+		Opciones.add(boxFiltros);
+		
+		
+		separador = new JPanel();
+		Constantes.fixedSize(separador,403,2);
+		
+		
+		//Component espacio = Box.createRigidArea(new Dimension(400, 2));
+		Opciones.add(separador);
 		
 		pulsador = new Luz();
 		pulsador.setColor(Color.GREEN);
@@ -411,14 +432,21 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnRecientes.setEnabled(b);
 		btnNuevaLista.setEnabled(b);
 		funcionalidadPremium(b);
+		if(b) {
+			boxFiltros.setSelectedItem((Object) controladorAppVideo.getFiltroUsuario());
+		}
 	}
 
 	public void funcionalidadPremium(boolean b) {
 		if(b && usuario.esPremium()) {
 			btnMasVistos.setEnabled(true);
+			boxFiltros.setVisible(true);
+			Constantes.fixedSize(separador,250,2);
 		}
 		else {
 			btnMasVistos.setEnabled(false);
+			boxFiltros.setVisible(false);
+			Constantes.fixedSize(separador,403,2);
 		}
 	}
 	

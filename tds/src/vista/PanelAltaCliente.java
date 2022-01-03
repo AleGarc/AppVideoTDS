@@ -420,6 +420,7 @@ public class PanelAltaCliente extends JPanel{
 			fechaNacimiento.setBorder(BorderFactory.createLineBorder(Color.RED));
 			salida = false;
 			fixedSize(datosPersonales,400,400);
+			fixedSize(panelInvisible,400,50);
 		}
 
 		frmRegistro.revalidate();

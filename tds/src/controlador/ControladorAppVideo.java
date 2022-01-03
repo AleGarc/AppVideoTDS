@@ -12,6 +12,7 @@ import modelo.CatalogoEtiquetas;
 import modelo.CatalogoUsuarios;
 import modelo.CatalogoVideos;
 import modelo.Etiqueta;
+import modelo.FactoriaFiltro;
 import modelo.CatalogoVentas;
 import modelo.CatalogoVideoList;
 import modelo.Usuario;
@@ -113,7 +114,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	}
 	
 	public List<Video> buscarVideos(String subCadena, List<String> etiquetas){
-		return catalogoVideos.buscarVideos(subCadena,etiquetas);
+		return catalogoVideos.buscarVideos(subCadena,etiquetas, usuario.getFiltro());
 	}
 	
 	public Video getVideo(String titulo){
@@ -182,7 +183,6 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 			int returnVal = eleccionFichero.showOpenDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 			        File file = eleccionFichero.getSelectedFile();
-			        //This is where a real application would open the file.
 			        cargarVideos(file);
 			        
 			       
@@ -191,7 +191,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 			}
 		
 		
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
@@ -268,5 +268,26 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 			user.addVideoReciente(v);
 		adaptadorUsuario.modificarUsuario(usuario);
 		
+	}
+	
+	public Etiqueta getEtiqueta(String nombre) {
+		return catalogoEtiquetas.getEtiqueta(nombre);
+	}
+	
+	public boolean checkVideoInVideoList(Usuario usuario, Video v) {
+		return catalogoVideoList.checkVideoInVideoList(usuario, v);
+	}
+	
+	public void setFiltroUsuario(String filtro) {
+		catalogoUsuarios.setFiltro(usuario,filtro);
+		adaptadorUsuario.modificarUsuario(usuario);
+	}
+	
+	public List<String> getFiltrosDisponibles(){
+		return FactoriaFiltro.getFiltrosDisponibles();
+	}
+	
+	public String getFiltroUsuario() {
+		return catalogoUsuarios.getFiltroUsuario(usuario);
 	}
 }

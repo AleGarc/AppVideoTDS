@@ -110,27 +110,27 @@ public class CatalogoVideos {
 	}
 	
 	
-	public List<Video> buscarVideos(String subCadena, List<String> etiquetasSeleccionadas){
+	public List<Video> buscarVideos(String subCadena, List<String> etiquetasSeleccionadas, FiltroVideo filtro){
 		List<Video> resultados = new ArrayList<Video>();
 		if(etiquetasSeleccionadas.isEmpty()) {
 			videos.forEach((t,v) ->{
-				if(t.contains(subCadena))
+				if(t.contains(subCadena) && filtro.esVideoOK(v))
 					resultados.add(v);
 			});
 		}
 		else{
-			resultados.addAll(buscarVideosEtiquetados(subCadena, etiquetasSeleccionadas));
+			resultados.addAll(buscarVideosEtiquetados(subCadena, etiquetasSeleccionadas, filtro));
 		}
 		return resultados;
 	}
 	
-	public List<Video> buscarVideosEtiquetados(String subCadena, List<String> etiquetasSeleccionadas){
+	public List<Video> buscarVideosEtiquetados(String subCadena, List<String> etiquetasSeleccionadas, FiltroVideo filtro){
 		List<Video> resultadosEtiquetados = new ArrayList<Video>();
 		for(String etiqueta : etiquetasSeleccionadas){
 			List<Video> posiblesVideos = videosIndexadosEtiquetas.get(etiqueta);
 			for(Video v: posiblesVideos){
 				if(v.getTitulo().contains(subCadena))
-					if(!resultadosEtiquetados.contains(v))
+					if(!resultadosEtiquetados.contains(v) && filtro.esVideoOK(v))
 						resultadosEtiquetados.add(v);
 			}
 		}

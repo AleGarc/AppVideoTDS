@@ -13,6 +13,7 @@ public class Usuario {
 	private String password;
 	private boolean premium;
 	private List<Video> videosRecientes;
+	private String filtro;
 	
 	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password) {
 		codigo = 0;
@@ -23,12 +24,14 @@ public class Usuario {
 		this.password = password;
 		this.premium = false;
 		this.videosRecientes = new ArrayList<Video>();
+		this.filtro = "NoFiltro";
 	}
 	
-	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password, boolean premium, List<Video> videosRecientes) {
+	public Usuario(String nombre_completo, String fecha_nacimiento, String email, String usuario, String password, boolean premium, List<Video> videosRecientes, String filtro) {
 		this(nombre_completo,fecha_nacimiento,email,usuario,password);
 		this.premium = premium;
 		this.videosRecientes = videosRecientes;
+		this.filtro = filtro;
 	}
 
 	public String getNombre_completo() {
@@ -93,15 +96,6 @@ public class Usuario {
 
 	public void addVideoReciente(Video v) {
 		List<Video> nuevosRecientes = new ArrayList<Video>();
-		/*for(Video vid : videosRecientes) {
-			if(vid.equals(v) && !exists)
-				exists = true;
-			else if(exists)
-				videosRecientes.add(videosRecientes.indexOf(vid)-1, vid);
-				
-		}
-		videosRecientes.add(0, v);
-		if(videosRecientes.size() > 5) videosRecientes.remove(5);*/
 		
 		for(Video vid : videosRecientes) {
 			if(!vid.equals(v)) 
@@ -110,5 +104,17 @@ public class Usuario {
 		videosRecientes = nuevosRecientes;
 		videosRecientes.add(0, v);
 		if(videosRecientes.size() > 5) videosRecientes.remove(5);
+	}
+	
+	public FiltroVideo getFiltro() {
+		return FactoriaFiltro.crearFiltro(this.filtro);
+	}
+	
+	public String getFiltroString() {
+		return this.filtro;
+	}
+	
+	public void setFiltro(String filtro) {
+		this.filtro = filtro;
 	}
 }

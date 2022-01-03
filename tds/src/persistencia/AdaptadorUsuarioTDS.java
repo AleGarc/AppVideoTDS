@@ -54,7 +54,8 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 						new Propiedad("usuario", usuario.getUsuario()),
 						new Propiedad("password", usuario.getPassword()),
 						new Propiedad("premium", String.valueOf(usuario.esPremium())),
-						new Propiedad("recientes",adaptadorVideo.obtenerCodigosListaVideos(usuario.getVideosRecientes())))));
+						new Propiedad("recientes",adaptadorVideo.obtenerCodigosListaVideos(usuario.getVideosRecientes())),
+						new Propiedad("filtro", usuario.getFiltroString()))));
 			
 		/*eUsuario.setPropiedades(new ArrayList<Propiedad>(
 				Arrays.asList(new Propiedad("dni", cliente.getDni()), new Propiedad("nombre", cliente.getNombre()),
@@ -97,6 +98,8 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 				prop.setValor( String.valueOf(usuario.esPremium()));
 			} else if (prop.getNombre().equals("recientes")) {
 				prop.setValor( adaptadorVideo.obtenerCodigosListaVideos(usuario.getVideosRecientes()));
+			}else if (prop.getNombre().equals("filtro")) {
+				prop.setValor(usuario.getFiltroString());
 			}
 			
 			servPersistencia.modificarPropiedad(prop);
@@ -118,6 +121,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		String usuario;
 		String password;
 		boolean premium;
+		String filtro;
 		
 		// recuperar entidad
 		eUsuario = servPersistencia.recuperarEntidad(codigo);
@@ -129,12 +133,12 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		usuario = servPersistencia.recuperarPropiedadEntidad(eUsuario, "usuario");
 		password = servPersistencia.recuperarPropiedadEntidad(eUsuario, "password");
 		premium = Boolean.parseBoolean(servPersistencia.recuperarPropiedadEntidad(eUsuario, "premium"));
-		
+		filtro = servPersistencia.recuperarPropiedadEntidad(eUsuario, "filtro");
 		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
 		String listaCodigosVideos = servPersistencia.recuperarPropiedadEntidad(eUsuario, "recientes");
 		
 		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password, premium, 
-				adaptadorVideo.obtenerVideosDesdeCodigos(listaCodigosVideos));
+				adaptadorVideo.obtenerVideosDesdeCodigos(listaCodigosVideos), filtro);
 		user.setCodigo(codigo);
 
 		// IMPORTANTE:añadir el cliente al pool antes de llamar a otros

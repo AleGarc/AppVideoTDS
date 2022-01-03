@@ -52,12 +52,6 @@ public class CatalogoVideoList {
 	
 	public void removeVideoList(VideoList videoLista) {
 		List<VideoList> lista =  videoListMap.get(videoLista.getAutor());
-		/*for(VideoList v : lista){
-			if(v.getNombre().equals(nombre)) {
-				lista.remove(v);
-				adaptadorVideoList.borrarVideoList(v);
-			}
-		}*/
 		lista.remove(videoLista);
 		adaptadorVideoList.borrarVideoList(videoLista);
 	}
@@ -138,5 +132,14 @@ public class CatalogoVideoList {
 			topTen.addVideo(v);
 		}
 		return topTen;
+	}
+	
+	public boolean checkVideoInVideoList(Usuario usuario, Video v) {
+		List<VideoList> listas = videoListMap.get(usuario.getUsuario());
+		for(VideoList vL : listas) {
+			if(vL.contieneVideo(v))
+				return true;
+		}
+		return false;
 	}
 }
