@@ -12,7 +12,6 @@ import beans.Entidad;
 import beans.Propiedad;
 
 import modelo.Usuario;
-import modelo.Venta;
 import modelo.Video;
 import modelo.VideoList;
 

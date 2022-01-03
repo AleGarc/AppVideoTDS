@@ -13,12 +13,10 @@ import modelo.CatalogoUsuarios;
 import modelo.CatalogoVideos;
 import modelo.Etiqueta;
 import modelo.FactoriaFiltro;
-import modelo.CatalogoVentas;
 import modelo.CatalogoVideoList;
 import modelo.Usuario;
 import modelo.Video;
 import modelo.VideoList;
-import modelo.Venta;
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
 import persistencia.IAdaptadorUsuarioDAO;
@@ -26,7 +24,6 @@ import persistencia.IAdaptadorEtiquetaDAO;
 import persistencia.IAdaptadorVideoDAO;
 import pulsador.IEncendidoListener;
 import tds.video.VideoWeb;
-import persistencia.IAdaptadorVentaDAO;
 import umu.tds.componente.ArchivoVideosEvent;
 import umu.tds.componente.CargadorVideos;
 import umu.tds.componente.IArchivoVideosListener;
@@ -37,15 +34,12 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	private static ControladorAppVideo unicaInstancia;
 	private IAdaptadorUsuarioDAO adaptadorUsuario;
 	private IAdaptadorVideoDAO adaptadorVideo;
-	private IAdaptadorVentaDAO adaptadorVenta;
 
 	private CatalogoUsuarios catalogoUsuarios;
-	private CatalogoVentas catalogoVentas;
 	private CatalogoVideos catalogoVideos;
 	private CatalogoEtiquetas catalogoEtiquetas;
 	private CatalogoVideoList catalogoVideoList;
 
-	private Venta ventaActual;
 	
 	private CargadorVideos cargadorVideos;
 
@@ -142,7 +136,6 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		}
 		adaptadorUsuario = factoria.getUsuarioDAO();
 		adaptadorVideo = factoria.getVideoDAO();
-		adaptadorVenta = factoria.getVentaDAO();
 		
 		cargadorVideos = new CargadorVideos();
 		cargadorVideos.addArchivoListener(this);
@@ -150,7 +143,6 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 
 	private void inicializarCatalogos() {
 		catalogoUsuarios = CatalogoUsuarios.getUnicaInstancia();
-		catalogoVentas = CatalogoVentas.getUnicaInstancia();
 		catalogoVideos = CatalogoVideos.getUnicaInstancia();
 		catalogoEtiquetas = CatalogoEtiquetas.getUnicaInstancia();
 		catalogoVideoList = CatalogoVideoList.getUnicaInstancia();

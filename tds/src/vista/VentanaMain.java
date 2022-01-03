@@ -39,7 +39,6 @@ import javax.swing.border.BevelBorder;
 
 import controlador.ControladorAppVideo;
 import modelo.CatalogoUsuarios;
-import modelo.CatalogoVentas;
 import modelo.Usuario;
 import modelo.LineaVenta;
 import modelo.Video;
@@ -47,7 +46,6 @@ import pulsador.IEncendidoListener;
 import pulsador.Luz;
 import tds.video.VideoWeb;
 import umu.tds.componente.Videos;
-import modelo.Venta;
 
 @SuppressWarnings("serial")
 public class VentanaMain extends JFrame implements ActionListener{
@@ -61,8 +59,6 @@ public class VentanaMain extends JFrame implements ActionListener{
 	//private PanelVerImagen panelVerImagen;
 	private PanelLogin panelLogin;
 	private PanelAltaCliente panelAltaCliente;
-	private PanelAltaVideo panelAltaProducto;
-	private PanelCrearVenta panelCrearVenta;
 	private PanelExplorar panelExplorar;
 	private PanelMisListas panelMisListas;
 	private PanelPremium panelPremium;
@@ -108,8 +104,6 @@ public class VentanaMain extends JFrame implements ActionListener{
 		playMainButton.addActionListener(this);
 		panelLogin.setLoginMainButton(loginMainButton);
 		panelAltaCliente = new PanelAltaCliente(this);
-		panelAltaProducto = new PanelAltaVideo(this);
-		panelCrearVenta = new PanelCrearVenta(this);
 		panelExplorar = new PanelExplorar(this, videoWeb);
 		panelExplorar.setPlayMainButton(playMainButton);
 		panelExplorar.update(controladorAppVideo.getEtiquetasDisponibles());
