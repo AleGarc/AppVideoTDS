@@ -1,71 +1,47 @@
 package vista;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import controlador.ControladorAppVideo;
 import modelo.Usuario;
 
 
+@SuppressWarnings("serial")
 public class PanelPremium extends JPanel {
-	private Font fuenteGrande = new Font("Arial",Font.BOLD,32);
-	private JLabel rotulo;
-	private JPanel datosProducto;
-	private JLabel lnombre, ldescripcion, lprecio, lalerta;
-	private JTextField txtUsuario, txtPassword;
-	private JTextArea descripcion;
-	private JButton btnLogin, btnCancelar;
-	private VentanaMain ventana;
+	private VentanaMain ventanaMain;
 	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
-	private JButton loginMainButton;
 	private Usuario usuario;
-	private JPanel panelPremium, panelNoPremium;
+	private JPanel panelPremium;
 	private JLabel tituloNoPremium1, tituloNoPremium2, tituloNoPremium3;
 	private JLabel tituloPremium1, tituloPremium2;
 	private JButton btnUnete, btnAbandonar;
+	
 	public PanelPremium(VentanaMain v){
-		ventana=v; 
+		ventanaMain=v; 
 		crearPantalla();
 	}
 	
 	private void crearPantalla() {
-		JPanel Ventana = new JPanel();
-		Ventana.setBorder(new LineBorder(new Color(0, 0, 0)));
-		Ventana.setBackground(Color.LIGHT_GRAY);
-		//Ventana.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
-		//Ventana.setMaximumSize(Ventana.getPreferredSize());
-		fixedSize(Ventana, Constantes.ventana_x_size-35, Constantes.ventana_y_size-180);
-		
-		add(Ventana);
-		
-		
-		
+		JPanel contenido = new JPanel();
+		contenido.setBorder(new LineBorder(new Color(0, 0, 0)));
+		contenido.setBackground(Color.LIGHT_GRAY);
+		Constantes.fixedSize(contenido, Constantes.ventana_x_size-35, Constantes.ventana_y_size-180);
+		add(contenido);
 		
 		panelPremium = new JPanel();
-		//panelPremium.setLayout(new BoxLayout(panelPremium, BoxLayout.Y_AXIS));
-		fixedSize(panelPremium,500,500);
-		Ventana.add(panelPremium);
+		Constantes.fixedSize(panelPremium,500,500);
+		contenido.add(panelPremium);
 		panelPremium.setBackground(Color.LIGHT_GRAY);
 		
 		tituloNoPremium1 = new JLabel();
@@ -81,7 +57,6 @@ public class PanelPremium extends JPanel {
 		tituloPremium1.setHorizontalTextPosition(JLabel.CENTER);
 		tituloPremium1.setVerticalTextPosition(JLabel.CENTER);
 		panelPremium.add(tituloPremium1);
-		
 		
 		tituloNoPremium2 = new JLabel();
 		tituloNoPremium2.setText("¿A qué estás esperando?");
@@ -108,7 +83,7 @@ public class PanelPremium extends JPanel {
 		panelPremium.add(panelPremium2);
 		panelPremium2.setBackground(Color.LIGHT_GRAY);
 		panelPremium2.setLayout(new BoxLayout(panelPremium2, BoxLayout.Y_AXIS));
-		fixedSize(panelPremium2, 700, 300);
+		Constantes.fixedSize(panelPremium2, 700, 300);
 		
 		JLabel imPDF = new JLabel("Generacion de pdf de tus listas de reproducción");
 		imPDF.setHorizontalTextPosition(JLabel.CENTER);
@@ -126,7 +101,6 @@ public class PanelPremium extends JPanel {
 		imFiltro.setHorizontalTextPosition(JLabel.CENTER);
 		imFiltro.setVerticalTextPosition(JLabel.BOTTOM);
 		imFiltro.setAlignmentX(CENTER_ALIGNMENT);
-		//Escalado del icono.
 		ImageIcon imageIcon2 = new ImageIcon(VentanaMain.class.getResource("filtro.png")); 
 		Image image2 = imageIcon2.getImage(); 
 		Image newimg2 = image2.getScaledInstance(50, 50,  java.awt.Image.SCALE_SMOOTH);
@@ -148,13 +122,12 @@ public class PanelPremium extends JPanel {
 		
 		btnUnete = new JButton("¡Unete ya!");
 		panelPremium.add(btnUnete);
-		
 		btnUnete.addActionListener(ev ->{
 			controladorAppVideo.cambiarRolUsuario(true);
-			ventana.funcionalidadPremium(true);
-			ventana.cambiarContenido(Contenido.RECIENTES);
+			ventanaMain.funcionalidadPremium(true);
 			 JOptionPane.showMessageDialog(null, "¡Ahora eres usuario premium!", "Usuario premium",
 						JOptionPane.INFORMATION_MESSAGE);
+			 ventanaMain.cambiarContenido(Contenido.RECIENTES);
 			 
 		});
 		
@@ -162,14 +135,14 @@ public class PanelPremium extends JPanel {
 		panelPremium.add(btnAbandonar);
 		btnAbandonar.addActionListener(ev ->{
 			controladorAppVideo.cambiarRolUsuario(false);
-			ventana.funcionalidadPremium(false);
-			ventana.cambiarContenido(Contenido.RECIENTES);
+			ventanaMain.funcionalidadPremium(false);
 			 JOptionPane.showMessageDialog(null, "Has dejado de ser usuario premium", "Usuario premium",
 						JOptionPane.INFORMATION_MESSAGE);
-			 
+			 ventanaMain.cambiarContenido(Contenido.RECIENTES);
 		});
 	}
 	
+	//Cambiar el contenido según si se accede siendo premium o no.
 	public void switchMode() {
 		usuario = controladorAppVideo.getUsuario();
 		if (usuario.esPremium()){
@@ -192,19 +165,5 @@ public class PanelPremium extends JPanel {
 			btnUnete.setVisible(true);
 		}
 	}
-	
-	
-
-	public void setLoginMainButton(JButton b) {
-		loginMainButton = b;
-	}
-		
-	private void fixedSize(JComponent c,int x, int y) {
-		c.setMinimumSize(new Dimension(x,y));
-		c.setMaximumSize(new Dimension(x,y));
-		c.setPreferredSize(new Dimension(x,y));
-	}
-	
-
 
 }

@@ -37,7 +37,7 @@ public class VentanaMain extends JFrame{
 	private JPanel contenido;
 	
 	private PanelLogin panelLogin;
-	private PanelAltaCliente panelAltaCliente;
+	private PanelRegistro panelRegistro;
 	private PanelExplorar panelExplorar;
 	private PanelMisListas panelMisListas;
 	private PanelPremium panelPremium;
@@ -80,14 +80,14 @@ public class VentanaMain extends JFrame{
 		
 		//Creamos los paneles de nuestra aplicación
 		panelLogin =  new PanelLogin(this);
-		panelAltaCliente = new PanelAltaCliente(this);
+		panelRegistro = new PanelRegistro(this);
 		panelExplorar = new PanelExplorar(this);
 		panelMisListas = new PanelMisListas(this);
 		panelPremium = new PanelPremium(this);
 		
 		//Los añadimos a la ventana. Cambiaremos de panel usando el CardLayout
 		contenido.add(panelLogin, panelLoginCard);
-		contenido.add(panelAltaCliente, panelRegistroCard);
+		contenido.add(panelRegistro, panelRegistroCard);
 		contenido.add(panelExplorar, panelExplorarCard);
 		contenido.add(panelMisListas, panelMisListasCard);
 		contenido.add(panelPremium, panelPremiumCard);
@@ -108,8 +108,8 @@ public class VentanaMain extends JFrame{
 		Menu.setMaximumSize(Menu.getPreferredSize());
 		contenedorPrincipal.add(Menu);
 		
+		//Imagen AppVideo
 		JLabel imagenMenu = new JLabel("");
-		//Escalado del icono.
 		ImageIcon imageIcon = new ImageIcon(VentanaMain.class.getResource("Titulo.png")); 
 		Image image = imageIcon.getImage(); 
 		Image newimg = image.getScaledInstance(656/7, 278/7,  java.awt.Image.SCALE_SMOOTH);
