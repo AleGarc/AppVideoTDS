@@ -138,7 +138,7 @@ public class PanelMisListas extends JPanel{
 				{
 					Video videoSeleccionado = controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo());
 					setVideo(videoSeleccionado);
-					controladorAppVideo.addVideoReciente(usuario, videoSeleccionado);
+					controladorAppVideo.addVideoReciente(videoSeleccionado);
 					panelDerecho.setVisible(true);
 					panelDerechoInv.setVisible(false);
 					
@@ -312,7 +312,7 @@ public class PanelMisListas extends JPanel{
 			txtLista.setVisible(false);
 			boxListas.setVisible(false);
 			
-			updateVideos(controladorAppVideo.getVideosRecientesUsuario());
+			updateVideos(usuario.getVideosRecientes());
 			
 		}
 	}
@@ -338,7 +338,7 @@ public class PanelMisListas extends JPanel{
 		boxListas.removeAllItems();
 		modelVideos.removeAllElements();
 		boxListas.addItem("");
-		for(VideoList v: controladorAppVideo.getListasAutor(usuario)) {
+		for(VideoList v: controladorAppVideo.getListasAutor()) {
 			boxListas.addItem(v.getNombre());
 		}
 		
@@ -355,7 +355,7 @@ public class PanelMisListas extends JPanel{
 		boxListas.addActionListener(ev ->{
 			//System.out.println(boxListas.getSelectedItem());
 			if(boxListas.getSelectedItem() != null && !boxListas.getSelectedItem().toString().isEmpty()) {
-				videoLista = controladorAppVideo.getListaVideo(boxListas.getSelectedItem().toString(), usuario.getUsuario());
+				videoLista = controladorAppVideo.getListaVideo(boxListas.getSelectedItem().toString());
 				updateVideos(videoLista.getListaVideos());
 				//updateVideosLista(videoLista.getListaVideos());
 			}

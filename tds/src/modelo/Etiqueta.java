@@ -1,5 +1,7 @@
 package modelo;
 
+import java.util.Objects;
+
 public class Etiqueta {
 	private String nombre;
 	private int codigo;
@@ -22,10 +24,20 @@ public class Etiqueta {
 	public int getCodigo() {
 		return codigo;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(codigo, nombre);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		Etiqueta other = (Etiqueta) obj;
+		return codigo == other.codigo && Objects.equals(nombre, other.nombre);
+	}
 	
-	/*public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}*/
-	
+
 	
 }

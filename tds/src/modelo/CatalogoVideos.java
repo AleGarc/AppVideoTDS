@@ -2,7 +2,6 @@ package modelo;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -51,26 +50,15 @@ public class CatalogoVideos {
 		return lista;
 	}
 	
-	public Video getVideo(int codigo) {
-		for (Video p : videos.values()) {
-			if (p.getCodigo()==codigo) return p;
-		}
-		return null;
-	}
+	//Devuelve un video concreto
 	public Video getVideo(String titulo) {
 		return videos.get(titulo); 
 	}
 	
-	public void addEtiquetaToVideo(Etiqueta e, Video v) {
-		Video vid = videos.get(v.getTitulo());
-		vid.addEtiqueta(e);
-		adaptadorVideo.modificarVideo(vid);
-	}
-	
+	//Añade un video al catalogo
 	public void addVideo(Video vid) {
 		videos.put(vid.getTitulo(),vid);
 		for(Etiqueta e: vid.getEtiquetas()) {
-			catalogoEtiquetas.addEtiqueta(e);
 			if(videosIndexadosEtiquetas.containsKey(e.getNombre())) {
 				List<Video> videosEtiquetados = videosIndexadosEtiquetas.get(e.getNombre());
 				videosEtiquetados.add(vid);
@@ -82,35 +70,9 @@ public class CatalogoVideos {
 			}
 		}
 	}
-	public void removeVideo(Video pro) {
-		videos.remove(pro.getTitulo());
-	}
-	
-	public void addReproduccion(Video v) {
-		Video video = videos.get(v.getTitulo());
-		video.addReproducciones();
-		adaptadorVideo.modificarVideo(video);
-	}
-	
-	/*Recupera todos los Videos para trabajar con ellos en memoria*/
-	private void cargarCatalogo() throws DAOException {
-		 List<Video> VideosBD = adaptadorVideo.recuperarTodosVideos();
-		 for (Video pro: VideosBD) 
-			     videos.put(pro.getTitulo(),pro);
-		 
-		 for(Etiqueta e: catalogoEtiquetas.getEtiquetas()) {
-			 List<Video> videosEtiquetados = new ArrayList<Video>();
-			 for (Video pro: VideosBD) {
-			     if(pro.contieneEtiqueta(e)) {
-			    	 videosEtiquetados.add(pro);
-			     }
-			 }
-			 videosIndexadosEtiquetas.put(e.getNombre(), videosEtiquetados);
-		 }
-	}
-	
-	
-	public List<Video> buscarVideos(String subCadena, List<String> etiquetasSeleccionadas, FiltroVideo filtro){
+
+	//Buscamos videos por nombre y etiquetas (o solamente nombre)
+	public List<Video> buscarVideos(String subCadena, List<Etiqueta> etiquetasSeleccionadas, FiltroVideo filtro){
 		List<Video> resultados = new ArrayList<Video>();
 		if(etiquetasSeleccionadas.isEmpty()) {
 			videos.forEach((t,v) ->{
@@ -124,17 +86,31 @@ public class CatalogoVideos {
 		return resultados;
 	}
 	
-	public List<Video> buscarVideosEtiquetados(String subCadena, List<String> etiquetasSeleccionadas, FiltroVideo filtro){
+	//Buscamos videos por etiquetas. Usado cuando en la busqueda se selecciona, al menos, una etiqueta
+	public List<Video> buscarVideosEtiquetados(String subCadena, List<Etiqueta> etiquetasSeleccionadas, FiltroVideo filtro){
 		List<Video> resultadosEtiquetados = new ArrayList<Video>();
-		for(String etiqueta : etiquetasSeleccionadas){
-			List<Video> posiblesVideos = videosIndexadosEtiquetas.get(etiqueta);
+		for(Etiqueta etiqueta : etiquetasSeleccionadas){
+			List<Video> posiblesVideos = videosIndexadosEtiquetas.get(etiqueta.getNombre());
 			for(Video v: posiblesVideos){
 				if(v.getTitulo().contains(subCadena))
 					if(!resultadosEtiquetados.contains(v) && filtro.esVideoOK(v))
 						resultadosEtiquetados.add(v);
 			}
 		}
-		return resultadosEtiquetados;
+		List<Video> resultadosTodasEtiquetas = new ArrayList<Video>();
+		for(Video v: resultadosEtiquetados) {
+			System.out.println(v.getTitulo());
+			boolean tieneTodasEtiquetas = true;
+			for(Etiqueta e: etiquetasSeleccionadas) {
+				if(!v.contieneEtiqueta(e)) {
+					tieneTodasEtiquetas = false;
+					break;
+				}
+			}
+			if(tieneTodasEtiquetas)
+				resultadosTodasEtiquetas.add(v);
+		}
+		return resultadosTodasEtiquetas;
 	}
 	
 	public List<Video> getVideosMasVistos(){
@@ -161,5 +137,22 @@ public class CatalogoVideos {
 			candidatos.remove(quitar);
 		}
 		return topTen;
+	}
+	
+	/*Recupera todos los Videos para trabajar con ellos en memoria*/
+	private void cargarCatalogo() throws DAOException {
+		 List<Video> VideosBD = adaptadorVideo.recuperarTodosVideos();
+		 for (Video pro: VideosBD) 
+			     videos.put(pro.getTitulo(),pro);
+		 
+		 for(Etiqueta e: catalogoEtiquetas.getEtiquetas()) {
+			 List<Video> videosEtiquetados = new ArrayList<Video>();
+			 for (Video pro: VideosBD) {
+			     if(pro.contieneEtiqueta(e)) {
+			    	 videosEtiquetados.add(pro);
+			     }
+			 }
+			 videosIndexadosEtiquetas.put(e.getNombre(), videosEtiquetados);
+		 }
 	}
 }

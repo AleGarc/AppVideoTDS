@@ -63,25 +63,38 @@ public class CatalogoVideoList {
 		
 	}
 	
-	public void addVideoToList(String nombre, String autor, Video v){
-		List<VideoList> list = videoListMap.get(autor);
-		for(VideoList vL: list){
-			if(vL.getNombre().equals(nombre)) {
-				vL.addVideo(v);
-				adaptadorVideoList.modificarVideoList(vL);
+	public boolean existeVideoList(String nombre, String autor) {
+		if(videoListMap.containsKey(autor)) {
+			List<VideoList> lista =  videoListMap.get(autor);
+			for(VideoList v : lista){
+				if(v.getNombre().equals(nombre)) {
+					return true;
+				}
 			}
 		}
-		
+		return false;
 	}
 	
-	public void removeVideoFromList(String nombre, String autor, Video v){
-		List<VideoList> list = videoListMap.get(autor);
-		for(VideoList vL: list){
-			if(vL.getNombre().equals(nombre)) {
-				vL.removeVideo(v);
-				adaptadorVideoList.modificarVideoList(vL);
+	public VideoList getVideoList(String nombre, String autor) {
+		List<VideoList> lista =  videoListMap.get(autor);
+		if(lista != null) {
+			for(VideoList v : lista){
+				if(v.getNombre().equals(nombre)) {
+					return v;
+				}
 			}
 		}
+		return null;
+	}
+	
+	
+	public boolean checkVideoInVideoList(String autor, Video v) {
+		List<VideoList> listas = videoListMap.get(autor);
+		for(VideoList vL : listas) {
+			if(vL.contieneVideo(v))
+				return true;
+		}
+		return false;
 	}
 	
 	/*Recupera todos los VideoLists para trabajar con ellos en memoria*/
@@ -96,50 +109,5 @@ public class CatalogoVideoList {
 			    	videoListMap.put(pro.getAutor(), nuevaLista);
 			    }    	
 		 }
-	}
-	
-	public boolean existeVideoList(String nombre, String autor) {
-		if(videoListMap.containsKey(autor)) {
-			List<VideoList> lista =  videoListMap.get(autor);
-			for(VideoList v : lista){
-				if(v.getNombre().equals(nombre)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	public VideoList getListaVideo(String nombre, String autor) {
-		List<VideoList> lista =  videoListMap.get(autor);
-		//if(lista == null)
-			
-		for(VideoList v : lista){
-			if(v.getNombre().equals(nombre)) {
-				return v;
-			}
-		}
-		return new VideoList(nombre,autor);
-	}
-	
-	public void actualizarVideoList(VideoList videoLista) {
-		adaptadorVideoList.modificarVideoList(videoLista);
-	}
-	
-	public VideoList getVideosMasVistos(List<Video> videosTopTen) {
-		VideoList topTen = new VideoList("topTen", "controlador");
-		for(Video v:  videosTopTen) {
-			topTen.addVideo(v);
-		}
-		return topTen;
-	}
-	
-	public boolean checkVideoInVideoList(Usuario usuario, Video v) {
-		List<VideoList> listas = videoListMap.get(usuario.getUsuario());
-		for(VideoList vL : listas) {
-			if(vL.contieneVideo(v))
-				return true;
-		}
-		return false;
 	}
 }

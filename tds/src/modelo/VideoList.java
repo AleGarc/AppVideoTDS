@@ -26,11 +26,13 @@ public class VideoList {
 	}
 	
 	public void addVideo(Video v){
-		videos.add(v);
+		if(!contieneVideo(v))
+			videos.add(v);
 	}
 	
 	public void removeVideo(Video v) {
-		videos.remove(v);
+		if(contieneVideo(v))
+			videos.remove(v);
 	}
 	
 	public String getNombre() {

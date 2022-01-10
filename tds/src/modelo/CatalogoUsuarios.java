@@ -1,7 +1,6 @@
 package modelo;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,20 +37,6 @@ public class CatalogoUsuarios {
 		return unicaInstancia;
 	}
 	
-	/*devuelve todos los clientes*/
-	public List<Usuario> getUsuarios(){
-		ArrayList<Usuario> lista = new ArrayList<Usuario>();
-		for (Usuario c:usuarios.values()) 
-			lista.add(c);
-		return lista;
-	}
-	
-	public Usuario getUsuario(int codigo) {
-		for (Usuario c:usuarios.values()) {
-			if (c.getCodigo()==codigo) return c;
-		}
-		return null;
-	}
 	public Usuario getUsuario(String usuario) {
 		return usuarios.get(usuario); 
 	}
@@ -59,10 +44,7 @@ public class CatalogoUsuarios {
 	public void addUsuario(Usuario cli) {
 		usuarios.put(cli.getUsuario(),cli);
 	}
-	public void removeUsuario (Usuario cli) {
-		usuarios.remove(cli.getUsuario());
-	}
-	
+
 	public boolean authUsuario(String user, String password) {
 		Usuario u = usuarios.get(user);
 		if(u == null) return false;
@@ -76,15 +58,5 @@ public class CatalogoUsuarios {
 			     usuarios.put(cli.getUsuario(),cli);
 	}
 	
-	public void cambiarRol(Usuario usuario, boolean b) {
-		usuario.cambiarRol(b);
-	}
 	
-	public void setFiltro(Usuario usuario, String filtro) {
-		usuario.setFiltro(filtro);
-	}
-	
-	public String getFiltroUsuario(Usuario usuario) {
-		return usuario.getFiltroString();
-	}
 }

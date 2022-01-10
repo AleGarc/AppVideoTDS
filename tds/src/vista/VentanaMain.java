@@ -427,7 +427,7 @@ public class VentanaMain extends JFrame implements ActionListener{
 		btnNuevaLista.setEnabled(b);
 		funcionalidadPremium(b);
 		if(b) {
-			boxFiltros.setSelectedItem((Object) controladorAppVideo.getFiltroUsuario());
+			boxFiltros.setSelectedItem((Object) usuario.getFiltroString());
 		}
 	}
 

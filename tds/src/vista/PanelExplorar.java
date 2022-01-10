@@ -138,8 +138,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			if(txtLista.getText().equals(""))
 				JOptionPane.showMessageDialog(Ventana,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
 			else{
-				if(controladorAppVideo.checkVideoListExiste(txtLista.getText(), usuario.getUsuario())) {
-					videoLista = controladorAppVideo.getListaVideo(txtLista.getText(), usuario.getUsuario());
+				if(controladorAppVideo.checkVideoListExiste(txtLista.getText())) {
+					videoLista = controladorAppVideo.getListaVideo(txtLista.getText());
 					updateVideosLista(videoLista.getListaVideos());
 					btnEliminar.setEnabled(true);
 					
@@ -147,7 +147,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 				else {
 					int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea crear la lista " + txtLista.getText() + "?", "Lista inexistente",JOptionPane.YES_NO_OPTION);
 					if(eleccion == 0) {
-						videoLista = controladorAppVideo.crearListaVideo(txtLista.getText(), usuario.getUsuario());
+						videoLista = controladorAppVideo.registrarVideoLista(txtLista.getText());
 						modelLista.removeAllElements();
 						btnEliminar.setEnabled(true);
 					}	
@@ -193,9 +193,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 			{
 				if (e.getClickCount() == 2 && !modelLista.isEmpty())
 				{
-					videoLista.removeVideo(controladorAppVideo.getVideo(listaVideos.getSelectedValue().getTitulo()));
+					controladorAppVideo.removeVideoFromLista(videoLista,controladorAppVideo.getVideo(listaVideos.getSelectedValue().getTitulo()));
 					modelLista.removeElement(listaVideos.getSelectedValue());
-					controladorAppVideo.actualizarLista(videoLista);
 				}
 			}
 		});
@@ -255,13 +254,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
 					if(modo == Mode.NUEVALISTA && !(videoLista == null) && !videoLista.contieneVideo(controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo()))) {
-						videoLista.addVideo(controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo()));
+						controladorAppVideo.addVideoToVideoList(videoLista, controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo()));
 						modelLista.addElement(lista.getSelectedValue());
-						controladorAppVideo.actualizarLista(videoLista);
+						
 					}
 					else if(modo == Mode.EXPLORAR) {
 						videoSeleccionado = videosEncontrados.get(lista.getSelectedIndex());
-						controladorAppVideo.addVideoReciente(usuario, videoSeleccionado);
+						controladorAppVideo.addVideoReciente(videoSeleccionado);
 						for(ActionListener a: playButton.getActionListeners()) {
 						    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
 						          
@@ -577,7 +576,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	      document.add(new Paragraph (info));
 	      document.add(new Paragraph ("\n"));
 	      
-	      List<VideoList> listasVideos = controladorAppVideo.getListasAutor(usuario);
+	      List<VideoList> listasVideos = controladorAppVideo.getListasAutor();
 	      for(VideoList v: listasVideos) {
 	    	  document.add(new Paragraph ("Lista de reproducción: "+ v.getNombre() ));
 		      for(Video vid: v.getListaVideos()) {

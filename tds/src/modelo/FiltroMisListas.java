@@ -8,7 +8,7 @@ public class FiltroMisListas implements FiltroVideo {
 	
 	@Override
 	public boolean esVideoOK(Video v) {
-		return !controladorAppVideo.checkVideoInVideoList(controladorAppVideo.getUsuario(), v);
+		return !controladorAppVideo.checkVideoInVideoList(v);
 	}
 
 }

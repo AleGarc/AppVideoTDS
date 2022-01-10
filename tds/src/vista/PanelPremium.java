@@ -150,7 +150,7 @@ public class PanelPremium extends JPanel {
 		panelPremium.add(btnUnete);
 		
 		btnUnete.addActionListener(ev ->{
-			controladorAppVideo.cambiarRolUsuario(usuario, true);
+			controladorAppVideo.cambiarRolUsuario(true);
 			ventana.funcionalidadPremium(true);
 			 JOptionPane.showMessageDialog(null, "¡Ahora eres usuario premium!", "Usuario premium",
 						JOptionPane.INFORMATION_MESSAGE);
@@ -159,7 +159,7 @@ public class PanelPremium extends JPanel {
 		btnAbandonar = new JButton("Abandonar");
 		panelPremium.add(btnAbandonar);
 		btnAbandonar.addActionListener(ev ->{
-			controladorAppVideo.cambiarRolUsuario(usuario, false);
+			controladorAppVideo.cambiarRolUsuario(false);
 			ventana.funcionalidadPremium(false);
 			 JOptionPane.showMessageDialog(null, "Has dejado de ser usuario premium", "Usuario premium",
 						JOptionPane.INFORMATION_MESSAGE);

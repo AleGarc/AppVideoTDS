@@ -70,11 +70,7 @@ public class Video {
 	}
 	
 	public boolean contieneEtiqueta(Etiqueta e) {
-		for(Etiqueta et: etiquetas){
-			if(et.getNombre().equals(e.getNombre()))
-				return true;
-		}
-		return false;
+		return this.etiquetas.contains(e);
 	}
 	
 	public int getReproducciones() {

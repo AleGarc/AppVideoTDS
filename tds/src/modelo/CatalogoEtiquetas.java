@@ -46,6 +46,7 @@ public class CatalogoEtiquetas {
 		return lista;
 	}
 	
+	//Devolvemos los nombres de las etiquetas disponibles 
 	public List<String> getEtiquetasString(){
 		ArrayList<String> lista = new ArrayList<String>();
 		for (Etiqueta c:etiquetas.values()) 
@@ -53,28 +54,15 @@ public class CatalogoEtiquetas {
 		return lista;
 	}
 	
-	public Etiqueta getEtiqueta(int codigo) {
-		for (Etiqueta p : etiquetas.values()) {
-			if (p.getCodigo()==codigo) return p;
-		}
-		return null;
-	}
+	
+	//Devuelve la etiqueta buscada
 	public Etiqueta getEtiqueta(String nombre) {
 		return etiquetas.get(nombre); 
 	}
 	
+	//Añade etiquetas
 	public void addEtiqueta(Etiqueta e) {
 		etiquetas.put(e.getNombre(),e);
-	}
-	public void removeEtiqueta(Etiqueta e) {
-		etiquetas.remove(e.getNombre());
-	}
-	
-	public Etiqueta nuevaEtiqueta(String nombreEtiqueta) {
-		Etiqueta e = new Etiqueta(nombreEtiqueta);
-		etiquetas.put(nombreEtiqueta, e);
-		adaptadorEtiqueta.registrarEtiqueta(e);
-		return e;
 	}
 	
 	/*Recupera todos los Etiquetas para trabajar con ellos en memoria*/
@@ -84,8 +72,5 @@ public class CatalogoEtiquetas {
 			     etiquetas.put(pro.getNombre(),pro);
 	}
 	
-	public Etiqueta existeEtiqueta(String e) {
-		return etiquetas.get(e);
-	}
 	
 }
