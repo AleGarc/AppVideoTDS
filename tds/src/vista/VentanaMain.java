@@ -40,7 +40,6 @@ import javax.swing.border.BevelBorder;
 import controlador.ControladorAppVideo;
 import modelo.CatalogoUsuarios;
 import modelo.Usuario;
-import modelo.LineaVenta;
 import modelo.Video;
 import pulsador.IEncendidoListener;
 import pulsador.Luz;

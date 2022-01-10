@@ -7,6 +7,7 @@ import java.awt.Color;
 import javax.swing.*;
 
 
+@SuppressWarnings("serial")
 public class VideoDisplay extends JPanel {
 	private String titulo;
 	private String url;

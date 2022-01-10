@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Video {
-
-
-
 	private int codigo;
 	private String titulo;
 	private String url;
@@ -22,7 +19,6 @@ public class Video {
 		this.reproducciones = 0;
 	}
 	
-
 	public Video(String titulo, String url, List<Etiqueta> etiquetas) {
 		this(titulo, url);
 		this.etiquetas = etiquetas;
@@ -33,31 +29,18 @@ public class Video {
 		this.reproducciones = reproducciones;
 	}
 	
-	
 	public String getTitulo() {
 		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
 	public List<Etiqueta> getEtiquetas() {
-		return new LinkedList<Etiqueta>(etiquetas);	//PUEDE SER??
+		return this.etiquetas;
 	}
 
-	public void setEtiquetas(List<Etiqueta> etiquetas) {
-		this.etiquetas = etiquetas;
-	}
-	
 	public void addEtiqueta(Etiqueta e) {
 		this.etiquetas.add(e);
 	}

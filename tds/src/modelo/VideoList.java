@@ -18,7 +18,6 @@ public class VideoList {
 		codigo = 0;
 	}
 	
-	
 	public VideoList(String nombre, String autor, List<Video> listaVideos) {
 		this(nombre,autor);
 		videos = listaVideos;
@@ -56,12 +55,7 @@ public class VideoList {
 	}
 	
 	public boolean contieneVideo(Video video) {
-		for(Video v: videos) {
-			if(v.getUrl().equals(video.getUrl()))
-				return true;
-		}
-		
-		return false;
+		return this.videos.contains(video);
 	}
 	
 	@Override

@@ -38,8 +38,8 @@ public class CatalogoVideoList {
 		return unicaInstancia;
 	}
 	
+	//Añade una lista de video al catalogo
 	public void addVideoList(VideoList vid) {
-		adaptadorVideoList.registrarVideoList(vid);
 		if(videoListMap.containsKey(vid.getAutor())) {
 			videoListMap.get(vid.getAutor()).add(vid);	
 		}
@@ -50,12 +50,14 @@ public class CatalogoVideoList {
 		}
 	}
 	
+	
+	//Borra una lista de video del catalogo
 	public void removeVideoList(VideoList videoLista) {
 		List<VideoList> lista =  videoListMap.get(videoLista.getAutor());
 		lista.remove(videoLista);
-		adaptadorVideoList.borrarVideoList(videoLista);
 	}
 	
+	//Devuelve todas las listas de video de un usuario concreto
 	public List<VideoList> getVideoListAutor(String autor){
 		if(videoListMap.containsKey(autor))
 			return videoListMap.get(autor);
@@ -63,6 +65,7 @@ public class CatalogoVideoList {
 		
 	}
 	
+	//Comprueba la existencia de una lista de video 
 	public boolean existeVideoList(String nombre, String autor) {
 		if(videoListMap.containsKey(autor)) {
 			List<VideoList> lista =  videoListMap.get(autor);
@@ -75,6 +78,7 @@ public class CatalogoVideoList {
 		return false;
 	}
 	
+	//Devuelve una lista de video dado el nombre y el usuario autor.
 	public VideoList getVideoList(String nombre, String autor) {
 		List<VideoList> lista =  videoListMap.get(autor);
 		if(lista != null) {
@@ -87,7 +91,7 @@ public class CatalogoVideoList {
 		return null;
 	}
 	
-	
+	//Comprobar si existe, al menos, una lista de video que contenga el video dado
 	public boolean checkVideoInVideoList(String autor, Video v) {
 		List<VideoList> listas = videoListMap.get(autor);
 		for(VideoList vL : listas) {

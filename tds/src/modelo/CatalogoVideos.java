@@ -99,7 +99,6 @@ public class CatalogoVideos {
 		}
 		List<Video> resultadosTodasEtiquetas = new ArrayList<Video>();
 		for(Video v: resultadosEtiquetados) {
-			System.out.println(v.getTitulo());
 			boolean tieneTodasEtiquetas = true;
 			for(Etiqueta e: etiquetasSeleccionadas) {
 				if(!v.contieneEtiqueta(e)) {
@@ -113,6 +112,7 @@ public class CatalogoVideos {
 		return resultadosTodasEtiquetas;
 	}
 	
+	//Devuelve la lista de los 10 videos mas vistos
 	public List<Video> getVideosMasVistos(){
 		List<Video> topTen = new ArrayList<Video>();
 		

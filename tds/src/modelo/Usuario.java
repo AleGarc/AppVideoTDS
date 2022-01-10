@@ -1,9 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 public class Usuario {
 	private int codigo;
@@ -39,40 +37,20 @@ public class Usuario {
 		return nombre_completo;
 	}
 
-	public void setNombre_completo(String nombre_completo) {
-		this.nombre_completo = nombre_completo;
-	}
-
 	public String getFecha_nacimiento() {
 		return fecha_nacimiento;
-	}
-
-	public void setFecha_nacimiento(String fecha_nacimiento) {
-		this.fecha_nacimiento = fecha_nacimiento;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
 	public String getPassword() {
 		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public void setCodigo(int codigo) {
@@ -95,6 +73,7 @@ public class Usuario {
 		return this.videosRecientes;
 	}
 
+	//Añadir un video a la lista de videos recientes del usuario
 	public void addVideoReciente(Video v) {
 		List<Video> nuevosRecientes = new ArrayList<Video>();
 		
@@ -117,25 +96,5 @@ public class Usuario {
 	
 	public void setFiltro(String filtro) {
 		this.filtro = filtro;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, email, fecha_nacimiento, filtro, nombre_completo, password, premium, usuario,
-				videosRecientes);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		return codigo == other.codigo && Objects.equals(email, other.email)
-				&& Objects.equals(fecha_nacimiento, other.fecha_nacimiento) && Objects.equals(filtro, other.filtro)
-				&& Objects.equals(nombre_completo, other.nombre_completo) && Objects.equals(password, other.password)
-				&& premium == other.premium && Objects.equals(usuario, other.usuario)
-				&& Objects.equals(videosRecientes, other.videosRecientes);
 	}
 }

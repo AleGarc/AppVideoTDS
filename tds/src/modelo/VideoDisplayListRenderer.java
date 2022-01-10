@@ -6,6 +6,7 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
+@SuppressWarnings("serial")
 public class VideoDisplayListRenderer extends DefaultListCellRenderer{
 
 	@Override

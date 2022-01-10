@@ -11,6 +11,7 @@ public abstract class FactoriaDAO {
 	 * Crea un tipo de factoria DAO.
 	 * Solo existe el tipo TDSFactoriaDAO
 	 */
+	@SuppressWarnings("deprecation")
 	public static FactoriaDAO getInstancia(String tipo) throws DAOException{
 		if (unicaInstancia == null)
 			try { unicaInstancia=(FactoriaDAO) Class.forName(tipo).newInstance();
@@ -31,7 +32,6 @@ public abstract class FactoriaDAO {
 		
 		
 	// Metodos factoria que devuelven adaptadores que implementen estos interfaces
-
 	public abstract IAdaptadorVideoDAO getVideoDAO();
 	public abstract IAdaptadorUsuarioDAO getUsuarioDAO();
 	public abstract IAdaptadorEtiquetaDAO getEtiquetaDAO();

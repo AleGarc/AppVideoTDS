@@ -15,8 +15,6 @@ public class Etiqueta {
 		return nombre;
 	}
 
-		
-
 	public void setCodigo(int codigo) {
 		this.codigo = codigo;
 	}

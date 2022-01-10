@@ -37,14 +37,17 @@ public class CatalogoUsuarios {
 		return unicaInstancia;
 	}
 	
+	//Devuelve el usuario buscado
 	public Usuario getUsuario(String usuario) {
 		return usuarios.get(usuario); 
 	}
 	
+	//Añade un usuario al catalogo
 	public void addUsuario(Usuario cli) {
 		usuarios.put(cli.getUsuario(),cli);
 	}
 
+	//Intenta logearse con usuario y contraseña
 	public boolean authUsuario(String user, String password) {
 		Usuario u = usuarios.get(user);
 		if(u == null) return false;
