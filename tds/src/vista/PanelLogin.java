@@ -1,6 +1,5 @@
 package vista;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,7 +8,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -24,218 +22,108 @@ import javax.swing.border.LineBorder;
 import controlador.ControladorAppVideo;
 
 
-public class PanelLogin extends JPanel implements ActionListener{
-	private Font fuenteGrande = new Font("Arial",Font.BOLD,32);
-	private JLabel rotulo;
-	private JPanel datosProducto;
-	private JLabel lnombre, ldescripcion, lprecio, lalerta;
+@SuppressWarnings("serial")
+public class PanelLogin extends JPanel{
+
 	private JTextField txtUsuario, txtPassword;
-	private JTextArea descripcion;
 	private JButton btnLogin, btnCancelar;
-	private VentanaMain ventana;
+	private VentanaMain ventanaMain;
 	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
-	private JButton loginMainButton;
 	
-	private String usuario;
 	
 	public PanelLogin(VentanaMain v){
-		ventana=v; 
+		ventanaMain=v; 
 		crearPantalla();
 	}
 	
 	private void crearPantalla() {
-		JPanel Ventana = new JPanel();
-		Ventana.setBorder(new LineBorder(new Color(0, 0, 0)));
-		Ventana.setBackground(Color.LIGHT_GRAY);
-		//Ventana.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
-		//Ventana.setMaximumSize(Ventana.getPreferredSize());
-		fixedSize(Ventana, Constantes.ventana_x_size-35, Constantes.ventana_y_size-180);
+		JPanel contenido = new JPanel();
+		contenido.setBorder(new LineBorder(new Color(0, 0, 0)));
+		contenido.setBackground(Color.LIGHT_GRAY);
+		Constantes.fixedSize(contenido, Constantes.ventana_x_size-35, Constantes.ventana_y_size-180);
+		contenido.setLayout(new FlowLayout(FlowLayout.CENTER));
 		
-		//frmAppVideo.getContentPane().add(Ventana);
+		Component rA0 = Box.createRigidArea(new Dimension(700, 100));
+		contenido.add(rA0);
 		
-		//Ventana.setLayout(new BoxLayout(Ventana, BoxLayout.Y_AXIS));
-		Ventana.setLayout(new FlowLayout(FlowLayout.CENTER));
+		JPanel panelLogin = new JPanel();
 		
-		Component rigidArea5 = Box.createRigidArea(new Dimension(700, 100));
-		Ventana.add(rigidArea5);
+		panelLogin.setBackground(Color.LIGHT_GRAY);
+		panelLogin.setLayout(new FlowLayout(FlowLayout.CENTER));
+		panelLogin.setBorder(new LineBorder(Color.DARK_GRAY));
+		panelLogin.setPreferredSize(new Dimension(400, 300));
+		panelLogin.setMaximumSize(new Dimension(400, 300));
+		contenido.add(panelLogin);
 		
-		JPanel panel = new JPanel();
+		Component rA1 = Box.createRigidArea(new Dimension(400, 60));
+		panelLogin.add(rA1);
 		
-		panel.setBackground(Color.LIGHT_GRAY);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		//panel.setAlignmentX(75);
-		panel.setBorder(new LineBorder(Color.DARK_GRAY));
-		panel.setPreferredSize(new Dimension(400, 300));
-		panel.setMaximumSize(new Dimension(400, 300));
-		Ventana.add(panel);
-		
-		Component rigidArea_3_1 = Box.createRigidArea(new Dimension(400, 60));
-		panel.add(rigidArea_3_1);
-		
-		JLabel lblNewLabel_2 = new JLabel("Usuario:");
-		lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
-		panel.add(lblNewLabel_2);
+		JLabel lbUsuario = new JLabel("Usuario:");
+		lbUsuario.setHorizontalAlignment(SwingConstants.LEFT);
+		panelLogin.add(lbUsuario);
 		
 		txtUsuario = new JTextField();
-		panel.add(txtUsuario);
+		panelLogin.add(txtUsuario);
 		txtUsuario.setColumns(20);
 		
-		Component rigidArea_3_1_1_1 = Box.createRigidArea(new Dimension(400, 50));
-		panel.add(rigidArea_3_1_1_1);
+		Component rA2 = Box.createRigidArea(new Dimension(400, 50));
+		panelLogin.add(rA2);
 		
-		JLabel lblNewLabel_2_1 = new JLabel("Password");
-		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.LEFT);
-		panel.add(lblNewLabel_2_1);
+		JLabel lbPassword = new JLabel("Password");
+		lbPassword.setHorizontalAlignment(SwingConstants.LEFT);
+		panelLogin.add(lbPassword);
 		
 		txtPassword = new JTextField();
 		txtPassword.setHorizontalAlignment(SwingConstants.LEFT);
 		txtPassword.setColumns(20);
-		panel.add(txtPassword);
+		panelLogin.add(txtPassword);
 		
-		Component rigidArea_3_1_1_2 = Box.createRigidArea(new Dimension(3, 20));
-		panel.add(rigidArea_3_1_1_2);
-		
-		Component rigidArea_3_1_1 = Box.createRigidArea(new Dimension(400, 50));
-		panel.add(rigidArea_3_1_1);
+		Component rA3 = Box.createRigidArea(new Dimension(3, 20));
+		panelLogin.add(rA3);	
+		Component rA4 = Box.createRigidArea(new Dimension(400, 50));
+		panelLogin.add(rA4);
 		
 		btnLogin = new JButton("Aceptar");
-		panel.add(btnLogin);
+		panelLogin.add(btnLogin);
 		
-		Component rigidArea_4 = Box.createRigidArea(new Dimension(60, 20));
-		panel.add(rigidArea_4);
+		Component rA5 = Box.createRigidArea(new Dimension(60, 20));
+		panelLogin.add(rA5);
 		
-		JButton btnNewButton_6 = new JButton("Cancelar");
-		panel.add(btnNewButton_6);
+		btnCancelar = new JButton("Cancelar");
+		panelLogin.add(btnCancelar);
 		
-		add(Ventana);
-		
-		btnLogin.addActionListener(this);
-		/*setSize(Constantes.x_size,Constantes.y_size);
-		setLayout(new BorderLayout());
-		rotulo=new JLabel("Alta Producto",JLabel.CENTER);
-		fixedSize(rotulo,Constantes.x_size,60);
-		rotulo.setFont(fuenteGrande);
-		add(rotulo,BorderLayout.NORTH);
-
-		datosProducto=new JPanel();
-		datosProducto.setLayout(new FlowLayout(FlowLayout.LEFT));
-	
-		lnombre=new JLabel("Nombre:",JLabel.RIGHT);	
-		fixedSize(lnombre,170,24);
-		nombre=new JTextField(); 
-		fixedSize(nombre,140,24); 
-	
-		lprecio=new JLabel("Precio:",JLabel.RIGHT); 
-		fixedSize(lprecio,60,24);
-		precio=new JTextField(); 
-		fixedSize(precio,90,24);
-
-		ldescripcion=new JLabel("Descripcion:",JLabel.RIGHT); 
-		fixedSize(ldescripcion,170,24);
-		descripcion=new JTextArea(); 
-		fixedSize(descripcion,300,100);
-		descripcion.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-	
-		btnRegistrar=new JButton("Registrar"); fixedSize(btnRegistrar,100,30);
-		btnCancelar=new JButton("Cancelar"); fixedSize(btnCancelar,100,30);
-		
-		lalerta=new JLabel("Los campos Nombre y Precio son obligtorios",JLabel.CENTER);
-		lalerta.setForeground(Color.RED); fixedSize(lalerta,Constantes.x_size,30);
-		lalerta.setVisible(false);
-		
-		datosProducto.add(Box.createRigidArea(new Dimension(Constantes.x_size,35)));
-		datosProducto.add(lnombre); datosProducto.add(nombre);
-		datosProducto.add(lprecio); datosProducto.add(precio);
-		datosProducto.add(ldescripcion);
-		datosProducto.add(descripcion);
-		datosProducto.add(Box.createRigidArea(new Dimension(Constantes.x_size,39)));
-		datosProducto.add(Box.createRigidArea(new Dimension(170,20)));
-		datosProducto.add(btnRegistrar);
-		datosProducto.add(Box.createRigidArea(new Dimension(90,20)));
-		datosProducto.add(btnCancelar);
-		datosProducto.add(lalerta);
-		
-		add(datosProducto,BorderLayout.CENTER);
-		
-		//Manejadores
-		*/
-		/*btnNewButton_5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {	
-				String auxUsuario=usuarioText.getText().trim();
-				String auxPassword=passwordText.getText().trim();
-				//double doubleprecio=Double.parseDouble(auxPrecio);
-				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
-				else if (!ControladorTienda.getUnicaInstancia().autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
-				else { /*lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
-					   JOptionPane.showMessageDialog(ventana,
-								"Producto dado de alta",
-								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
-					   precio.setText(""); usuarioText.setText(""); 
-					   descripcion.setText(""); lalerta.setVisible(false); 
-					
-					usuarioText.setText(""); passwordText.setText("");
-					for(ActionListener a: loginMainButton.getActionListeners()) {
-					    a.actionPerformed(new ActionEvent(loginMainButton, ActionEvent.ACTION_PERFORMED, null) {
-					          //Nothing need go here, the actionPerformed method (with the
-					          //above arguments) will trigger the respective listener
-					    });
-					    }
-					}
-				}
-			}	
-		});*/
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource()== btnLogin) { 
-				String auxUsuario=txtUsuario.getText().trim();
-				String auxPassword=txtPassword.getText().trim();
-				//double doubleprecio=Double.parseDouble(auxPrecio);
-				if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();//lalerta.setVisible(true);
-				else if (!controladorAppVideo.autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
-				else { /*lalerta.setVisible(false);
-					   ControladorTienda.getUnicaInstancia().registrarVideo(auxUsuario, descripcion.getText());
-					   JOptionPane.showMessageDialog(ventana,
-								"Producto dado de alta",
-								"Registrar producto",JOptionPane.PLAIN_MESSAGE);
-					   precio.setText(""); usuarioText.setText(""); 
-					   descripcion.setText(""); lalerta.setVisible(false); */
-					
-					txtUsuario.setText(""); txtPassword.setText("");
-					usuario = auxUsuario;
-					for(ActionListener a: loginMainButton.getActionListeners()) {
-					    a.actionPerformed(new ActionEvent(loginMainButton, ActionEvent.ACTION_PERFORMED, null) {
-					          //Nothing need go here, the actionPerformed method (with the
-					          //above arguments) will trigger the respective listener
-					    });
-					    }
-					}
-				}
-				return;	
-			
+		add(contenido);
+		actionListeners();
 		
 	}
 	
 	private void showErrorAuth() {
-		JOptionPane.showMessageDialog(ventana,
+		JOptionPane.showMessageDialog(ventanaMain,
 				"Usuario o contraseña no valido",
 				"Error",JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public void setLoginMainButton(JButton b) {
-		loginMainButton = b;
-	}
+	private void actionListeners() {
+		btnLogin.addActionListener(ev->{
+			String auxUsuario=txtUsuario.getText().trim();
+			String auxPassword=txtPassword.getText().trim();
+			if (auxUsuario.isEmpty()||auxPassword.isEmpty()) showErrorAuth();
+			else if (!controladorAppVideo.autenticarUsuario(auxUsuario, auxPassword)) showErrorAuth();
+			else { 
+				limpiarCampos();
+				ventanaMain.cambiarContenido(Contenido.LOGGED);
+			}
+			
+		});
 		
-	private void fixedSize(JComponent c,int x, int y) {
-		c.setMinimumSize(new Dimension(x,y));
-		c.setMaximumSize(new Dimension(x,y));
-		c.setPreferredSize(new Dimension(x,y));
+		btnCancelar.addActionListener(ev->{
+			limpiarCampos();
+		});
 	}
 	
-	public String getUsuario() {
-		return usuario;
+	private void limpiarCampos(){
+		txtUsuario.setText("");
+		txtPassword.setText("");
 	}
-
+		
 }

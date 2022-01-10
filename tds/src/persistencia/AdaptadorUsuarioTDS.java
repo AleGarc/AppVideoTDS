@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
@@ -12,10 +11,7 @@ import beans.Entidad;
 import beans.Propiedad;
 
 import modelo.Usuario;
-import modelo.Video;
-import modelo.VideoList;
 
-//Usa un pool para evitar problemas doble referencia con ventas
 public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 	private static ServicioPersistencia servPersistencia;
 	private static AdaptadorUsuarioTDS unicaInstancia = null;
@@ -31,7 +27,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		servPersistencia = FactoriaServicioPersistencia.getInstance().getServicioPersistencia(); 
 	}
 
-	/* cuando se registra un cliente se le asigna un identificador único */
+	//Registra un usuario asignandole un código en el proceso
 	public void registrarUsuario(Usuario usuario) {
 		Entidad eUsuario = null;
 		
@@ -41,6 +37,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		} catch (NullPointerException e) {}
 		if (eUsuario != null) return;
 
+		//Necesitamos obtener los objetos guardados como entidad.
 		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
 		
 		// crear entidad Usuario
@@ -56,11 +53,9 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 						new Propiedad("recientes",adaptadorVideo.obtenerCodigosListaVideos(usuario.getVideosRecientes())),
 						new Propiedad("filtro", usuario.getFiltroString()))));
 			
-		/*eUsuario.setPropiedades(new ArrayList<Propiedad>(
-				Arrays.asList(new Propiedad("dni", cliente.getDni()), new Propiedad("nombre", cliente.getNombre()),
-						new Propiedad("ventas", obtenerCodigosVentas(cliente.getVentas())))));*/
+	
 		
-		// registrar entidad cliente
+		// registrar entidad usuario
 		eUsuario = servPersistencia.registrarEntidad(eUsuario);
 		// asignar identificador unico
 		// Se aprovecha el que genera el servicio de persistencia
@@ -68,13 +63,14 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 
 	}
 
+	//Borrar un usuario de la base de datos
 	public void borrarUsuario(Usuario usuario) {
-		// No se comprueban restricciones de integridad con Venta
 		Entidad eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
 		
 		servPersistencia.borrarEntidad(eUsuario);
 	}
 
+	//Modificar un usuario guardado en la base de datos
 	public void modificarUsuario(Usuario usuario) {
 
 		Entidad eUsuario = servPersistencia.recuperarEntidad(usuario.getCodigo());
@@ -105,15 +101,10 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		}
 	}
 
+	//Recuperar un usuario de la base de datos dado su codigo
 	public Usuario recuperarUsuario(int codigo) {
 
-		// Si la entidad está en el pool la devuelve directamente
-		if (PoolDAO.getUnicaInstancia().contiene(codigo))
-			return (Usuario) PoolDAO.getUnicaInstancia().getObjeto(codigo);
-
-		// si no, la recupera de la base de datos
 		Entidad eUsuario;
-		//List<Venta> ventas = new LinkedList<Venta>();
 		String nombre_completo;
 		String fecha_nacimiento;
 		String email;
@@ -122,10 +113,7 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		boolean premium;
 		String filtro;
 		
-		// recuperar entidad
 		eUsuario = servPersistencia.recuperarEntidad(codigo);
-
-		// recuperar propiedades que no son objetos
 		nombre_completo = servPersistencia.recuperarPropiedadEntidad(eUsuario, "nombre_completo");
 		fecha_nacimiento = servPersistencia.recuperarPropiedadEntidad(eUsuario, "fecha_nacimiento");
 		email = servPersistencia.recuperarPropiedadEntidad(eUsuario, "email");
@@ -133,27 +121,18 @@ public class AdaptadorUsuarioTDS implements IAdaptadorUsuarioDAO {
 		password = servPersistencia.recuperarPropiedadEntidad(eUsuario, "password");
 		premium = Boolean.parseBoolean(servPersistencia.recuperarPropiedadEntidad(eUsuario, "premium"));
 		filtro = servPersistencia.recuperarPropiedadEntidad(eUsuario, "filtro");
+		
+		//Recuperar las entidades que son objetos
 		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
 		String listaCodigosVideos = servPersistencia.recuperarPropiedadEntidad(eUsuario, "recientes");
 		
 		Usuario user = new Usuario(nombre_completo, fecha_nacimiento, email, usuario, password, premium, 
 				adaptadorVideo.obtenerVideosDesdeCodigos(listaCodigosVideos), filtro);
 		user.setCodigo(codigo);
-
-		// IMPORTANTE:añadir el cliente al pool antes de llamar a otros
-		// adaptadores
-		PoolDAO.getUnicaInstancia().addObjeto(codigo, usuario);
-
-		// recuperar propiedades que son objetos llamando a adaptadores
-		// ventas
-		/*ventas = obtenerVentasDesdeCodigos(servPersistencia.recuperarPropiedadEntidad(eUsuario, "ventas"));
-
-		for (Venta v : ventas)
-			cliente.addVenta(v);*/
-
 		return user;
 	}
 
+	//Recuperar todos los usuarios de la base de datos
 	public List<Usuario> recuperarTodosUsuarios() {
 
 		List<Entidad> eUsuarios = servPersistencia.recuperarEntidades("usuario");

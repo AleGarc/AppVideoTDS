@@ -10,7 +10,6 @@ import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 import beans.Entidad;
 import beans.Propiedad;
-import modelo.Etiqueta;
 import modelo.Video;
 
 public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
@@ -29,7 +28,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		servPersistencia = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
 	}
 
-	/* cuando se registra un Video se le asigna un identificador unico */
+	//Registra un video asignandole un código en el proceso
 	public void registrarVideo(Video video) {
 		Entidad eVideo = null;
 		// Si la entidad esta registrada no la registra de nuevo
@@ -38,9 +37,8 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		} catch (NullPointerException e) {}
 		if (eVideo != null) return;
 		
-		// registrar primero los atributos que son objetos
+		// Las Etiquetas ya están registradas en la base de datos, solo hace falta recuperar sus códigos
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
-		adaptadorEtiqueta.registrarListaEtiqueta(video.getEtiquetas());
 		// crear entidad Video
 		eVideo = new Entidad();
 		eVideo.setNombre("video");
@@ -57,29 +55,16 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 	}
 	
 	
-		
+	//Borrar un video de la base de datos	
 	public void borrarVideo(Video video) {
-		// No se comprueba integridad con lineas de venta
 		Entidad eVideo = servPersistencia.recuperarEntidad(video.getCodigo());
 		servPersistencia.borrarEntidad(eVideo);
 	}
 
+	//Modificar un video guardado en la base de datos
 	public void modificarVideo(Video video) {
 		Entidad eVideo = servPersistencia.recuperarEntidad(video.getCodigo());
-/*
-		servPersistencia.eliminarPropiedadEntidad(eVideo, "titulo");
-		servPersistencia.anadirPropiedadEntidad(eVideo, "titulo", String.valueOf(video.getTitulo()));
-		servPersistencia.eliminarPropiedadEntidad(eVideo, "url");
-		servPersistencia.anadirPropiedadEntidad(eVideo, "url", video.getUrl());
 		
-		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
-		servPersistencia.eliminarPropiedadEntidad(eVideo, "etiquetas");
-		servPersistencia.anadirPropiedadEntidad(eVideo, "etiquetas", adaptadorEtiqueta.obtenerCodigosListaEtiquetas(video.getEtiquetas())); 
-		*/
-		//AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
-		
-		//Entidad eCliente = servPersistencia.recuperarEntidad(videoList.getCodigo());
-
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		
 		for (Propiedad prop : eVideo.getPropiedades()) {
@@ -100,6 +85,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 	
 	}
 
+	//Recuperar un video de la base de datos dado su codigo
 	public Video recuperarVideo(int codigo) {
 		Entidad eVideo;
 		String titulo; 
@@ -110,6 +96,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		url = servPersistencia.recuperarPropiedadEntidad(eVideo, "url");
 		reproducciones = Integer.parseInt(servPersistencia.recuperarPropiedadEntidad(eVideo, "views"));
 		
+		//Recuperar las entidades que son objetos
 		AdaptadorEtiquetaTDS adaptadorEtiqueta = AdaptadorEtiquetaTDS.getUnicaInstancia();
 		String listaCodigosEtiquetas = servPersistencia.recuperarPropiedadEntidad(eVideo, "etiquetas");
 		Video video = new Video(titulo, url, adaptadorEtiqueta.obtenerEtiquetasDesdeCodigos(listaCodigosEtiquetas), reproducciones);
@@ -117,6 +104,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		return video;
 	}
 
+	//Recuperar todos los usuarios de la base de datos
 	public List<Video> recuperarTodosVideos() {
 		List<Video> videos = new LinkedList<Video>();
 		List<Entidad> entidades = servPersistencia.recuperarEntidades("video");
@@ -127,7 +115,7 @@ public class AdaptadorVideoTDS implements IAdaptadorVideoDAO {
 		return videos;
 	}
 
-	
+	//---------------------Funciones auxiliares----------------------------//
 	public String obtenerCodigosListaVideos(List<Video> listaVideos) { 
 		String codigoVideos = ""; 
 		for (Video v: listaVideos)

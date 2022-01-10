@@ -49,7 +49,6 @@ public class PanelMisListas extends JPanel{
 
 	private VentanaMain ventana;
 	
-	private JButton loginMainButton;
 	private JPanel panelIzquierdo;
 	private JPanel panelDerecho;
 	private JPanel panelDerechoInv;
@@ -62,14 +61,13 @@ public class PanelMisListas extends JPanel{
 	private VideoList videoLista;
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
 	
-	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
-	private static VideoWeb videoWeb;
+	private static ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
+	private static VideoWeb videoWeb = controladorAppVideo.getVideoWeb();
 	
 	private Video videoSeleccionado;
 	
-	public PanelMisListas(VentanaMain v, VideoWeb vWeb){
+	public PanelMisListas(VentanaMain v){
 		ventana=v; 
-		videoWeb = vWeb;
 		crearPantalla();
 	}
 	
@@ -282,7 +280,6 @@ public class PanelMisListas extends JPanel{
 			fixedSize(panelDerecho, 977,525 );
 			panelDerecho.setVisible(true);
 			panelDerechoInv.setVisible(false);
-			
 		}
 		else if (m == Mode.MISLISTAS){
 			panelIzquierdo.setVisible(true);

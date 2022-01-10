@@ -87,13 +87,13 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		catalogoVideoList = CatalogoVideoList.getUnicaInstancia();
 	}
 
-	//VideoWeb
+	//---------------------VideoWeb---------------------//
 	
 	public VideoWeb getVideoWeb() {
 		return videoWeb;
 	}
 	
-	//Usuarios
+	//---------------------Usuarios---------------------//
 	
 	//Registrar usuario
 	public boolean registrarUsuario(String nombre_completo, String email, String usuario, String password, String fecha_nacimiento) {
@@ -140,7 +140,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	
 
 	
-	//Videos
+	//---------------------Videos---------------------//
 	
 	//Registrar video
 	public void registrarVideo(String titulo, String url, List<Etiqueta> etiquetas) {
@@ -174,7 +174,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	}
 	
 
-	//Etiquetas
+	//---------------------Etiquetas---------------------//
 	
 	//Registramos una etiqueta
 	public Etiqueta registrarEtiqueta(String etiqueta) {
@@ -210,7 +210,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	}
 	
 	
-	//VideoLists
+	//---------------------VideoLists---------------------//
 	
 	
 	//Registramos una nueva lista de videos
@@ -268,13 +268,15 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		return catalogoVideoList.checkVideoInVideoList(usuario.getUsuario(), v);
 	}
 	
-	//Filtros
+	//---------------------Filtros---------------------//
+	
 	public List<String> getFiltrosDisponibles(){
 		return FactoriaFiltro.getFiltrosDisponibles();
 	}
 	
 	
-	//Componente Luz
+	//---------------------Componente Luz---------------------//
+	
 	//Listener del componente luz, si se pulsa se inicia el proceso de seleccion de archivo para cargar videos
 	@Override
 	public void enteradoCambioEncendido(EventObject arg0) {
@@ -287,7 +289,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 			        
 			       
 			} else {
-				 System.out.println("Open command cancelled by user.");
+				 System.out.println("Cancelado por el usuario");
 			}
 		
 		
@@ -295,7 +297,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		
 	}
 	
-	//CargadorVideos
+	//---------------------CargadorVideos---------------------//
 	private void cargarVideos(File xml) {
 		cargadorVideos.setArchivoVideos(xml);
 	}

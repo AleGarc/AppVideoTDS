@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 import beans.Entidad;
 import beans.Propiedad;
-import modelo.Etiqueta;
 import modelo.VideoList;
 
 public class AdaptadorVideoListTDS implements IAdaptadorVideoListDAO {
@@ -29,7 +27,7 @@ public class AdaptadorVideoListTDS implements IAdaptadorVideoListDAO {
 		servPersistencia = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
 	}
 
-	/* cuando se registra una lista de videos se le asigna un identificador unico */
+	//Registra una lista de video asignandole un código en el proceso
 	public void registrarVideoList(VideoList videoList) {
 		Entidad eVideoList = null;
 		// Si la entidad esta registrada no la registra de nuevo
@@ -56,26 +54,14 @@ public class AdaptadorVideoListTDS implements IAdaptadorVideoListDAO {
 	}
 	
 	
-		
+	//Borrar una lista de video de la base de datos
 	public void borrarVideoList(VideoList videoList) {
-		// No se comprueba integridad con lineas de venta
 		Entidad eVideoList = servPersistencia.recuperarEntidad(videoList.getCodigo());
 		servPersistencia.borrarEntidad(eVideoList);
 	}
 
+	//Modificar una lista de video guardada en la base de datos
 	public void modificarVideoList(VideoList videoList) {
-/*		Entidad eVideoList = servPersistencia.recuperarEntidad(videoList.getCodigo());
-
-		servPersistencia.eliminarPropiedadEntidad(eVideoList, "nombre");
-		servPersistencia.anadirPropiedadEntidad(eVideoList, "nombre", videoList.getNombre());
-		servPersistencia.eliminarPropiedadEntidad(eVideoList, "autor");
-		servPersistencia.anadirPropiedadEntidad(eVideoList, "autor", videoList.getAutor());
-		
-		
-		servPersistencia.eliminarPropiedadEntidad(eVideoList, "videos");
-		servPersistencia.anadirPropiedadEntidad(eVideoList, "videos", adaptadorVideo.obtenerCodigosListaVideos(videoList.getListaVideos())); 
-		System.out.println(adaptadorVideo.obtenerCodigosListaVideos(videoList.getListaVideos()));
-	*/
 		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
 	
 		Entidad eCliente = servPersistencia.recuperarEntidad(videoList.getCodigo());
@@ -95,6 +81,7 @@ public class AdaptadorVideoListTDS implements IAdaptadorVideoListDAO {
 		}
 	}
 
+	//Recuperar una lista de video de la base de datos dado su codigo
 	public VideoList recuperarVideoList(int codigo) {
 		Entidad eVideoList;
 		String nombre;
@@ -103,13 +90,16 @@ public class AdaptadorVideoListTDS implements IAdaptadorVideoListDAO {
 		nombre = servPersistencia.recuperarPropiedadEntidad(eVideoList, "nombre");
 		autor = servPersistencia.recuperarPropiedadEntidad(eVideoList, "autor");
 		
+		//Recuperar las entidades que son objetos
 		AdaptadorVideoTDS adaptadorVideo = AdaptadorVideoTDS.getUnicaInstancia();
 		String listaCodigosVideos = servPersistencia.recuperarPropiedadEntidad(eVideoList, "videos");
+		
 		VideoList videoList = new VideoList(nombre, autor, adaptadorVideo.obtenerVideosDesdeCodigos(listaCodigosVideos));
 		videoList.setCodigo(codigo);
 		return videoList;
 	}
 
+	//Recuperar todas las listas de video de la base de datos
 	public List<VideoList> recuperarTodosVideoLists() {
 		List<VideoList> videoLists = new LinkedList<VideoList>();
 		List<Entidad> entidades = servPersistencia.recuperarEntidades("videoList");

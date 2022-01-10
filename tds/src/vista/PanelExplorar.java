@@ -63,7 +63,6 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private JTextField textField;
 	private JTextField txtLista;
 	private VentanaMain ventana;
-	private static VideoWeb videoWeb;
 	private JButton playButton;
 	private JButton btnPlay;
 	private JButton btnNuevaBusqueda;
@@ -83,17 +82,17 @@ public class PanelExplorar extends JPanel implements ActionListener{
 	private String subCadenaBusqueda;
 	private List<String> etiquetasBusqueda = new ArrayList<String>();
 	
-	ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
 	
 	private VideoList videoLista = null;
 	
 	private Mode modo = Mode.EXPLORAR;
+	private static ControladorAppVideo controladorAppVideo = ControladorAppVideo.getUnicaInstancia();
+	private static VideoWeb videoWeb = controladorAppVideo.getVideoWeb();
 	
 	//JPanel resultados = new JPanel();
-	public PanelExplorar(VentanaMain v, VideoWeb vWeb){
+	public PanelExplorar(VentanaMain v){
 		//videoWeb = new VideoWeb();
-		ventana=v; 
-		videoWeb = vWeb;
+		ventana=v;
 		crearPantalla();
 	}
 	
@@ -123,13 +122,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panelIzquierdo.setBackground(Color.LIGHT_GRAY);
 		panelIzquierdo.setLayout(new FlowLayout(FlowLayout.LEFT, 5,5));
 		//panelIzquierdo.setAlignmentX(Component.LEFT_ALIGNMENT);
-		fixedSize(panelIzquierdo, 270,525 );
+		Constantes.fixedSize(panelIzquierdo, 270,525 );
 		Ventana.add(panelIzquierdo);
 		JLabel lbLista = new JLabel("Introducir nombre lista:");
 		panelIzquierdo.add(lbLista);
 		
 		txtLista = new JTextField();
-		fixedSize(txtLista, 177,20);
+		Constantes.fixedSize(txtLista, 177,20);
 		panelIzquierdo.add(txtLista);
 		
 		
@@ -202,10 +201,10 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JScrollPane scrollerListaVideos = new JScrollPane(listaVideos);
 		scrollerListaVideos.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollerListaVideos.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		fixedSize(scrollerListaVideos, 258,430);
+		Constantes.fixedSize(scrollerListaVideos, 258,430);
 		panelIzquierdo.add(scrollerListaVideos);
 		
-		//fixedSize(scrollerResultados, 204, 400);
+		//Constantes.fixedSize(scrollerResultados, 204, 400);
 		//JButton btnCancelar = new JButton("Cancelar");
 		//scrollerResultados.setViewportView(Ventana);
 		//panelIzquierdo.add(scrollerResultados);
@@ -218,12 +217,12 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panelCentral = new JPanel();
 		panelCentral.setBackground(Color.LIGHT_GRAY);
 		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-		fixedSize(panelCentral, 700, Constantes.ventana_y_size-195);
+		Constantes.fixedSize(panelCentral, 700, Constantes.ventana_y_size-195);
 		Ventana.add(panelCentral);
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.setBackground(Color.LIGHT_GRAY);
-		fixedSize(panel, 700,80);
+		Constantes.fixedSize(panel, 700,80);
 		panelCentral.add(panel);
 		//panelCentral.setBackground(Color.YELLOW);
 		
@@ -233,7 +232,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		/*resultados = new JPanel();
 		resultados.setBorder(new LineBorder(new Color(0, 0, 0)));
 		resultados.setBackground(Color.LIGHT_GRAY);
-		//fixedSize(resultados, 700, 439);
+		//Constantes.fixedSize(resultados, 700, 439);
 		//resultados.setMinimumSize(new Dimension(700, 439));
 		//resultados.setMaximumSize(new Dimension(700,2000000));
 		//resultados.setPreferredSize(resultados.getMinimumSize());
@@ -261,12 +260,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 					else if(modo == Mode.EXPLORAR) {
 						videoSeleccionado = videosEncontrados.get(lista.getSelectedIndex());
 						controladorAppVideo.addVideoReciente(videoSeleccionado);
-						for(ActionListener a: playButton.getActionListeners()) {
-						    a.actionPerformed(new ActionEvent(playButton, ActionEvent.ACTION_PERFORMED, null) {
-						          
-						    	
-						    });
-						 }
+						ventana.cambiarContenido(Contenido.REPRODUCTOR);
 					}
 				}
 			}
@@ -275,7 +269,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JScrollPane scrollerResultados = new JScrollPane(lista);
 		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		fixedSize(scrollerResultados, 700,439);
+		Constantes.fixedSize(scrollerResultados, 700,439);
 		panelCentral.add(scrollerResultados);
 		//panelCentral.add(resultados);
 		
@@ -320,13 +314,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JButton btnNewButton = new JButton("Buscar");
 		btnNewButton.addActionListener(ev -> {
 			subCadenaBusqueda = textField.getText();
-			for(ActionListener a: btnBusqueda.getActionListeners()) {
-			    a.actionPerformed(new ActionEvent(btnBusqueda, ActionEvent.ACTION_PERFORMED, null) {
-			          //Nothing need go here, the actionPerformed method (with the
-			          //above arguments) will trigger the respective listener
-			    	
-			    });
-			    }
+			updateVideos(controladorAppVideo.buscarVideos(subCadenaBusqueda, etiquetasBusqueda));
 		});
 		panel.add(btnNewButton);
 		
@@ -340,14 +328,14 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panelDerecho = new JPanel();
 		Ventana.add(panelDerecho);
 		panelDerecho.setBackground(Color.LIGHT_GRAY);
-		fixedSize(panelDerecho, 270, Constantes.ventana_y_size-195);
+		Constantes.fixedSize(panelDerecho, 270, Constantes.ventana_y_size-195);
 		panelDerecho.setLayout(new BoxLayout(panelDerecho, BoxLayout.Y_AXIS));
 		
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(Color.LIGHT_GRAY);
 		panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
-		fixedSize(panel_1, 270, (Constantes.ventana_y_size-195)/2-5);
+		Constantes.fixedSize(panel_1, 270, (Constantes.ventana_y_size-195)/2-5);
 		panelDerecho.add(panel_1);
 		
 		Component rigidArea = Box.createRigidArea(new Dimension(5, 5));
@@ -356,13 +344,13 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(Color.LIGHT_GRAY);
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0)));
-		fixedSize(panel_2, 270, (Constantes.ventana_y_size-195)/2);
+		Constantes.fixedSize(panel_2, 270, (Constantes.ventana_y_size-195)/2);
 		panelDerecho.add(panel_2);
 		
 		JLabel lblNewLabel_1 = new JLabel("Etiquetas disponibles");
 		panel_1.add(lblNewLabel_1);
 		JPanel panel_lista_1 = new JPanel();
-		fixedSize(panel_lista_1, 220,220);
+		Constantes.fixedSize(panel_lista_1, 220,220);
 		panel_lista_1.setBackground(Color.LIGHT_GRAY);
 		panel_1.add(panel_lista_1);
 		
@@ -370,7 +358,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		panel_2.add(lblNewLabel_2);
 		
 		JPanel panel_lista_2 = new JPanel();
-		fixedSize(panel_lista_2, 220,200);
+		Constantes.fixedSize(panel_lista_2, 220,200);
 		panel_lista_2.setBackground(Color.LIGHT_GRAY);
 		panel_2.add(panel_lista_2);
 		
@@ -436,21 +424,8 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		
 	}
 
-	private void fixedSize(JComponent c,int x, int y) {
-		c.setMinimumSize(new Dimension(x,y));
-		c.setMaximumSize(new Dimension(x,y));
-		c.setPreferredSize(new Dimension(x,y));
-	}
 	
 
-	public void setPlayMainButton(JButton playMainButton)
-	{
-		playButton = playMainButton;
-	}
-
-	public void setBotonBusqueda(JButton btnBusqueda) {
-		this.btnBusqueda = btnBusqueda; 
-	}
 	
 	public void update(List<String> etiquetasDadas) {	
 		model.removeAllElements();
@@ -527,7 +502,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		if (m == Mode.EXPLORAR){
 			modo = Mode.EXPLORAR;
 			panelIzquierdo.setVisible(false);
-			//fixedSize(panelDerecho, 977,525 );
+			//Constantes.fixedSize(panelDerecho, 977,525 );
 			panelDerecho.setVisible(true);
 			//panelDerechoInv.setVisible(false);
 			
@@ -535,7 +510,7 @@ public class PanelExplorar extends JPanel implements ActionListener{
 		else if (m == Mode.NUEVALISTA){
 			modo = Mode.NUEVALISTA;
 			panelIzquierdo.setVisible(true);
-			//fixedSize(panelDerecho, 770,525 );
+			//Constantes.fixedSize(panelDerecho, 770,525 );
 			panelDerecho.setVisible(false);
 			//panelDerechoInv.setVisible(true);
 		}

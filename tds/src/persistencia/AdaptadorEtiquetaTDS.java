@@ -29,7 +29,7 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 		servPersistencia = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
 	}
 
-	/* cuando se registra un Etiqueta se le asigna un identificador unico */
+	//Registra una etiqueta asignandole un código en el proceso
 	public void registrarEtiqueta(Etiqueta etiqueta) {
 		Entidad eEtiqueta = null;
 		
@@ -52,12 +52,14 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 		etiqueta.setCodigo(eEtiqueta.getId()); 
 	}
 
+	//Borrar una etiqueta de la base de datos
 	public void borrarEtiqueta(Etiqueta etiqueta) {
 		// No se comprueba integridad con lineas de venta
 		Entidad eEtiqueta = servPersistencia.recuperarEntidad(etiqueta.getCodigo());
 		servPersistencia.borrarEntidad(eEtiqueta);
 	}
 
+	//Modificar un usuario guardado en la base de datos
 	public void modificarEtiqueta(Etiqueta etiqueta) {
 		Entidad eEtiqueta = servPersistencia.recuperarEntidad(etiqueta.getCodigo());
 
@@ -65,6 +67,7 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 		servPersistencia.anadirPropiedadEntidad(eEtiqueta, "nombre", String.valueOf(etiqueta.getNombre()));
 	}
 
+	//Recuperar una etiqueta de la base de datos dado su codigo
 	public Etiqueta recuperarEtiqueta(int codigo) {
 		Entidad eEtiqueta;
 		String nombre;
@@ -77,6 +80,7 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 		return etiqueta;
 	}
 
+	//Recuperar todas las etiquetas de la base de datos
 	public List<Etiqueta> recuperarTodosEtiquetas() {
 		List<Etiqueta> etiquetas = new LinkedList<Etiqueta>();
 		List<Entidad> entidades = servPersistencia.recuperarEntidades("etiqueta");
@@ -88,7 +92,7 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 	}
 	
 	
-	//---------------------Funciones auxiliares----------------------------
+	//---------------------Funciones auxiliares----------------------------//
 	public String obtenerCodigosListaEtiquetas(List<Etiqueta> listaEtiquetas) { 
 		String codigoEtiquetas = ""; 
 		for (Etiqueta e: listaEtiquetas)
@@ -100,15 +104,10 @@ public class AdaptadorEtiquetaTDS implements IAdaptadorEtiquetaDAO {
 		List<Etiqueta> listaEtiquetas = new LinkedList<Etiqueta>();
 		StringTokenizer strTok = new StringTokenizer(listaCodigoEtiquetas, " "); 
 		while (strTok.hasMoreTokens()) { 
-			listaEtiquetas.add(recuperarEtiqueta(Integer.valueOf((String)strTok.nextElement()))); //QUIZAS ADAPTADORETIQUETA UNICA INSTANCIA. RECUPERAR?
+			listaEtiquetas.add(recuperarEtiqueta(Integer.valueOf((String)strTok.nextElement()))); 
 		} 
 		return listaEtiquetas; 
 	}
 	
-	public void registrarListaEtiqueta(List<Etiqueta> listaEtiquetas) {
-		for(Etiqueta e: listaEtiquetas) {
-			registrarEtiqueta(e);
-		}
-	}
 
 }
