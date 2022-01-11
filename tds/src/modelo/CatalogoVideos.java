@@ -2,10 +2,10 @@ package modelo;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
@@ -39,14 +39,6 @@ public class CatalogoVideos {
 		return unicaInstancia;
 	}
 	
-	/*devuelve todos los Videos*/
-	public List<Video> getVideos(){
-		ArrayList<Video> lista = new ArrayList<Video>();
-		for (Video c:videos.values()) 
-			lista.add(c);
-		return lista;
-	}
-	
 	//Devuelve un video concreto
 	public Video getVideo(String titulo) {
 		return videos.get(titulo); 
@@ -61,7 +53,6 @@ public class CatalogoVideos {
 	public void removeVideo(Video vid) {
 		videos.remove(vid.getTitulo());
 	}
-	
 	
 
 	//Buscamos videos por nombre y etiquetas (o solamente nombre)
@@ -84,31 +75,10 @@ public class CatalogoVideos {
 		return resultados;
 	}
 	
-
 	//Devuelve la lista de los 10 videos mas vistos
 	public List<Video> getVideosMasVistos(){
-		List<Video> topTen = new ArrayList<Video>();
-		
-		Map<Video,Integer> candidatos = new HashMap<Video,Integer>();
-		for(Video v: videos.values()) {
-			candidatos.put(v, v.getReproducciones());
-		}
-		int max = 0;
-		Video quitar;
-		while(!candidatos.isEmpty() && topTen.size() < 10) {
-			max = Collections.max(candidatos.values());
-			quitar = null;
-			for(Video v: candidatos.keySet()) {
-				if(topTen.size() >= 10)
-					break;
-				else if(v.getReproducciones() == max) {
-					topTen.add(v);
-					quitar = v;
-					break;
-				}
-			}
-			candidatos.remove(quitar);
-		}
+		List<Video> topTen = (List<Video>) videos.values().stream()
+				.sorted((v1,v2) -> (int) v2.getReproducciones() - v1.getReproducciones()).collect(Collectors.toList());
 		return topTen;
 	}
 	

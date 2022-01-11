@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -96,8 +97,8 @@ public class PanelMisListas extends JPanel{
 				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
 					Video videoSeleccionado = controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo());
-					setVideo(videoSeleccionado);
 					controladorAppVideo.addVideoReciente(videoSeleccionado);
+					setVideo(videoSeleccionado);
 					panelDerecho.setVisible(true);
 					panelDerechoInv.setVisible(false);
 				}
@@ -199,18 +200,12 @@ public class PanelMisListas extends JPanel{
 	//Método encargado de actualizar la lista (JList) con los videos que alberga la lista de video (VideoList) seleccionada
 	private void updateVideos(List<Video> videos) {
 		modelVideos.removeAllElements();
-		for(Video v: videos) {
-			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
-		}
+		modelVideos.addAll(videos.stream().map(v -> new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl()))).collect(Collectors.toList()));
 	}
 	
 	//Método utilizado para comprobar si el video alberga la etiqueta que se intenta añadir.
 	private boolean checkEtiquetas(String etiqueta, Video v) {
-		for(Etiqueta e: v.getEtiquetas()) {
-			if(e.getNombre().equals(etiqueta))
-				return true;
-		}
-		return false;
+		return v.getEtiquetas().stream().anyMatch(e -> e.getNombre().equals(etiqueta));
 	}
 	
 	//Método utilizado para cambiar de modo este panel
@@ -252,7 +247,6 @@ public class PanelMisListas extends JPanel{
 			boxListas.setVisible(false);
 			
 			updateVideos(usuario.getVideosRecientes());
-			
 		}
 	}
 	

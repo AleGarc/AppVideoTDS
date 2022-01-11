@@ -2,9 +2,11 @@ package modelo;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import persistencia.DAOException;
 import persistencia.FactoriaDAO;
@@ -61,46 +63,30 @@ public class CatalogoVideoList {
 	public List<VideoList> getVideoListAutor(String autor){
 		if(videoListMap.containsKey(autor))
 			return videoListMap.get(autor);
-		return new ArrayList<VideoList>();
-		
+		return new ArrayList<VideoList>();	
 	}
 	
 	//Comprueba la existencia de una lista de video 
 	public boolean existeVideoList(String nombre, String autor) {
-		if(videoListMap.containsKey(autor)) {
-			List<VideoList> lista =  videoListMap.get(autor);
-			for(VideoList v : lista){
-				if(v.getNombre().equals(nombre)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return Stream.ofNullable(videoListMap.get(autor)).
+				flatMap(Collection::stream)
+				.anyMatch(vL -> vL.getNombre().equals(nombre));
 	}
-	
+
 	//Devuelve una lista de video dado el nombre y el usuario autor.
 	public VideoList getVideoList(String nombre, String autor) {
-		List<VideoList> lista =  videoListMap.get(autor);
-		if(lista != null) {
-			for(VideoList v : lista){
-				if(v.getNombre().equals(nombre)) {
-					return v;
-				}
-			}
-		}
-		return null;
+		return Stream.ofNullable(videoListMap.get(autor))
+			    .flatMap(Collection::stream)
+			    .filter(vl -> vl.getNombre().equals(nombre))
+				.findFirst()
+				.orElse(null);
 	}
 	
 	//Comprobar si existe, al menos, una lista de video que contenga el video dado
 	public boolean checkVideoInVideoList(String autor, Video v) {
-		List<VideoList> listas = videoListMap.get(autor);
-		if(listas == null)
-			return false;
-		for(VideoList vL : listas) {
-			if(vL.contieneVideo(v))
-				return true;
-		}
-		return false;
+		return Stream.ofNullable(videoListMap.get(autor))
+				.flatMap(Collection::stream)
+				.anyMatch(vL -> vL.contieneVideo(v));
 	}
 	
 	/*Recupera todos los VideoLists para trabajar con ellos en memoria*/

@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -195,6 +196,7 @@ public class PanelExplorar extends JPanel{
 		
 		JButton btnBuscar = new JButton("Buscar");
 		btnBuscar.addActionListener(ev -> {
+			
 			subCadenaBusqueda = textField.getText();
 			updateVideos(controladorAppVideo.buscarVideos(subCadenaBusqueda, etiquetasBusqueda));
 		});
@@ -299,7 +301,7 @@ public class PanelExplorar extends JPanel{
 					@SuppressWarnings("unchecked")
 					JList<String> source = (JList<String>)event.getSource();
 					String selected = source.getSelectedValue();
-					if(!modelEtSeleccionadas.contains(selected)) {
+					if(selected != null && !modelEtSeleccionadas.contains(selected)) {
 						modelEtSeleccionadas.addElement(selected);
 						etiquetasBusqueda.add(selected);
 					}
@@ -323,8 +325,10 @@ public class PanelExplorar extends JPanel{
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()){
 					String selected = etiquetasSeleccionadas.getSelectedValue();
-			        modelEtSeleccionadas.removeElement(selected);
-					etiquetasBusqueda.remove(selected);
+					if(selected != null) {
+				        modelEtSeleccionadas.removeElement(selected);
+						etiquetasBusqueda.remove(selected);
+					}
 					 
 				}
 			}	
@@ -337,8 +341,7 @@ public class PanelExplorar extends JPanel{
 	//Método utilizado por VentanaMain para actualizar las etiquetas disponibles.
 	public void update(List<String> etiquetasDadas) {	
 		modelEtDisponibles.removeAllElements();
-		for (String etiqueta: etiquetasDadas) 
-			modelEtDisponibles.addElement(etiqueta);
+		modelEtDisponibles.addAll(etiquetasDadas);
 		modelEtSeleccionadas.removeAllElements();
 	}
 	
@@ -346,13 +349,13 @@ public class PanelExplorar extends JPanel{
 	public void limpiar() {
 		textField.setText("");
 		modelVideos.removeAllElements();
+		subCadenaBusqueda = "";
 		etiquetasBusqueda.clear();
 		modelEtSeleccionadas.clear();
-		limpiarLista();
 	}
 	
 	//Método de limpieza de la video lista (y los videos representados en JList) cuando se pulsa el botón eliminar (Nueva Lista)
-	private void limpiarLista() {
+	public void limpiarLista() {
 		modelLista.removeAllElements();
 		btnEliminar.setEnabled(false);
 		btnPDF.setEnabled(false);
@@ -367,18 +370,14 @@ public class PanelExplorar extends JPanel{
 	private void updateVideos(List<Video> videos) {
 		videosEncontrados = videos;
 		modelVideos.removeAllElements();
-		for(Video v: videos) {
-			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
-		}
+		modelVideos.addAll(videos.stream().map(v -> new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl()))).collect(Collectors.toList()));
 		validate();
 	}
 	
 	//Misma función que el método anterior pero ahora con los videos de la lista de videos (VideoList) seleccionada
 	private void updateVideosLista(List<Video> videos) {
 		modelLista.removeAllElements();
-		for(Video v: videos) {
-			modelLista.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
-		}
+		modelLista.addAll(videos.stream().map(v -> new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl()))).collect(Collectors.toList()));
 		validate();
 	}
 	

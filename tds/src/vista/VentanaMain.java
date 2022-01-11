@@ -350,6 +350,7 @@ public class VentanaMain extends JFrame{
 	private void nuevaLista() {
 		videoWeb.cancel();
 		panelExplorar.limpiar();
+		panelExplorar.limpiarLista();
 		panelExplorar.switchMode(Mode.NUEVALISTA);
 	}
 	private void masVistos() {

@@ -1,11 +1,13 @@
 package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
+
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.BeforeEach;
 
 import modelo.Usuario;
+import modelo.Video;
 
 class TestUsuario {
 
@@ -13,12 +15,12 @@ class TestUsuario {
 	
 	@BeforeEach
 	public void inicialiar1() {
-		user1 = new Usuario("Usuario Rodr�guez", "05/04/2000", "usuariorodriguez@gmail.com", "uRodri", "1234");
+		user1 = new Usuario("Usuario Rodriguez", "05/04/2000", "usuariorodriguez@gmail.com", "uRodri", "1234");
 	}
 	
 	@Test
 	public void prueba1CrearUsuario() {
-		assertEquals("Usuario Rodr�guez", user1.getNombre_completo(),"resultado prueba1.1");
+		assertEquals("Usuario Rodriguez", user1.getNombre_completo(),"resultado prueba1.1");
 		assertEquals("05/04/2000", user1.getFecha_nacimiento(),"resultado prueba1.2");
 		assertEquals("usuariorodriguez@gmail.com", user1.getEmail(),"resultado prueba1.3");
 		assertEquals("uRodri", user1.getUsuario(),"resultado prueba1.4");
@@ -29,7 +31,7 @@ class TestUsuario {
 	
 	@BeforeEach
 	public void inicialiar2() {
-		user2 = new Usuario("Usuario Rodr�guez", "05/04/2000", "usuariorodriguez@gmail.com", "uRodri", "1234");
+		user2 = new Usuario("Usuario Rodriguez", "05/04/2000", "usuariorodriguez@gmail.com", "uRodri", "1234");
 	}
 	
 	@Test
@@ -39,8 +41,8 @@ class TestUsuario {
 	
 	@Test
 	public void prueba3CambiarNombre() {
-		user1.setNombre_completo("Usuario Fern�ndez");
-		assertEquals("Usuario Fern�ndez", user1.getNombre_completo(),"resultado prueba3.1");
+		user1.setNombre_completo("Usuario Fernindez");
+		assertEquals("Usuario Fernindez", user1.getNombre_completo(),"resultado prueba3.1");
 	}
 	
 	@Test
@@ -79,6 +81,24 @@ class TestUsuario {
 	public void prueba8CompararDeNuevo() {
 		user1.setFecha_nacimiento("03/07/1995");
 		assertEquals(false, user1.equals(user2),"resultado prueba8.1");
+	}
+	
+	@BeforeEach
+	public void inicialiar3() {
+		Video video1 = new Video("titulo1", "url1");
+		Video video2 = new Video("titulo2", "url2");
+		Video video3 = new Video("titulo3", "url3");
+		user1.addVideoReciente(video1);
+		user1.addVideoReciente(video2);
+		user1.addVideoReciente(video3);
+		user2.addVideoReciente(video1);
+		user2.addVideoReciente(video2);
+		user2.addVideoReciente(video3);
+	}
+	
+	@Test
+	public void prueba9VideosRecientes() {
+		assertEquals(true, user1.getVideosRecientes().equals(user2.getVideosRecientes()));
 	}
 }
 

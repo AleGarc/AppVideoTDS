@@ -1,9 +1,9 @@
 package controlador;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JFileChooser;
 
@@ -171,12 +171,7 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	public Video getVideo(String titulo){
 		return catalogoVideos.getVideo(titulo);
 	}
-	
-	//Devolvemos la lista de videos completa
-	public List<Video> getVideos() {
-		return catalogoVideos.getVideos();
-	}
-	
+
 
 	//---------------------Etiquetas---------------------//
 	
@@ -200,12 +195,9 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 	//Dada una lista de nombres de etiqueta, devolvemos una lista con las etiquetas correspondientes
 	//Se crean las etiquetas si no existen.
 	public List<Etiqueta> stringToEtiquetas(List<String> etiquetasString){
-		ArrayList<Etiqueta> etiquetas = new ArrayList<Etiqueta>();
-		for(String e: etiquetasString) {
-			Etiqueta nueva =registrarEtiqueta(e);
-			etiquetas.add(nueva);
-		}
-		return etiquetas;
+		return etiquetasString.stream()
+				.map(e -> registrarEtiqueta(e))
+				.collect(Collectors.toList());
 	}
 	
 	//Devolvemos la lista completa de etiquetas disponibles
@@ -290,15 +282,9 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 			        File file = eleccionFichero.getSelectedFile();
 			        cargarVideos(file);
-			        
-			       
-			} else {
-				 System.out.println("Cancelado por el usuario");
 			}
-		
-		
-		
-		
+			        
+	
 	}
 	
 	//---------------------CargadorVideos---------------------//

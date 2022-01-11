@@ -95,16 +95,19 @@ public class Usuario {
 	}
 
 	//Añadir un video a la lista de videos recientes del usuario
+	//La lista está ordenada asi que el video que se reproduzca se pondrá en cabeza de la lista
+	//No deben haber mas de 5 videos en esta lista, por lo que el 6º se eliminará.
 	public void addVideoReciente(Video v) {
 		List<Video> nuevosRecientes = new ArrayList<Video>();
 		
-		for(Video vid : videosRecientes) {
-			if(!vid.equals(v)) 
-				nuevosRecientes.add(vid);	
+		for(Video vid : this.videosRecientes) {
+			if(!vid.equals(v))
+				nuevosRecientes.add(vid);
 		}
-		videosRecientes = nuevosRecientes;
-		videosRecientes.add(0, v);
-		if(videosRecientes.size() > 5) videosRecientes.remove(5);
+		this.videosRecientes = nuevosRecientes;
+		this.videosRecientes.add(0, v);
+		if(this.videosRecientes.size() > 5) this.videosRecientes.remove(5);
+
 	}
 	
 	public FiltroVideo getFiltro() {
