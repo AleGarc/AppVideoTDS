@@ -60,9 +60,14 @@ public class CatalogoEtiquetas {
 		return etiquetas.get(nombre); 
 	}
 	
-	//Añade etiquetas
+	//Añade etiqueta
 	public void addEtiqueta(Etiqueta e) {
 		etiquetas.put(e.getNombre(),e);
+	}
+	
+	//Elimina etiqueta
+	public void removeEtiqueta(Etiqueta e) {
+		etiquetas.remove(e.getNombre());
 	}
 	
 	/*Recupera todos los Etiquetas para trabajar con ellos en memoria*/
@@ -72,5 +77,9 @@ public class CatalogoEtiquetas {
 			     etiquetas.put(pro.getNombre(),pro);
 	}
 	
+	//Busca una etiqueta concreta
+	public Etiqueta existeEtiqueta(String e) {
+		return etiquetas.get(e);
+	}
 	
 }

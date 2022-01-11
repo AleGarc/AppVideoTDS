@@ -33,14 +33,26 @@ public class Video {
 		return titulo;
 	}
 
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
 	public String getUrl() {
 		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public List<Etiqueta> getEtiquetas() {
 		return this.etiquetas;
 	}
 
+	public void setEtiquetas(List<Etiqueta> etiquetas) {
+		this.etiquetas = etiquetas;
+	}
+	
 	public void addEtiqueta(Etiqueta e) {
 		this.etiquetas.add(e);
 	}

@@ -56,6 +56,13 @@ public class CatalogoVideos {
 	public void addVideo(Video vid) {
 		videos.put(vid.getTitulo(),vid);
 	}
+	
+	//Elimina un video del catalogo
+	public void removeVideo(Video vid) {
+		videos.remove(vid.getTitulo());
+	}
+	
+	
 
 	//Buscamos videos por nombre y etiquetas (o solamente nombre)
 	public List<Video> buscarVideos(String subCadena, List<Etiqueta> etiquetasSeleccionadas, FiltroVideo filtro){

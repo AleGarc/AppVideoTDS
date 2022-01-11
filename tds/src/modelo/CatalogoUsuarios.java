@@ -46,8 +46,15 @@ public class CatalogoUsuarios {
 	public void addUsuario(Usuario cli) {
 		usuarios.put(cli.getUsuario(),cli);
 	}
+	
+	//Elimina un usuario
+	public void removeUsuario (Usuario cli) {
+		usuarios.remove(cli.getUsuario());
+	}
+	
 
-	//Intenta logearse con usuario y contraseña
+	
+	//Se intenta logear con un usuario y contraseña dado
 	public boolean authUsuario(String user, String password) {
 		Usuario u = usuarios.get(user);
 		if(u == null) return false;
