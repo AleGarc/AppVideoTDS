@@ -1,38 +1,25 @@
 package vista;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import controlador.ControladorAppVideo;
@@ -45,10 +32,9 @@ import modelo.VideoList;
 import tds.video.VideoWeb;
 
 
+@SuppressWarnings("serial")
 public class PanelMisListas extends JPanel{
 
-	private VentanaMain ventana;
-	
 	private JPanel panelIzquierdo;
 	private JPanel panelDerecho;
 	private JPanel panelDerechoInv;
@@ -56,7 +42,6 @@ public class PanelMisListas extends JPanel{
 	private JLabel tituloVideo, reproducciones;
 	private JPanel panelEtiquetas;
 	private JLabel txtLista;
-	private List<JLabel> etiquetas = new ArrayList<JLabel>();
 	JComboBox<String> boxListas;
 	private VideoList videoLista;
 	DefaultListModel<VideoDisplay> modelVideos = new DefaultListModel<VideoDisplay>();
@@ -66,62 +51,37 @@ public class PanelMisListas extends JPanel{
 	
 	private Video videoSeleccionado;
 	
-	public PanelMisListas(VentanaMain v){
-		ventana=v; 
+	public PanelMisListas(){
 		crearPantalla();
 	}
 	
 	private void crearPantalla() {
-		JPanel Ventana = new JPanel();
-		Ventana.setBorder(new LineBorder(new Color(0, 0, 0)));
-		Ventana.setBackground(Color.LIGHT_GRAY);
-		Ventana.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
-		Ventana.setMaximumSize(Ventana.getPreferredSize());
-		
-	
-	      
-		Ventana.setLayout(new FlowLayout(FlowLayout.LEFT, 5,5));
-		add(Ventana);
+		JPanel contenido = new JPanel();
+		contenido.setBorder(new LineBorder(new Color(0, 0, 0)));
+		contenido.setBackground(Color.LIGHT_GRAY);
+		contenido.setPreferredSize(new Dimension(Constantes.ventana_x_size-35, Constantes.ventana_y_size-180));
+		contenido.setMaximumSize(contenido.getPreferredSize());
+		contenido.setLayout(new FlowLayout(FlowLayout.LEFT, 5,5));
+		add(contenido);
 		
 		
-		
+		//Creación del panel izquierdo, panel que alberga el comboBox con las listas de video creadas por el usuario.
 		panelIzquierdo = new JPanel();
 		panelIzquierdo.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelIzquierdo.setBackground(Color.LIGHT_GRAY);
 		panelIzquierdo.setLayout(new BoxLayout(panelIzquierdo, BoxLayout.Y_AXIS));
-		fixedSize(panelIzquierdo, 200,525 );
-		Ventana.add(panelIzquierdo);
+		Constantes.fixedSize(panelIzquierdo, 200,525 );
+		contenido.add(panelIzquierdo);
+		
 		txtLista = new JLabel("Seleccione la lista:");
 		panelIzquierdo.add(txtLista);
 		boxListas = new JComboBox<String>();
 		boxListas.setMaximumSize(new Dimension(292,20));
 		boxListas.setEditable(false);
-		//updateBoxListas();
 		actualizarLista();
 		panelIzquierdo.add(boxListas);
-	
 		
-		/*JPanel pnPrueba = new JPanel();
-		pnPrueba.setLayout(new BoxLayout(pnPrueba, BoxLayout.Y_AXIS));
-		pnPrueba.setBackground(Color.LIGHT_GRAY);
-		//panelIzquierdo.add(pnPrueba);
-		JScrollPane scrollerResultados = new JScrollPane(pnPrueba);
-		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		//scrollerResultados.getViewport().setBackground(Color.LIGHT_GRAY);
-		scrollerResultados.setBorder(new LineBorder(new Color(0, 0, 0)));*/
-		//pnPrueba.add(prueba);
-		
-		
-		
-		/*JLabel prueba = new JLabel("VAMOS");
-		ImageIcon imageIcon = new ImageIcon(VentanaMain.class.getResource("/Titulo.png")); 
-		Image image = imageIcon.getImage(); 
-		Image newimg = image.getScaledInstance(656/7, 278/7,  java.awt.Image.SCALE_SMOOTH);
-		imageIcon = new ImageIcon(newimg); 
-		prueba.setIcon(imageIcon);*/
-		
-		
+		//Creación de la lista (JList) que mostrará el titulo y miniatura de los videos de una lista de videos específica.
 		JList<VideoDisplay> lista = new JList<VideoDisplay>();
 		lista.setBackground(Color.LIGHT_GRAY);
 		lista.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -132,6 +92,7 @@ public class PanelMisListas extends JPanel{
 		lista.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e)
 			{
+				//Si se dobleclica sobre un video de esta lista, se reproducirá
 				if (e.getClickCount() == 2 && !modelVideos.isEmpty())
 				{
 					Video videoSeleccionado = controladorAppVideo.getVideo(lista.getSelectedValue().getTitulo());
@@ -139,7 +100,6 @@ public class PanelMisListas extends JPanel{
 					controladorAppVideo.addVideoReciente(videoSeleccionado);
 					panelDerecho.setVisible(true);
 					panelDerechoInv.setVisible(false);
-					
 				}
 			}
 		});
@@ -147,34 +107,27 @@ public class PanelMisListas extends JPanel{
 		JScrollPane scrollerResultados = new JScrollPane(lista);
 		scrollerResultados.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollerResultados.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		//fixedSize(scrollerResultados, 700,439);
 		panelIzquierdo.add(scrollerResultados);
 		
-		//fixedSize(scrollerResultados, 204, 400);
-	
-		//scrollerResultados.setViewportView(Ventana);
-		//panelIzquierdo.add(scrollerResultados);
-	
-		//scrollerResultados.setVisible(false);
-		
-		//panelIzquierdo.setVisible(false);
-		
+		//Creación del panel derecho que albergará la reproducción del video seleccionado mediante el uso de videoWeb.
 		panelDerecho = new JPanel();
 		panelDerecho.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelDerecho.setBackground(Color.LIGHT_GRAY);
 		panelDerecho.setLayout(new BoxLayout(panelDerecho, BoxLayout.Y_AXIS));
-		fixedSize(panelDerecho, 770,525 );
-		Ventana.add(panelDerecho);
+		Constantes.fixedSize(panelDerecho, 770,525 );
+		contenido.add(panelDerecho);
 		
+		//Panel de atrezo creado para ocultar el reproductor mientras no se seleccione un video.
 		panelDerechoInv = new JPanel();
 		panelDerechoInv.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelDerechoInv.setBackground(Color.LIGHT_GRAY);
-		fixedSize(panelDerechoInv, 770,525 );
-		Ventana.add(panelDerechoInv);
+		Constantes.fixedSize(panelDerechoInv, 770,525 );
+		contenido.add(panelDerechoInv);
 		
+		
+		//Contenido del panelDerecho (panel del reproductor)
 		Component h1 = Box.createRigidArea(new Dimension(15, 15));
 		panelDerecho.add(h1);
-		
 		
 		tituloVideo = new JLabel();
 		tituloVideo.setText("Titulo del video");
@@ -194,15 +147,12 @@ public class PanelMisListas extends JPanel{
 		
 		Component h2 = Box.createRigidArea(new Dimension(40, 40));
 		panelDerecho.add(h2);
-		//videoWeb.playVideo("https://www.youtube.com/watch?v=EdVMSYomYJY");
-	
-		//validate();
 		panelDerecho.add(videoWeb);
 
 		panelEtiquetas = new JPanel();
 		panelEtiquetas.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panelEtiquetas.setBackground(Color.LIGHT_GRAY);
-		fixedSize(panelEtiquetas, 500,100);
+		Constantes.fixedSize(panelEtiquetas, 500,100);
 		panelDerecho.add(panelEtiquetas);
 		
 		JLabel nuevaEtiqueta = new JLabel("Nueva etiqueta:");
@@ -212,7 +162,7 @@ public class PanelMisListas extends JPanel{
 		
 		JPanel anadirNuevaEtiqueta = new JPanel();
 		anadirNuevaEtiqueta.setLayout(new FlowLayout( FlowLayout.LEFT));
-		fixedSize(anadirNuevaEtiqueta,300,40);
+		Constantes.fixedSize(anadirNuevaEtiqueta,300,40);
 		anadirNuevaEtiqueta.setBackground(Color.LIGHT_GRAY);
 		anadirNuevaEtiqueta.add(nuevaEtiqueta);
 		anadirNuevaEtiqueta.add(txtEtiqueta);
@@ -220,17 +170,18 @@ public class PanelMisListas extends JPanel{
 		
 		Component h3 = Box.createRigidArea(new Dimension(80, 10));
 		panelDerecho.add(h3);
-		
 		panelDerecho.add(anadirNuevaEtiqueta);
 		
+		//Action listener para añadir una etiqueta al video seleccionado
+		//Se comprueba que sea una etiqueta válida y que el video no la contenga.
 		btnAnadir.addActionListener(ev ->{
 			if(txtEtiqueta.getText().equals(""))
-				JOptionPane.showMessageDialog(Ventana,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(contenido,"Escribe un nombre válido","Nombre no válido", JOptionPane.ERROR_MESSAGE);
 			else if(checkEtiquetas(txtEtiqueta.getText(), videoSeleccionado)){
-				JOptionPane.showMessageDialog(Ventana,"El video ya tiene esa etiqueta","Etiqueta no válida", JOptionPane.ERROR_MESSAGE);	
+				JOptionPane.showMessageDialog(contenido,"El video ya tiene esa etiqueta","Etiqueta no válida", JOptionPane.ERROR_MESSAGE);	
 			}
 			else {
-				int eleccion = JOptionPane.showConfirmDialog(Ventana, "¿Desea añadir la etiqueta " + txtEtiqueta.getText() + " al video " + tituloVideo.getText() + " ?", "Añadir etiqueta",JOptionPane.YES_NO_OPTION);
+				int eleccion = JOptionPane.showConfirmDialog(contenido, "¿Desea añadir la etiqueta " + txtEtiqueta.getText() + " al video " + tituloVideo.getText() + " ?", "Añadir etiqueta",JOptionPane.YES_NO_OPTION);
 				if(eleccion == 0) {
 					controladorAppVideo.addEtiquetaToVideo(txtEtiqueta.getText(), videoSeleccionado);
 					mostrarEtiquetas(videoSeleccionado);
@@ -241,27 +192,19 @@ public class PanelMisListas extends JPanel{
 			}
 		});
 		
-		}
+	}
 		
 			
-		
-
 	
-
-	private void fixedSize(JComponent c,int x, int y) {
-		c.setMinimumSize(new Dimension(x,y));
-		c.setMaximumSize(new Dimension(x,y));
-		c.setPreferredSize(new Dimension(x,y));
-	}
-	
-	public void updateVideos(List<Video> videos) {
-		//ImageIcon n = new ImageIcon((Image) videoWeb.getThumb(videos.get(0).getUrl()));
+	//Método encargado de actualizar la lista (JList) con los videos que alberga la lista de video (VideoList) seleccionada
+	private void updateVideos(List<Video> videos) {
 		modelVideos.removeAllElements();
 		for(Video v: videos) {
 			modelVideos.addElement(new VideoDisplay(v.getTitulo(),v.getUrl(),videoWeb.getThumb(v.getUrl())));
 		}
 	}
 	
+	//Método utilizado para comprobar si el video alberga la etiqueta que se intenta añadir.
 	private boolean checkEtiquetas(String etiqueta, Video v) {
 		for(Etiqueta e: v.getEtiquetas()) {
 			if(e.getNombre().equals(etiqueta))
@@ -270,20 +213,19 @@ public class PanelMisListas extends JPanel{
 		return false;
 	}
 	
-	public void setVideoWeb(VideoWeb v){
-		videoWeb = v;
-	}
-	
+	//Método utilizado para cambiar de modo este panel
+	//Este panel tiene 4 modos, cada uno con sus componentes visibles (o invisibles) para reutilizar código.
+	//En el caso de MASVISTOS o RECIENTES, no se mostrarán las listas (VideoList) creadas por usuarios, sino unas listas generadas por el controlador / usuario
 	public void switchMode(Mode m) {
 		if (m == Mode.REPRODUCTOR){
 			panelIzquierdo.setVisible(false);
-			fixedSize(panelDerecho, 977,525 );
+			Constantes.fixedSize(panelDerecho, 977,525 );
 			panelDerecho.setVisible(true);
 			panelDerechoInv.setVisible(false);
 		}
 		else if (m == Mode.MISLISTAS){
 			panelIzquierdo.setVisible(true);
-			fixedSize(panelDerecho, 770,525 );
+			Constantes.fixedSize(panelDerecho, 770,525 );
 			panelDerecho.setVisible(false);
 			panelDerechoInv.setVisible(true);
 			txtLista.setVisible(true);
@@ -291,7 +233,7 @@ public class PanelMisListas extends JPanel{
 		}
 		else if(m == Mode.MASVISTOS) {
 			panelIzquierdo.setVisible(true);
-			fixedSize(panelDerecho, 770,525 );
+			Constantes.fixedSize(panelDerecho, 770,525 );
 			panelDerecho.setVisible(false);
 			panelDerechoInv.setVisible(true);
 			txtLista.setVisible(false);
@@ -303,7 +245,7 @@ public class PanelMisListas extends JPanel{
 		}
 		else if(m == Mode.RECIENTES) {
 			panelIzquierdo.setVisible(true);
-			fixedSize(panelDerecho, 770,525 );
+			Constantes.fixedSize(panelDerecho, 770,525 );
 			panelDerecho.setVisible(false);
 			panelDerechoInv.setVisible(true);
 			txtLista.setVisible(false);
@@ -314,6 +256,7 @@ public class PanelMisListas extends JPanel{
 		}
 	}
 	
+	//Método encargado de reproducir el video seleccionado y de mostrar toda su información en el panel (panelDerecho)
 	public void setVideo(Video v){
 		videoSeleccionado = v;
 		videoWeb.playVideo(v.getUrl());
@@ -323,7 +266,8 @@ public class PanelMisListas extends JPanel{
 		mostrarEtiquetas(v);
 	}
 	
-	public void mostrarEtiquetas(Video v) {
+	//Método encargado de mostrar todas las etiquetas del video seleccionado.
+	private void mostrarEtiquetas(Video v) {
 		panelEtiquetas.removeAll();
 		for(Etiqueta e : v.getEtiquetas()) {
 			JLabel et = new JLabel(e.getNombre());
@@ -331,6 +275,7 @@ public class PanelMisListas extends JPanel{
 		}
 	}
 	
+	//Método utilizado (principalmente por VentanaMain) para actualizar el comboBox con las listas creadas por un usuario.
 	public void updateBoxListas() {
 		boxListas.removeAllItems();
 		modelVideos.removeAllElements();
@@ -338,23 +283,19 @@ public class PanelMisListas extends JPanel{
 		for(VideoList v: controladorAppVideo.getListasAutor()) {
 			boxListas.addItem(v.getNombre());
 		}
-		
-		
-
-
 	}
 	
+	//Método utilizado (principalmente por VentanaMain) para actualizar el usuario de la sesión.
 	public void setUsuario(Usuario user) {
 		usuario = user;
 	}
 	
+	//Método utilizado para actualizar la lista (JList) con los videos de la lista de videos (VideoList) seleccionada por el usuario.
 	private void actualizarLista() {
 		boxListas.addActionListener(ev ->{
-			//System.out.println(boxListas.getSelectedItem());
 			if(boxListas.getSelectedItem() != null && !boxListas.getSelectedItem().toString().isEmpty()) {
 				videoLista = controladorAppVideo.getListaVideo(boxListas.getSelectedItem().toString());
 				updateVideos(videoLista.getListaVideos());
-				//updateVideosLista(videoLista.getListaVideos());
 			}
 		});
 	}

@@ -94,6 +94,8 @@ public class CatalogoVideoList {
 	//Comprobar si existe, al menos, una lista de video que contenga el video dado
 	public boolean checkVideoInVideoList(String autor, Video v) {
 		List<VideoList> listas = videoListMap.get(autor);
+		if(listas == null)
+			return false;
 		for(VideoList vL : listas) {
 			if(vL.contieneVideo(v))
 				return true;

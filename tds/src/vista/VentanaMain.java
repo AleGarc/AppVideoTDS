@@ -48,7 +48,7 @@ public class VentanaMain extends JFrame{
 	private final String panelMisListasCard = "panelMisListas";
 	private final String panelPremiumCard = "panelPremium";
 	
-	private Usuario usuario;
+	private Usuario usuario = null;
 	private JLabel lbSaludoUsuario;
 	private Luz pulsador;
 	private JComboBox<String> boxFiltros;
@@ -82,7 +82,7 @@ public class VentanaMain extends JFrame{
 		panelLogin =  new PanelLogin(this);
 		panelRegistro = new PanelRegistro(this);
 		panelExplorar = new PanelExplorar(this);
-		panelMisListas = new PanelMisListas(this);
+		panelMisListas = new PanelMisListas();
 		panelPremium = new PanelPremium(this);
 		
 		//Los añadimos a la ventana. Cambiaremos de panel usando el CardLayout
@@ -185,7 +185,7 @@ public class VentanaMain extends JFrame{
 		}
 		boxFiltros.setVisible(false);
 		boxFiltros.addActionListener(ev ->{
-			if(boxFiltros.getSelectedItem() != null){
+			if(boxFiltros.getSelectedItem() != null && usuario != null){
 				controladorAppVideo.setFiltroUsuario(boxFiltros.getSelectedItem().toString());
 			}
 		});
@@ -316,6 +316,7 @@ public class VentanaMain extends JFrame{
 		panelMisListas.switchMode(Mode.RECIENTES);
 	}
 	private void logout() {
+		usuario = null;
 		logeado(false);
 		lbSaludoUsuario.setVisible(false);
 		Constantes.fixedSize(panelSaludo, 667, 20);
@@ -382,6 +383,11 @@ public class VentanaMain extends JFrame{
 			btnMasVistos.setEnabled(false);
 			boxFiltros.setVisible(false);
 			Constantes.fixedSize(panelSeparador3,403,2);
+			if(usuario!= null) {
+				controladorAppVideo.resetFiltroUsuario();
+				boxFiltros.setSelectedIndex(0);
+			}
 		}
 	}
+	
 }

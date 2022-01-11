@@ -32,6 +32,7 @@ public class PanelPremium extends JPanel {
 		crearPantalla();
 	}
 	
+	//Se crea un único panel con todos los componentes (info para premium & no premium) y se alterna mediante el uso de una función.
 	private void crearPantalla() {
 		JPanel contenido = new JPanel();
 		contenido.setBorder(new LineBorder(new Color(0, 0, 0)));

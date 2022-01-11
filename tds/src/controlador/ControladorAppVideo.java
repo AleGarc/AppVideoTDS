@@ -138,6 +138,10 @@ public class ControladorAppVideo implements IEncendidoListener, IArchivoVideosLi
 		
 	}
 	
+	public void resetFiltroUsuario() {
+		usuario.setFiltro("NoFiltro");
+	}
+	
 
 	
 	//---------------------Videos---------------------//
